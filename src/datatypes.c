@@ -177,3 +177,13 @@ bool fpointInFRectangle(FPoint p, FRectangle r)
   if(p.y >= r.b.y) return FALSE;
   return TRUE;
 }
+
+Point getFrameFromAscii(char c, int colour)
+{
+  int raw = c-32;
+  Point out = NULL_POINT;
+  out.y = raw/32;
+  out.x = raw - out.y*32;
+  out.y += colour*3;
+  return out;
+}

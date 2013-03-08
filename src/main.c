@@ -38,10 +38,11 @@ int main()
   Entity blah = NULL_ENTITY;
   SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
   blah.sprite = spriteData;
-  blah.frame.x = 1;
+  blah.frame = getFrameFromAscii('a', 5);
   game_spawn(&game, blah);
   blah.pos.x = 5;
   blah.player = TRUE;
+  blah.frame = getFrameFromAscii('@', 6);
   game_spawn(&game, blah);
   
   LOG("Main loop.");  

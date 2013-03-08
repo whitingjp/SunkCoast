@@ -80,3 +80,5 @@ bool rectangleIntersect(Rectangle a, Rectangle b);
 bool frectangleIntersect(FRectangle a, FRectangle b);
 bool pointInRectangle(Point p, Rectangle r);
 bool fpointInFRectangle(FPoint p, FRectangle r);
+
+Point getFrameFromAscii(char c, int colour);
