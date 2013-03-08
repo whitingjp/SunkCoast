@@ -301,15 +301,11 @@ void sys_update()
   _heldInputs[INPUT_LEFT] = glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS;
   _heldInputs[INPUT_A] = glfwGetKey('Z') == GLFW_PRESS;
   _heldInputs[INPUT_B] = glfwGetKey('X') == GLFW_PRESS;
-  _heldInputs[INPUT_ESC] = glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS;
-  _heldInputs[INPUT_DRAW] = glfwGetMouseButton(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-  _heldInputs[INPUT_CUT] = glfwGetKey('X') == GLFW_PRESS;
-  _heldInputs[INPUT_PASTE] = glfwGetKey('V') == GLFW_PRESS;
-  _heldInputs[INPUT_SAVE] = glfwGetKey('S') == GLFW_PRESS;
-  _heldInputs[INPUT_TOGGLE_PALLETE] = glfwGetKey(GLFW_KEY_SPACE) == GLFW_PRESS;
-  _heldInputs[INPUT_TOGGLE_WORLD] = glfwGetKey(GLFW_KEY_TAB) == GLFW_PRESS;
-  for(i=0; i<10; i++)
-    _heldInputs[INPUT_0 + i] = glfwGetKey('0'+i) == GLFW_PRESS;
+
+  _heldInputs[INPUT_ANY] = FALSE;
+  for(i=0; i<INPUT_ANY; i++)
+    if(_heldInputs[i])
+      _heldInputs[INPUT_ANY] = TRUE;
   
   for(i=0; i<INPUT_MAX; i++)
     _pressedInputs[i] = !_oldInputs[i] && _heldInputs[i];

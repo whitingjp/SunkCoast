@@ -1,14 +1,47 @@
 #include "main.h"
 
+const char* line0 = "   _____             __      ______                 __  ";
+const char* line1 = "  / ___/__  ______  / /__   / ____/___  ____ ______/ /_ ";
+const char* line2 = "  \\__ \\/ / / / __ \\/ //_/  / /   / __ \\/ __ `/ ___/ __/ ";
+const char* line3 = " ___/ / /_/ / / / / ,<    / /___/ /_/ / /_/ (__  ) /_  ";
+const char* line4 = "/____/\\__,_/_/ /_/_/|_|   \\____/\\____/\\__,_/____/\\__/  ";
+
 const double _timePerFrame = 1.0f/60.0f;
 
 Point _resolution;
 double _totalTime;
 double _elapsedTime;
 
+bool preGame = TRUE;
 GameData game;
 
-void _render();
+void drawBanner()
+{
+  int i;
+  int j;
+  SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
+  for(i=0; i<5; i++)
+  {
+    const char *str = NULL;
+    switch(i)
+    {
+      case 0: str = line0; break;
+      case 1: str = line1; break;
+      case 2: str = line2; break;
+      case 3: str = line3; break;
+      case 4: str = line4; break;
+    }
+    for(j=0; j<55; j++)
+    {
+      const char c = str[j];
+      Point frame = getFrameFromAscii(c, i+2);
+      Point pos = NULL_POINT;
+      pos.x = (TILEMAP_WIDTH-55)/2+j;
+      pos.y = (TILEMAP_HEIGHT-5)/2+i;
+      sys_drawSprite(spriteData, frame, pos);
+    }    
+  }
+}
 
 int main()
 {
@@ -62,12 +95,23 @@ int main()
     while(_elapsedTime > _timePerFrame)
     {
       sys_update();
-      game_update(&game);
+      if(preGame)
+      {
+        if(sys_inputPressed(INPUT_ANY))
+          preGame = FALSE;
+      }
+      else
+      {
+        game_update(&game);
+      }
       _elapsedTime -= _timePerFrame;
     }
    
     sys_drawInit(bgCol);
-    game_draw(&game);
+    if(preGame)
+      drawBanner();
+    else
+      game_draw(&game);
     sys_drawFinish();
 
     if(sys_shouldClose())

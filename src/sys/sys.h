@@ -9,23 +9,7 @@ typedef enum
   INPUT_B,
   INPUT_ESC,
 
-  // editor
-  INPUT_DRAW,
-  INPUT_CUT,
-  INPUT_PASTE,
-  INPUT_SAVE,
-  INPUT_TOGGLE_PALLETE,
-  INPUT_TOGGLE_WORLD,
-  INPUT_0,
-  INPUT_1,
-  INPUT_2,
-  INPUT_3,
-  INPUT_4,
-  INPUT_5,
-  INPUT_6,
-  INPUT_7,
-  INPUT_8,
-  INPUT_9,
+  INPUT_ANY,
 
   // max
   INPUT_MAX,
