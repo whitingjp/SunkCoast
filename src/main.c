@@ -41,6 +41,7 @@ int main()
   blah.frame.x = 1;
   game_spawn(&game, blah);
   blah.pos.x = 5;
+  blah.player = TRUE;
   game_spawn(&game, blah);
   
   LOG("Main loop.");  

@@ -5,8 +5,9 @@ typedef struct
   Point frame;
   Point pos;
   int turn;
+  bool player;
 } Entity;
-#define NULL_ENTITY { FALSE, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX }
+#define NULL_ENTITY { FALSE, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, FALSE }
 
 #define MAX_ENTITIES (64)
 typedef struct

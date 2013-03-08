@@ -71,7 +71,7 @@ void game_draw(const GameData* game)
   }
 }
 
-void game_update(GameData* game)
+Point _get_input()
 {
   Point move = NULL_POINT;
   if(sys_inputPressed(INPUT_UP))
@@ -81,7 +81,17 @@ void game_update(GameData* game)
   if(sys_inputPressed(INPUT_DOWN))
     move.y++;
   if(sys_inputPressed(INPUT_LEFT))
-    move.y--;
+    move.x--;
+  return move;
+}
+
+void game_update(GameData* game)
+{
+  Point move = NULL_POINT;
+  if(game->entities[0].player)
+    move = _get_input();
+  else
+    move.y = 1;
   if(move.x != 0 || move.y != 0)
   {
     game->entities[0].pos = pointAddPoint(game->entities[0].pos, move);
