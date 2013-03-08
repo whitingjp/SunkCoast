@@ -8,6 +8,8 @@ GameData game_null_gamedata()
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
   out.tileMap = NULL_TILEMAP;
+  out.tileMap.tiles[0].frame = getFrameFromAscii('#', 1);
+  out.tileMap.tiles[0].type = TILE_WALL;
   return out;
 }
 
@@ -63,6 +65,8 @@ void game_spawn(GameData* game, Entity entity)
 void game_draw(const GameData* game)
 {
   int i;
+  Point nullPoint = NULL_POINT;
+  tilemap_draw(game->tileMap, nullPoint);
   for(i=0; i<MAX_ENTITIES; i++)
   {
     const Entity* e = &game->entities[i];
@@ -94,8 +98,10 @@ void game_update(GameData* game)
   else
     move.y = 1;
   if(move.x != 0 || move.y != 0)
-  {
-    game->entities[0].pos = pointAddPoint(game->entities[0].pos, move);
+  {    
+    Point newPoint = pointAddPoint(game->entities[0].pos, move);
+    if(!tilemap_collides(&game->tileMap, newPoint))
+      game->entities[0].pos = newPoint;
     game->entities[0].turn += 100;
     _game_sortEntities(game);
   }

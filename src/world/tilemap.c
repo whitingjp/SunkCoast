@@ -4,9 +4,9 @@ TileMap tilemap_null_tileMap()
 {
   int i;
   TileMap out;
-  SpriteData nullSpriteData = NULL_SPRITEDATA;
+  SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
   Tile nullTile = NULL_TILE;
-  out.spriteData = nullSpriteData;
+  out.spriteData = spriteData;
   out.size.x = TILEMAP_WIDTH;
   out.size.y = TILEMAP_HEIGHT;
   out.numTiles = out.size.x*out.size.y;
@@ -15,7 +15,7 @@ TileMap tilemap_null_tileMap()
   return out;
 }
 
-void tilemap_render(TileMap tileMap, Point pos)
+void tilemap_draw(TileMap tileMap, Point pos)
 {
   int i;
   for(i=0; i<tileMap.numTiles; i++)

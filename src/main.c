@@ -34,7 +34,7 @@ int main()
     }
   }
 
-  game = game_null_gamedata();
+  game = NULL_GAMEDATA;
   Entity blah = NULL_ENTITY;
   SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
   blah.sprite = spriteData;
