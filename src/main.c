@@ -3,7 +3,6 @@
 const double _timePerFrame = 1.0f/60.0f;
 
 Point _resolution;
-World _world;
 double _totalTime;
 double _elapsedTime;
 
@@ -19,8 +18,6 @@ int main()
   _resolution.x = 80*8;
   _resolution.y = 24*15;
   sys_init(_resolution, 4);
-
-  _world = world_load();
   
   for(i=0; i<IMAGE_MAX; i++)
   {

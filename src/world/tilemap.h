@@ -13,16 +13,14 @@ typedef struct
 } Tile;
 #define NULL_TILE {NULL_POINT, NULL_TILETYPE}
 
-#define TILEMAP_UNIT_WIDTH (10)
-#define TILEMAP_UNIT_HEIGHT (9)
-#define TILEMAP_MAX_WIDTH (TILEMAP_UNIT_WIDTH*3)
-#define TILEMAP_MAX_HEIGHT (TILEMAP_UNIT_HEIGHT*3)
+#define TILEMAP_WIDTH (80)
+#define TILEMAP_HEIGHT (24)
 extern const Point tilemap_size;
 extern const Point tile_size;
 typedef struct
 {
   SpriteData spriteData;
-  Tile tiles[TILEMAP_MAX_WIDTH*TILEMAP_MAX_HEIGHT];  
+  Tile tiles[TILEMAP_WIDTH*TILEMAP_HEIGHT];  
   Point size;
   int numTiles;
 } TileMap;

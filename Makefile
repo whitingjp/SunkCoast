@@ -31,7 +31,6 @@ SRC += sys/file.c
 SRC += sys/logging.c
 SRC += sys/sys.c
 SRC += world/tilemap.c
-SRC += world/world.c
 
 HEADERS := $(patsubst %.c,src/%.h,$(SRC)) src/sys/logging.h
 OBJ := $(patsubst %.c,obj/%.o,$(SRC))

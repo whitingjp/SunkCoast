@@ -4,8 +4,8 @@
 #include <IL/il.h> 
 
 #include "datatypes.h"
+#include "game/game.h"
 #include "world/tilemap.h"
-#include "world/world.h"
 #include "sys/file.h"
 #include "sys/logging.h"
 #include "sys/sys.h"

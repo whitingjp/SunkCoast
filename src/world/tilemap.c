@@ -7,10 +7,10 @@ TileMap tilemap_null_tileMap()
   SpriteData nullSpriteData = NULL_SPRITEDATA;
   Tile nullTile = NULL_TILE;
   out.spriteData = nullSpriteData;
-  out.size.x = TILEMAP_UNIT_WIDTH;
-  out.size.y = TILEMAP_UNIT_HEIGHT;
+  out.size.x = TILEMAP_WIDTH;
+  out.size.y = TILEMAP_HEIGHT;
   out.numTiles = out.size.x*out.size.y;
-  for(i=0; i<TILEMAP_MAX_WIDTH*TILEMAP_MAX_HEIGHT; i++)
+  for(i=0; i<out.size.x*out.size.y; i++)
     out.tiles[i] = nullTile;
   return out;
 }
