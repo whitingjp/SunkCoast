@@ -41,14 +41,53 @@ int tilemap_indexFromTilePosition(const TileMap* tileMap, Point p)
   return p.x + p.y*tileMap->size.x;
 }
 
+bool _pointInBounds(const TileMap* tileMap, Point p)
+{
+  if(p.x < 0)
+    return FALSE;
+  if(p.y < 0)
+    return FALSE;
+  if(p.x >= tileMap->size.x)
+    return FALSE;
+  if(p.y >= tileMap->size.y)
+    return FALSE;
+  return TRUE;
+}
+
 bool tilemap_collides(const TileMap* tileMap, Point p)
 {
   int index = tilemap_indexFromTilePosition(tileMap, p);
-  if(index < 0 || index >= tileMap->size.x*tileMap->size.y)
+  if(!_pointInBounds(tileMap, p))
     return TRUE;
   if(tileMap->tiles[index].type == TILE_WALL)
     return TRUE;
   return FALSE;
+}
+
+void _tilemap_walker(TileMap* tileMap, int length, Tile tile, TileType notType)
+{
+  int i;
+  Point walker = NULL_POINT;  
+  walker.x = sys_randint(tileMap->size.x);
+  walker.y = sys_randint(tileMap->size.y);
+  int startIndex = tilemap_indexFromTilePosition(tileMap, walker);
+  if(tileMap->tiles[startIndex].type == notType)
+    return;
+  
+  for(i=0; i<length; i++)
+  {
+    int index = tilemap_indexFromTilePosition(tileMap, walker);
+    tileMap->tiles[index] = tile;
+    Direction dir = sys_randint(4);
+    Point move = directionToPoint(dir);
+    Point newPoint = pointAddPoint(walker, move);
+    if(!_pointInBounds(tileMap, newPoint))
+      continue;
+    int newIndex = tilemap_indexFromTilePosition(tileMap, newPoint);
+    if(tileMap->tiles[newIndex].type == notType)
+      continue; 
+    walker = newPoint;    
+  }
 }
 
 TileMap tilemap_generate()
@@ -59,32 +98,14 @@ TileMap tilemap_generate()
   cavern.frame = getFrameFromAscii('#', 1);
   cavern.type = TILE_WALL;
   Tile empty = NULL_TILE;
+  Tile seaweed = NULL_TILE;
+  seaweed.frame = getFrameFromAscii('~', 3);
   for(i=0; i<out.numTiles; i++)
   {
     out.tiles[i] = cavern;
   }
-  Point walker = NULL_POINT;
-  walker.x = out.size.x/4 + sys_randint(out.size.x/2);
-  walker.y = out.size.y/4 + sys_randint(out.size.y/2);
-  for(i=0; i<(out.size.x*out.size.y)*4; i++)
-  {
-    int index = tilemap_indexFromTilePosition(&out, walker);
-    out.tiles[index] = empty;
-    Direction dir = sys_randint(4);
-    Point move = directionToPoint(dir);
-    Point newPoint = pointAddPoint(walker, move);
-    if(newPoint.x >= 0 && newPoint.y >= 0 &&
-       newPoint.x < out.size.x && newPoint.y < out.size.y)
-    {
-      walker = newPoint;
-    }
-  }
-  for(i=0; i<out.numTiles; i++)
-  {
-    if(out.tiles[i].type == TILE_NONE && sys_randint(4) == 0)
-    {
-        out.tiles[i].frame = getFrameFromAscii('~', 3);
-    }
-  }
+  _tilemap_walker(&out, out.size.x*out.size.y*4, empty, TILE_MAX);
+  for(i=0; i<8; i++)
+    _tilemap_walker(&out, sys_randint(out.size.x*out.size.y/10), seaweed, TILE_WALL);
   return out;
 }
