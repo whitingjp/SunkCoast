@@ -6,6 +6,8 @@ Point _resolution;
 double _totalTime;
 double _elapsedTime;
 
+GameData game;
+
 void _render();
 
 int main()
@@ -13,7 +15,7 @@ int main()
   bool running;
   int i;
   
-  LOG("Starting game.");  
+  LOG("Starting game.");
   
   _resolution.x = 80*8;
   _resolution.y = 24*15;
@@ -31,6 +33,15 @@ int main()
         exit(EXIT_FAILURE);
     }
   }
+
+  game = game_null_gamedata();
+  Entity blah = NULL_ENTITY;
+  SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
+  blah.sprite = spriteData;
+  blah.frame.x = 1;
+  game_spawn(&game, blah);
+  blah.pos.x = 5;
+  game_spawn(&game, blah);
   
   LOG("Main loop.");  
 
@@ -40,7 +51,6 @@ int main()
   while(running)
   {
     Color bgCol = {0x1e, 0x23, 0x27, 0xff};
-    //TileMap tileMap = NULL_TILEMAP;
     double time = sys_getTime();
     
     _elapsedTime += time - _totalTime;
@@ -48,16 +58,12 @@ int main()
     while(_elapsedTime > _timePerFrame)
     {
       sys_update();
+      game_update(&game);
       _elapsedTime -= _timePerFrame;
     }
    
     sys_drawInit(bgCol);
-    //tileMap = _world.screens[_gameData.screen].tileMap;
-    //tilemap_render(tileMap, _gameData.camera.offset);
-    SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
-    Point pos = {4,1};
-    Point frame = {1,9};
-    sys_drawSprite(spriteData, frame, pos);
+    game_draw(&game);
     sys_drawFinish();
 
     if(sys_shouldClose())
