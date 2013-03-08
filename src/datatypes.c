@@ -178,6 +178,30 @@ bool fpointInFRectangle(FPoint p, FRectangle r)
   return TRUE;
 }
 
+Point directionToPoint(Direction d)
+{
+  Point out = NULL_POINT;
+  switch(d)
+  {
+    case DIR_UP:
+      out.y--;
+      break;
+    case DIR_RIGHT:
+      out.x++;
+      break;
+    case DIR_DOWN:
+      out.y++;
+      break;
+    case DIR_LEFT:
+      out.x--;
+      break;
+    default:
+      LOG("Invalid direction: %i", d);
+      break;
+  }
+  return out;
+}
+
 Point getFrameFromAscii(char c, int colour)
 {
   int raw = c-32;

@@ -128,4 +128,6 @@ bool frectangleIntersect(FRectangle a, FRectangle b);
 bool pointInRectangle(Point p, Rectangle r);
 bool fpointInFRectangle(FPoint p, FRectangle r);
 
+Point directionToPoint(Direction d);
+
 Point getFrameFromAscii(char c, int colour);
