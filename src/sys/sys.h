@@ -46,3 +46,4 @@ bool sys_inputDown(Input input);
 bool sys_inputPressed(Input input);
 Point sys_mousePos();
 void sys_update();
+int sys_randint(int max);

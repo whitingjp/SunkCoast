@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
 #include <GL/glfw.h>
 #include <IL/il.h> 
 

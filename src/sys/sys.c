@@ -65,6 +65,8 @@ void sys_init(Point resolution, int pixel_scale)
     _images[i] = nullImage;
     _images[i].gluint = image_ids[i];
   }
+
+  srand(time(NULL));
 }
 
 int GLFWCALL _sys_close_callback()
@@ -311,4 +313,9 @@ void sys_update()
   
   for(i=0; i<INPUT_MAX; i++)
     _pressedInputs[i] = !_oldInputs[i] && _heldInputs[i];
+}
+
+int sys_randint(int max)
+{
+  return rand() % max;
 }

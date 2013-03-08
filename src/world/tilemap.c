@@ -48,3 +48,22 @@ bool tilemap_collides(const TileMap* tileMap, Point p)
     return TRUE;
   return FALSE;
 }
+
+TileMap tilemap_generate()
+{
+  TileMap out = NULL_TILEMAP;
+  int i;
+  for(i=0; i<out.numTiles; i++)
+  {
+    if(sys_randint(4) == 0)
+    {
+        out.tiles[i].frame = getFrameFromAscii('~', 3);
+    }
+    else if(sys_randint(10) == 0)
+    {
+        out.tiles[i].frame = getFrameFromAscii('#', 1);
+        out.tiles[i].type = TILE_WALL;
+    }
+  }
+  return out;
+}

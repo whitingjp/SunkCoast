@@ -7,9 +7,7 @@ GameData game_null_gamedata()
   Entity nullEntity = NULL_ENTITY;
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
-  out.tileMap = NULL_TILEMAP;
-  out.tileMap.tiles[0].frame = getFrameFromAscii('#', 1);
-  out.tileMap.tiles[0].type = TILE_WALL;
+  out.tileMap = tilemap_generate();
   return out;
 }
 
