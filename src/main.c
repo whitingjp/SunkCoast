@@ -39,8 +39,10 @@ int main()
   SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
   blah.sprite = spriteData;
   blah.frame = getFrameFromAscii('a', 5);
+  blah.pos.x = 35;
+  blah.pos.y = 10;
   game_spawn(&game, blah);
-  blah.pos.x = 5;
+  blah.pos.x = 40;
   blah.player = TRUE;
   blah.frame = getFrameFromAscii('@', 6);
   game_spawn(&game, blah);
