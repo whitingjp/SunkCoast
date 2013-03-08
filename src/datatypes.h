@@ -57,6 +57,53 @@ typedef enum
   DIR_LEFT,
 } Direction;
 
+typedef enum
+{
+  TILE_NONE=0,
+  TILE_WALL,
+  TILE_MAX,
+} TileType;
+#define NULL_TILETYPE (TILE_NONE)
+
+typedef struct
+{
+  Point frame;
+  TileType type;
+} Tile;
+#define NULL_TILE {NULL_POINT, NULL_TILETYPE}
+
+#define TILEMAP_WIDTH (80)
+#define TILEMAP_HEIGHT (24)
+extern const Point tilemap_size;
+extern const Point tile_size;
+typedef struct
+{
+  SpriteData spriteData;
+  Tile tiles[TILEMAP_WIDTH*TILEMAP_HEIGHT];  
+  Point size;
+  int numTiles;
+} TileMap;
+#define NULL_TILEMAP (tilemap_null_tileMap());
+
+typedef struct
+{
+  bool active;
+  SpriteData sprite;
+  Point frame;
+  Point pos;
+  int turn;
+  bool player;
+} Entity;
+#define NULL_ENTITY { FALSE, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, FALSE }
+
+#define MAX_ENTITIES (64)
+typedef struct
+{
+  Entity entities[MAX_ENTITIES];
+  TileMap tileMap;
+} GameData;
+#define NULL_GAMEDATA (game_null_gamedata());
+
 int min(int a, int b);
 int max(int a, int b);
 int minmax(int lower, int upper, int n);

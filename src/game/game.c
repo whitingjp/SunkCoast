@@ -7,6 +7,7 @@ GameData game_null_gamedata()
   Entity nullEntity = NULL_ENTITY;
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
+  out.tileMap = NULL_TILEMAP;
   return out;
 }
 
