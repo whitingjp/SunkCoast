@@ -116,7 +116,7 @@ void _draw_hud(Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
   snprintf(string, TILEMAP_WIDTH, "  O2: %d", e.oxygen);
-  sys_drawString(offset, string, TILEMAP_WIDTH, 6);
+  sys_drawString(offset, string, TILEMAP_WIDTH, 2);
 }
 
 
@@ -201,14 +201,17 @@ Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
   return move;
 }
 
-Point _getAiInput(GameData* game)
+Point _getAiInput(const GameData* game, Entity* e)
 {
-  Point pos = game->entities[0].pos;
+  Point pos = e->pos;
   Point move = NULL_POINT;
-  int player =  _get_playerIndex(game);
-  bool visible = tilemap_visible(&game->tileMap, pos);
-  if(player != -1 && visible)
-    move = _get_aiPath(&game->tileMap, pos, game->entities[player].pos);
+  if(e->sentient)
+  {
+    int player =  _get_playerIndex(game);
+    bool visible = tilemap_visible(&game->tileMap, pos);
+    if(player != -1 && visible)
+      move = _get_aiPath(&game->tileMap, pos, game->entities[player].pos);
+  }
   if(move.x == 0 && move.y == 0)
   {
     int dir = sys_randint(4);
@@ -226,7 +229,7 @@ void game_update(GameData* game)
   if(game->entities[0].player)
     move = _getInput();
   else
-    move = _getAiInput(game);
+    move = _getAiInput(game, &game->entities[0]);
 
   if(move.x != 0 || move.y != 0)
   {
@@ -251,6 +254,8 @@ void game_update(GameData* game)
       game_addMessage("%s hit %s", game->entities[0].name, game->entities[i].name);
       if(game->entities[i].oxygen <= 0)
       {
+        if(game->entities[i].containsOxygen)
+          game->entities[0].oxygen += sys_randint(3)+sys_randint(3)+2;
         Entity nullEntity = NULL_ENTITY;
         game->entities[i] = nullEntity;
       }

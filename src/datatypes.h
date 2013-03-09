@@ -94,8 +94,11 @@ typedef struct
   int oxygen;
   int strength;
   const char* name;
+  bool sentient;
+  bool containsOxygen;
 } Entity;
-#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100, 10, 4, NULL}
+#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT,\
+                      INT_MAX, false, 100, 10, 4, NULL, false, false}
 
 #define MAX_ENTITIES (64)
 typedef struct

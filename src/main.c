@@ -74,6 +74,7 @@ int main()
   blah.frame = getFrameFromAscii('s', 5);
   blah.speed = 140;
   blah.name = "starfish";
+  blah.sentient = true;
   game_spawn(&game, blah);
   game_spawn(&game, blah);
   game_spawn(&game, blah);
@@ -82,6 +83,17 @@ int main()
   blah.speed = 100;
   blah.frame = getFrameFromAscii('@', 6);
   blah.name = "you";
+  game_spawn(&game, blah);
+  blah.frame = getFrameFromAscii('o', 2);
+  blah.name = "bubble";
+  blah.speed = 400;
+  blah.player = false;
+  blah.oxygen = 1;
+  blah.sentient = false;
+  blah.containsOxygen = true;
+  game_spawn(&game, blah);
+  game_spawn(&game, blah);
+  game_spawn(&game, blah);
   game_spawn(&game, blah);
   
   LOG("Main loop.");  
