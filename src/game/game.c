@@ -102,6 +102,13 @@ void game_update(GameData* game)
       game->entities[0].pos = newPoint;
     game->entities[0].turn += 100;
     _game_sortEntities(game);
-    tilemap_recalcFov(&game->tileMap, game->entities[0].pos);
+    int i;
+    for(i=0; i<MAX_ENTITIES; i++)
+    {
+      if(!game->entities[i].player)
+        continue;
+      tilemap_recalcFov(&game->tileMap, game->entities[i].pos);
+    }
+    
   }
 }

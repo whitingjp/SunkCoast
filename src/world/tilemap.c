@@ -28,9 +28,12 @@ void tilemap_draw(TileMap tileMap, Point pos)
     renderPos.y = tilepos.y+pos.y;
     Point frame = tileMap.tiles[i].frame;
     if(!tileMap.tiles[i].seen)
-      continue;
-    if(tileMap.tiles[i].visible)
-      frame.y+=3;
+    {
+      frame.x=0;
+      frame.y=0;
+    }
+    if(!tileMap.tiles[i].visible)
+      frame.x+=32;
     sys_drawSprite(tileMap.spriteData, frame, renderPos);
   }
 }
@@ -150,6 +153,6 @@ void tilemap_recalcFov(TileMap* tileMap, Point viewer)
   fov_settings_init(&fov_settings);
   fov_settings_set_apply_lighting_function(&fov_settings, _tilemap_libfov_apply);
   fov_settings_set_opacity_test_function(&fov_settings, _tilemap_libfov_opaque);
-  fov_circle(&fov_settings, tileMap, NULL, viewer.x, viewer.y, 10);
+  fov_circle(&fov_settings, tileMap, NULL, viewer.x, viewer.y, 8);
   fov_settings_free(&fov_settings);
 }
