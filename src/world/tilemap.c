@@ -106,6 +106,7 @@ TileMap tilemap_generate()
   cavern.type = TILE_WALL;
   Tile empty = NULL_TILE;
   Tile seaweed = NULL_TILE;
+  seaweed.type = TILE_HIDE;
   seaweed.frame = getFrameFromAscii('~', 3);
   for(i=0; i<out.numTiles; i++)
   {
@@ -138,6 +139,14 @@ bool _tilemap_libfov_opaque(void *map, int x, int y) {
   Point p = NULL_POINT;
   p.x = x;
   p.y = y;
+  if(!_pointInBounds(tileMap, p))
+    return true;
+  int index = tilemap_indexFromTilePosition(tileMap, p);
+  int type = tileMap->tiles[index].type;
+  if(type == TILE_WALL)
+    return true;
+  if(type == TILE_HIDE)
+    return true;
   return tilemap_collides(tileMap, p);
 }
 

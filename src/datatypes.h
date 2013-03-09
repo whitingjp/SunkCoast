@@ -55,6 +55,7 @@ typedef enum
 {
   TILE_NONE=0,
   TILE_WALL,
+  TILE_HIDE,
   TILE_MAX,
 } TileType;
 #define NULL_TILETYPE (TILE_NONE)
