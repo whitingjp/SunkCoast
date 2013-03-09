@@ -183,6 +183,7 @@ Point _getAiInput(GameData* game)
 
 void game_update(GameData* game)
 {
+  int i;
   Point move = NULL_POINT;
   if(!game->entities[0].active)
     return;
@@ -190,14 +191,30 @@ void game_update(GameData* game)
     move = _getInput();
   else
     move = _getAiInput(game);
+
   if(move.x != 0 || move.y != 0)
   {
     Point newPoint = pointAddPoint(game->entities[0].pos, move);
-    if(!tilemap_collides(&game->tileMap, newPoint))
+    bool isWall = tilemap_collides(&game->tileMap, newPoint);
+    bool isEntity = false;
+    for(i=0; i<MAX_ENTITIES; i++)
+    {
+      if(i==0)
+        continue;
+      if(!game->entities[i].active)
+        continue;
+      if(newPoint.x != game->entities[i].pos.x)
+        continue;
+      if(newPoint.y != game->entities[i].pos.y)
+        continue;
+      LOG("%d hit %d!", 0, i);
+      isEntity = true;
+    }
+    if(!isWall && !isEntity)
       game->entities[0].pos = newPoint;
+
     game->entities[0].turn += game->entities[0].speed;
     _game_sortEntities(game);
-    int i;
     for(i=0; i<MAX_ENTITIES; i++)
     {
       if(!game->entities[i].player)
