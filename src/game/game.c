@@ -213,7 +213,7 @@ void game_update(GameData* game)
     if(!isWall && !isEntity)
       game->entities[0].pos = newPoint;
 
-    game->entities[0].turn += game->entities[0].speed;
+    game->entities[0].turn += game->entities[0].speed+sys_randint(game->entities[0].speed);
     _game_sortEntities(game);
     for(i=0; i<MAX_ENTITIES; i++)
     {
