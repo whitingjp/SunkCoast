@@ -70,6 +70,8 @@ void game_draw(const GameData* game)
     const Entity* e = &game->entities[i];
     if(!e->active)
       continue;
+    if(!tilemap_visible(&game->tileMap, e->pos))
+      continue;
     sys_drawSprite(e->sprite, e->frame, e->pos);
   }
 }

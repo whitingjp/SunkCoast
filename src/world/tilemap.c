@@ -155,4 +155,15 @@ void tilemap_recalcFov(TileMap* tileMap, Point viewer)
   fov_settings_set_opacity_test_function(&fov_settings, _tilemap_libfov_opaque);
   fov_circle(&fov_settings, tileMap, NULL, viewer.x, viewer.y, 8);
   fov_settings_free(&fov_settings);
+  int index = tilemap_indexFromTilePosition(tileMap, viewer);
+  tileMap->tiles[index].seen = true;
+  tileMap->tiles[index].visible = true;
+}
+
+bool tilemap_visible(const TileMap* tileMap, Point p)
+{
+  if(!_pointInBounds(tileMap, p))
+    return false;
+  int index = tilemap_indexFromTilePosition(tileMap, p);
+  return tileMap->tiles[index].visible;
 }

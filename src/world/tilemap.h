@@ -7,3 +7,4 @@ bool tilemap_collides(const TileMap* tileMap, Point p);
 TileMap tilemap_generate();
 
 void tilemap_recalcFov(TileMap* tileMap, Point viewer);
+bool tilemap_visible(const TileMap* tileMap, Point o);
