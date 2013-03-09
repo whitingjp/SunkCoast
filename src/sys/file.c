@@ -8,7 +8,7 @@ bool file_save(const char* fileName, int size, const void* data)
   if (dest == NULL)
   {
     LOG("Failed to open %s for save.", fileName);
-    return FALSE;
+    return false;
   }
     
   written = fwrite(&size, 1, sizeof(size), dest);
@@ -16,7 +16,7 @@ bool file_save(const char* fileName, int size, const void* data)
   {
     LOG("Failed to write size to %s", fileName);
     fclose(dest);
-    return FALSE;
+    return false;
   }
   
   written = fwrite(data, 1, size, dest);
@@ -24,11 +24,11 @@ bool file_save(const char* fileName, int size, const void* data)
   {
     LOG("Failed to write object to %s", fileName);
     fclose(dest);
-    return FALSE;
+    return false;
   }
   LOG("Saved data to %s", fileName);
   fclose(dest);
-  return TRUE;
+  return true;
 }
 
 bool file_load(const char* fileName, int size, void* data)
@@ -40,14 +40,14 @@ bool file_load(const char* fileName, int size, void* data)
   if (src == NULL)
   {
     LOG("Failed to open %s for load.", fileName);
-    return FALSE;
+    return false;
   }
   read = fread( &readSize, 1, sizeof(readSize), src );
   if(read != sizeof(readSize))
   {
     LOG("Failed to read size from %s", fileName);
     fclose(src);
-    return FALSE;
+    return false;
   }
   if(readSize != size)
   {
@@ -58,9 +58,9 @@ bool file_load(const char* fileName, int size, void* data)
   {
     LOG("Failed to read object from %s", fileName);
     fclose(src);
-    return FALSE;
+    return false;
   }
   LOG("Loaded data from %s", fileName);
   fclose(src);
-  return TRUE;
+  return true;
 }

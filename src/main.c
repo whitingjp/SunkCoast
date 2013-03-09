@@ -12,7 +12,7 @@ Point _resolution;
 double _totalTime;
 double _elapsedTime;
 
-bool preGame = TRUE;
+bool preGame = true;
 GameData game;
 
 void drawBanner()
@@ -76,7 +76,7 @@ int main()
   blah.pos.y = 10;
   game_spawn(&game, blah);
   blah.pos.x = 40;
-  blah.player = TRUE;
+  blah.player = true;
   blah.frame = getFrameFromAscii('@', 6);
   game_spawn(&game, blah);
   
@@ -84,7 +84,7 @@ int main()
 
   _totalTime = sys_getTime();
   _elapsedTime = 0;
-  running = TRUE;
+  running = true;
   while(running)
   {
     Color bgCol = {0x1e, 0x23, 0x27, 0xff};
@@ -98,7 +98,7 @@ int main()
       if(preGame)
       {
         if(sys_inputPressed(INPUT_ANY))
-          preGame = FALSE;
+          preGame = false;
       }
       else
       {
@@ -115,7 +115,7 @@ int main()
     sys_drawFinish();
 
     if(sys_shouldClose())
-      running = FALSE;
+      running = false;
   }
   
   LOG("Closing.");

@@ -26,7 +26,7 @@ void sys_init(Point resolution, int pixel_scale)
   GLuint image_ids[IMAGE_MAX];
   _resolution = resolution;
   _pixel_scale = pixel_scale;
-  _shouldClose = FALSE;
+  _shouldClose = false;
   _nextImage = 0;
   
   LOG("Initialize GLFW");
@@ -71,8 +71,8 @@ void sys_init(Point resolution, int pixel_scale)
 
 int GLFWCALL _sys_close_callback()
 {
-  _shouldClose = TRUE;
-  return TRUE;
+  _shouldClose = true;
+  return true;
 }
 
 bool sys_shouldClose()
@@ -116,7 +116,7 @@ void sys_drawInit(Color col)
   _drawRect.b.y = _drawRect.a.y+drawRectSize.y;
   
   if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-    _shouldClose = TRUE;
+    _shouldClose = true;
 }
 
 Point _sys_worldPointToScreenPoint(Point p)
@@ -177,7 +177,7 @@ ImageID sys_loadImage(const char *name)
   if(_nextImage >= IMAGE_MAX)
   {
     LOG("Ran out of image slots.");
-    _shouldClose = TRUE;
+    _shouldClose = true;
     return 0;
   }
   
@@ -190,7 +190,7 @@ ImageID sys_loadImage(const char *name)
   if(!success)
   {
     LOG("Failed to load spritesheet.");
-    _shouldClose = TRUE;
+    _shouldClose = true;
     return 0;
   }
   
@@ -198,7 +198,7 @@ ImageID sys_loadImage(const char *name)
   if(!success)
   {
     LOG("Failed to convert image.");
-    _shouldClose = TRUE;
+    _shouldClose = true;
     return 0;
   }
   
@@ -302,10 +302,10 @@ void sys_update()
   _heldInputs[INPUT_A] = glfwGetKey('Z') == GLFW_PRESS;
   _heldInputs[INPUT_B] = glfwGetKey('X') == GLFW_PRESS;
 
-  _heldInputs[INPUT_ANY] = FALSE;
+  _heldInputs[INPUT_ANY] = false;
   for(i=0; i<INPUT_ANY; i++)
     if(_heldInputs[i])
-      _heldInputs[INPUT_ANY] = TRUE;
+      _heldInputs[INPUT_ANY] = true;
   
   for(i=0; i<INPUT_MAX; i++)
     _pressedInputs[i] = !_oldInputs[i] && _heldInputs[i];

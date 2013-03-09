@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -7,9 +8,9 @@
 
 #include "datatypes.h"
 #include "game/game.h"
-#include "world/tilemap.h"
 #include "sys/file.h"
 #include "sys/logging.h"
 #include "sys/sys.h"
+#include "world/tilemap.h"
 
 Point main_getResolution();

@@ -1,9 +1,3 @@
-typedef enum
-{
-  FALSE = 0,
-  TRUE,
-} bool;
-
 typedef struct
 {
   int x, y;
@@ -69,8 +63,10 @@ typedef struct
 {
   Point frame;
   TileType type;
+  bool seen;
+  bool visible;
 } Tile;
-#define NULL_TILE {NULL_POINT, NULL_TILETYPE}
+#define NULL_TILE {NULL_POINT, NULL_TILETYPE, false, false}
 
 #define TILEMAP_WIDTH (80)
 #define TILEMAP_HEIGHT (24)
@@ -94,7 +90,7 @@ typedef struct
   int turn;
   bool player;
 } Entity;
-#define NULL_ENTITY { FALSE, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, FALSE }
+#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false }
 
 #define MAX_ENTITIES (64)
 typedef struct

@@ -144,38 +144,38 @@ Rectangle frectangleToRectangle(FRectangle in)
 
 bool rectangleIntersect(Rectangle a, Rectangle b)
 {
-  if(a.a.x >= b.b.x) return FALSE;
-  if(b.a.x >= a.b.x) return FALSE;
-  if(a.a.y >= b.b.y) return FALSE;
-  if(b.a.y >= a.b.y) return FALSE;
-  return TRUE;
+  if(a.a.x >= b.b.x) return false;
+  if(b.a.x >= a.b.x) return false;
+  if(a.a.y >= b.b.y) return false;
+  if(b.a.y >= a.b.y) return false;
+  return true;
 }
 
 bool frectangleIntersect(FRectangle a, FRectangle b)
 {
-  if(a.a.x >= b.b.x) return FALSE;
-  if(b.a.x >= a.b.x) return FALSE;
-  if(a.a.y >= b.b.y) return FALSE;
-  if(b.a.y >= a.b.y) return FALSE;
-  return TRUE;
+  if(a.a.x >= b.b.x) return false;
+  if(b.a.x >= a.b.x) return false;
+  if(a.a.y >= b.b.y) return false;
+  if(b.a.y >= a.b.y) return false;
+  return true;
 }
 
 bool pointInRectangle(Point p, Rectangle r)
 {
-  if(p.x < r.a.x) return FALSE;
-  if(p.x >= r.b.x) return FALSE;
-  if(p.y < r.a.y) return FALSE;
-  if(p.y >= r.b.y) return FALSE;
-  return TRUE;
+  if(p.x < r.a.x) return false;
+  if(p.x >= r.b.x) return false;
+  if(p.y < r.a.y) return false;
+  if(p.y >= r.b.y) return false;
+  return true;
 }
 
 bool fpointInFRectangle(FPoint p, FRectangle r)
 {
-  if(p.x < r.a.x) return FALSE;
-  if(p.x >= r.b.x) return FALSE;
-  if(p.y < r.a.y) return FALSE;
-  if(p.y >= r.b.y) return FALSE;
-  return TRUE;
+  if(p.x < r.a.x) return false;
+  if(p.x >= r.b.x) return false;
+  if(p.y < r.a.y) return false;
+  if(p.y >= r.b.y) return false;
+  return true;
 }
 
 Point directionToPoint(Direction d)

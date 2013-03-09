@@ -52,7 +52,7 @@ void game_spawn(GameData* game, Entity entity)
     if(game->entities[i].active)
       continue;
     game->entities[i] = entity;
-    game->entities[i].active = TRUE;
+    game->entities[i].active = true;
     game->entities[i].turn = maxTurn+1;
     _game_sortEntities(game);
     return;
@@ -102,5 +102,6 @@ void game_update(GameData* game)
       game->entities[0].pos = newPoint;
     game->entities[0].turn += 100;
     _game_sortEntities(game);
+    tilemap_recalcFov(&game->tileMap, game->entities[0].pos);
   }
 }
