@@ -45,6 +45,15 @@ void game_spawn(GameData* game, Entity entity)
 {
   int i;
   int maxTurn = 0;
+  Point spawnPoint = NULL_POINT;
+  for(i=0; i<TILEMAP_WIDTH*TILEMAP_HEIGHT; i++)
+  {
+    spawnPoint.x = sys_randint(TILEMAP_WIDTH);
+    spawnPoint.y = sys_randint(TILEMAP_WIDTH);
+    if(!tilemap_collides(&game->tileMap, spawnPoint))
+      break;
+  }
+  entity.pos = spawnPoint;
   for(i=0; i<MAX_ENTITIES; i++)
   {
     if(!game->entities[i].active)
