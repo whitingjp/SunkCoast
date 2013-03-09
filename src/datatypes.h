@@ -90,14 +90,17 @@ typedef struct
   int turn;
   bool player;
   int speed;
+  int oxygen;
+  int strength;
 } Entity;
-#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100 }
+#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100, 10, 4}
 
 #define MAX_ENTITIES (64)
 typedef struct
 {
   Entity entities[MAX_ENTITIES];
   TileMap tileMap;
+  char message[TILEMAP_WIDTH];
 } GameData;
 #define NULL_GAMEDATA (game_null_gamedata());
 

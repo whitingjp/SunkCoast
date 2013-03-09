@@ -268,6 +268,20 @@ void sys_drawSprite(SpriteData spriteData, Point frame, Point pos)
     glDisable(GL_TEXTURE_2D);
 }
 
+void sys_drawString(Point pos, const char* string, int len)
+{
+  int i;
+  SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
+  for(i=0; i<len; i++)
+  {
+    if(string[i] == 0)
+      break;
+    Point frame = getFrameFromAscii(string[i], 1);
+    sys_drawSprite(spriteData, frame, pos);
+    pos.x++;
+  }
+}
+
 bool sys_inputDown(Input input)
 {
   return _heldInputs[input];

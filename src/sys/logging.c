@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdarg.h>
 
 #define LOG_BUFFER_MAX (256)
 char _buffer[LOG_BUFFER_MAX];

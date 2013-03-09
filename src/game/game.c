@@ -8,6 +8,7 @@ GameData game_null_gamedata()
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
   out.tileMap = tilemap_generate();
+  game_addMessage(&out, "Welcome to Sunk Coast.");
   return out;
 }
 
@@ -98,11 +99,10 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
   }
 }
 
-void game_draw(const GameData* game)
+void game_draw(const GameData* game, Point offset)
 {
   int i;
-  Point nullPoint = NULL_POINT;
-  tilemap_draw(game->tileMap, nullPoint);
+  tilemap_draw(game->tileMap, offset);
   for(i=0; i<MAX_ENTITIES; i++)
   {
     const Entity* e = &game->entities[i];
@@ -110,10 +110,13 @@ void game_draw(const GameData* game)
       continue;
     if(!tilemap_visible(&game->tileMap, e->pos))
       continue;
-    sys_drawSprite(e->sprite, e->frame, e->pos);    
+    Point drawPos = pointAddPoint(offset, e->pos);
+    sys_drawSprite(e->sprite, e->frame, drawPos);   
   }
   if(sys_inputDown(INPUT_A))
     _draw_route(&game->tileMap, game->entities[0].pos, game->entities[1].pos, game->entities[0].sprite, game->entities[0].frame);
+  Point nullPoint = NULL_POINT;
+  sys_drawString(nullPoint, game->message, TILEMAP_WIDTH);
 }
 
 Point _getInput()
@@ -207,8 +210,18 @@ void game_update(GameData* game)
         continue;
       if(newPoint.y != game->entities[i].pos.y)
         continue;
-      LOG("%d hit %d!", 0, i);
+      
+      int amount = sys_randint(game->entities[0].strength);
+      game->entities[i].oxygen -= amount;
+      game_addMessage(game, "%d hit %d for %d. Oxygen now %d", 0, i, amount, game->entities[i].oxygen);
+      if(game->entities[i].oxygen <= 0)
+      {
+        Entity nullEntity = NULL_ENTITY;
+        game->entities[i] = nullEntity;
+      }
+        
       isEntity = true;
+      break;
     }
     if(!isWall && !isEntity)
       game->entities[0].pos = newPoint;
@@ -223,4 +236,11 @@ void game_update(GameData* game)
     }
     
   }
+}
+
+void game_addMessage(GameData* game, const char *str, ...)
+{
+  va_list args;
+  va_start(args, str);
+  vsnprintf(game->message, TILEMAP_WIDTH, str, args);
 }

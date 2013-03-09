@@ -51,7 +51,7 @@ int main()
   LOG("Starting game.");
   
   _resolution.x = TILEMAP_WIDTH*8;
-  _resolution.y = TILEMAP_HEIGHT*15;
+  _resolution.y = (TILEMAP_HEIGHT+3)*15;
   sys_init(_resolution, 4);
   
   for(i=0; i<IMAGE_MAX; i++)
@@ -108,12 +108,14 @@ int main()
       }
       _elapsedTime -= _timePerFrame;
     }
-   
+    
+    Point offset = NULL_POINT;
+    offset.y = 1;
     sys_drawInit(bgCol);
     if(preGame)
       drawBanner();
     else
-      game_draw(&game);
+      game_draw(&game, offset);
     sys_drawFinish();
 
     if(sys_shouldClose())
