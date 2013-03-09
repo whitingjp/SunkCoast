@@ -100,7 +100,6 @@ typedef struct
 {
   Entity entities[MAX_ENTITIES];
   TileMap tileMap;
-  char message[TILEMAP_WIDTH];
 } GameData;
 #define NULL_GAMEDATA (game_null_gamedata());
 

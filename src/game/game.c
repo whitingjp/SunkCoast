@@ -1,5 +1,8 @@
 #include "main.h"
 
+char messages[TILEMAP_HEIGHT][TILEMAP_WIDTH];
+int numMessages;
+
 GameData game_null_gamedata()
 {
   GameData out;
@@ -8,7 +11,8 @@ GameData game_null_gamedata()
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
   out.tileMap = tilemap_generate();
-  game_addMessage(&out, "Welcome to Sunk Coast.");
+  numMessages = 0;
+  game_addMessage("Welcome to Sunk Coast.");
   return out;
 }
 
@@ -115,8 +119,13 @@ void game_draw(const GameData* game, Point offset)
   }
   if(sys_inputDown(INPUT_A))
     _draw_route(&game->tileMap, game->entities[0].pos, game->entities[1].pos, game->entities[0].sprite, game->entities[0].frame);
-  Point nullPoint = NULL_POINT;
-  sys_drawString(nullPoint, game->message, TILEMAP_WIDTH);
+
+  Point messagePos = NULL_POINT;
+  for(i=0; i<numMessages; i++)
+  {    
+    sys_drawString(messagePos, messages[i], TILEMAP_WIDTH);
+    messagePos.y++;
+  }
 }
 
 Point _getInput()
@@ -197,6 +206,8 @@ void game_update(GameData* game)
 
   if(move.x != 0 || move.y != 0)
   {
+    if(game->entities[0].player)
+      numMessages = 0;    
     Point newPoint = pointAddPoint(game->entities[0].pos, move);
     bool isWall = tilemap_collides(&game->tileMap, newPoint);
     bool isEntity = false;
@@ -213,7 +224,7 @@ void game_update(GameData* game)
       
       int amount = sys_randint(game->entities[0].strength);
       game->entities[i].oxygen -= amount;
-      game_addMessage(game, "%d hit %d for %d. Oxygen now %d", 0, i, amount, game->entities[i].oxygen);
+      game_addMessage("%d hit %d for %d. Oxygen now %d", 0, i, amount, game->entities[i].oxygen);
       if(game->entities[i].oxygen <= 0)
       {
         Entity nullEntity = NULL_ENTITY;
@@ -234,13 +245,18 @@ void game_update(GameData* game)
         continue;
       tilemap_recalcFov(&game->tileMap, game->entities[i].pos);
     }
-    
   }
 }
 
-void game_addMessage(GameData* game, const char *str, ...)
+void game_addMessage(const char *str, ...)
 {
+  if(numMessages >= TILEMAP_HEIGHT)
+  {
+    LOG("Not enough space for messages.");
+    return;
+  }
   va_list args;
   va_start(args, str);
-  vsnprintf(game->message, TILEMAP_WIDTH, str, args);
+  vsnprintf(messages[numMessages], TILEMAP_WIDTH, str, args);
+  numMessages++;
 }
