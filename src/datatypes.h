@@ -89,8 +89,9 @@ typedef struct
   Point pos;
   int turn;
   bool player;
+  int speed;
 } Entity;
-#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false }
+#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100 }
 
 #define MAX_ENTITIES (64)
 typedef struct

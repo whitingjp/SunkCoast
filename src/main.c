@@ -74,9 +74,11 @@ int main()
   blah.frame = getFrameFromAscii('a', 5);
   blah.pos.x = 35;
   blah.pos.y = 10;
+  blah.speed = 140;
   game_spawn(&game, blah);
   blah.pos.x = 40;
   blah.player = true;
+  blah.speed = 100;
   blah.frame = getFrameFromAscii('@', 6);
   game_spawn(&game, blah);
   

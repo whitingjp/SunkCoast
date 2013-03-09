@@ -171,7 +171,7 @@ void game_update(GameData* game)
     Point newPoint = pointAddPoint(game->entities[0].pos, move);
     if(!tilemap_collides(&game->tileMap, newPoint))
       game->entities[0].pos = newPoint;
-    game->entities[0].turn += 100;
+    game->entities[0].turn += game->entities[0].speed;
     _game_sortEntities(game);
     int i;
     for(i=0; i<MAX_ENTITIES; i++)
