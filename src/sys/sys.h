@@ -24,7 +24,7 @@ void sys_drawInit(Color col);
 void sys_drawFinish();
 void sys_drawRectangle(Rectangle rectangle, Color col);
 void sys_drawSprite(SpriteData sprite, Point frame, Point pos);
-void sys_drawString(Point pos, const char* string, int len);
+void sys_drawString(Point pos, const char* string, int len, int colour);
 ImageID sys_loadImage(const char *name);
 Point sys_imageSize(ImageID id);
 bool sys_inputDown(Input input);

@@ -268,7 +268,7 @@ void sys_drawSprite(SpriteData spriteData, Point frame, Point pos)
     glDisable(GL_TEXTURE_2D);
 }
 
-void sys_drawString(Point pos, const char* string, int len)
+void sys_drawString(Point pos, const char* string, int len, int colour)
 {
   int i;
   SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
@@ -276,7 +276,7 @@ void sys_drawString(Point pos, const char* string, int len)
   {
     if(string[i] == 0)
       break;
-    Point frame = getFrameFromAscii(string[i], 1);
+    Point frame = getFrameFromAscii(string[i], colour);
     sys_drawSprite(spriteData, frame, pos);
     pos.x++;
   }

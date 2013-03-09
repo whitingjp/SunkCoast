@@ -103,6 +103,28 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
   }
 }
 
+void _draw_hud(Entity e, Point offset)
+{
+  char string[TILEMAP_WIDTH];
+  snprintf(string, TILEMAP_WIDTH, "  O2: %d", e.oxygen);
+  sys_drawString(offset, string, TILEMAP_WIDTH, 6);
+}
+
+
+int _get_playerIndex(const GameData* game)
+{
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    if(!game->entities[i].active)
+      continue;
+    if(!game->entities[i].player)
+      continue;
+    return i;
+  }
+  return -1;
+}
+
 void game_draw(const GameData* game, Point offset)
 {
   int i;
@@ -123,8 +145,15 @@ void game_draw(const GameData* game, Point offset)
   Point messagePos = NULL_POINT;
   for(i=0; i<numMessages; i++)
   {    
-    sys_drawString(messagePos, messages[i], TILEMAP_WIDTH);
+    sys_drawString(messagePos, messages[i], TILEMAP_WIDTH, 1);
     messagePos.y++;
+  }
+  int playerIndex = _get_playerIndex(game);
+  if(playerIndex != -1)
+  {
+    Point pos = offset;
+    pos.y += TILEMAP_HEIGHT;
+    _draw_hud(game->entities[playerIndex], pos);
   }
 }
 
@@ -161,20 +190,6 @@ Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
     astar_free_directions (directions);
   }
   return move;
-}
-
-int _get_playerIndex(GameData* game)
-{
-  int i;
-  for(i=0; i<MAX_ENTITIES; i++)
-  {
-    if(!game->entities[i].active)
-      continue;
-    if(!game->entities[i].player)
-      continue;
-    return i;
-  }
-  return -1;
 }
 
 Point _getAiInput(GameData* game)
