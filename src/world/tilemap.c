@@ -1,5 +1,3 @@
-#include "input/libfov/fov.h"
-
 #include "main.h"
 
 TileMap tilemap_null_tileMap()

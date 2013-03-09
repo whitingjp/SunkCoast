@@ -60,6 +60,44 @@ void game_spawn(GameData* game, Entity entity)
   LOG("Couldn't find a free entity space, not spawning.");
 }
 
+const TileMap* _aStartTileMap;
+
+uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
+{
+  Point p = NULL_POINT;
+  p.x = x;
+  p.y = y;
+  if(tilemap_collides(_aStartTileMap, p))
+    return COST_BLOCKED;
+  else
+    return 1;
+}
+
+void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData sprite, Point frame)
+{
+  _aStartTileMap = tileMap;
+  astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
+  astar_set_origin (as, 0, 0);
+  astar_set_steering_penalty (as, 0);
+  astar_set_movement_mode (as, DIR_CARDINAL);
+  astar_run (as, start.x, start.y, end.x, end.y);
+  if(astar_have_route(as))
+  {
+    direction_t * directions, * dir;
+    int i, num_steps;
+    num_steps = astar_get_directions (as, &directions);    
+    Point cur = start;
+    dir = directions;
+    for (i = 0; i < num_steps; i++, dir++)
+    {
+      sys_drawSprite(sprite, frame, cur);
+      cur.x += astar_get_dx(as, *dir);
+      cur.y += astar_get_dy(as, *dir);
+    }
+    astar_free_directions (directions);
+  }
+}
+
 void game_draw(const GameData* game)
 {
   int i;
@@ -72,8 +110,10 @@ void game_draw(const GameData* game)
       continue;
     if(!tilemap_visible(&game->tileMap, e->pos))
       continue;
-    sys_drawSprite(e->sprite, e->frame, e->pos);
+    sys_drawSprite(e->sprite, e->frame, e->pos);    
   }
+  if(sys_inputDown(INPUT_A))
+    _draw_route(&game->tileMap, game->entities[0].pos, game->entities[1].pos, game->entities[0].sprite, game->entities[0].frame);
 }
 
 Point _get_input()
