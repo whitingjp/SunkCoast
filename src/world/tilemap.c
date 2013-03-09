@@ -29,10 +29,9 @@ void tilemap_draw(TileMap tileMap, Point pos)
     Point frame = tileMap.tiles[i].frame;
     if(!tileMap.tiles[i].seen)
     {
-      frame.x=0;
+      frame.x=64;
       frame.y=0;
-    }
-    if(!tileMap.tiles[i].visible)
+    } else if(!tileMap.tiles[i].visible)
       frame.x+=32;
     sys_drawSprite(tileMap.spriteData, frame, renderPos);
   }
