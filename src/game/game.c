@@ -116,7 +116,7 @@ void game_draw(const GameData* game)
     _draw_route(&game->tileMap, game->entities[0].pos, game->entities[1].pos, game->entities[0].sprite, game->entities[0].frame);
 }
 
-Point _get_input()
+Point _getInput()
 {
   Point move = NULL_POINT;
   if(sys_inputPressed(INPUT_UP))
@@ -130,7 +130,7 @@ Point _get_input()
   return move;
 }
 
-Point _get_ai_input(const TileMap* tileMap, Point start, Point end)
+Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
 {
   Point move = NULL_POINT;
   _aStartTileMap = tileMap;
@@ -151,21 +151,45 @@ Point _get_ai_input(const TileMap* tileMap, Point start, Point end)
   return move;
 }
 
+int _get_playerIndex(GameData* game)
+{
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    if(!game->entities[i].active)
+      continue;
+    if(!game->entities[i].player)
+      continue;
+    return i;
+  }
+  return -1;
+}
+
+Point _getAiInput(GameData* game)
+{
+  Point pos = game->entities[0].pos;
+  Point move = NULL_POINT;
+  int player =  _get_playerIndex(game);
+  bool visible = tilemap_visible(&game->tileMap, pos);
+  if(player != -1 && visible)
+    move = _get_aiPath(&game->tileMap, pos, game->entities[player].pos);
+  if(move.x == 0 && move.y == 0)
+  {
+    int dir = sys_randint(4);
+    move = directionToPoint(dir);
+  }
+  return move;
+}
+
 void game_update(GameData* game)
 {
   Point move = NULL_POINT;
   if(!game->entities[0].active)
     return;
   if(game->entities[0].player)
-    move = _get_input();
-  else if(game->entities[1].active)
-    move = _get_ai_input(&game->tileMap, game->entities[0].pos, game->entities[1].pos);
-
-  if(move.x == 0 && move.y == 0 && !game->entities[0].player)
-  {
-    int dir = sys_randint(4);
-    move = directionToPoint(dir);
-  }
+    move = _getInput();
+  else
+    move = _getAiInput(game);
   if(move.x != 0 || move.y != 0)
   {
     Point newPoint = pointAddPoint(game->entities[0].pos, move);
