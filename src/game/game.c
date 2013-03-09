@@ -130,15 +130,44 @@ Point _get_input()
   return move;
 }
 
+Point _get_ai_input(const TileMap* tileMap, Point start, Point end)
+{
+  Point move = NULL_POINT;
+  _aStartTileMap = tileMap;
+  astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
+  astar_set_origin (as, 0, 0);
+  astar_set_steering_penalty (as, 0);
+  astar_set_movement_mode (as, DIR_CARDINAL);
+  astar_run (as, start.x, start.y, end.x, end.y);
+  if(astar_have_route(as))
+  {
+    direction_t * directions, * dir;
+    astar_get_directions (as, &directions);    
+    dir = directions;
+    move.x += astar_get_dx(as, *dir);
+    move.y += astar_get_dy(as, *dir);
+    astar_free_directions (directions);
+  }
+  return move;
+}
+
 void game_update(GameData* game)
 {
   Point move = NULL_POINT;
+  if(!game->entities[0].active)
+    return;
   if(game->entities[0].player)
     move = _get_input();
-  else
-    move.y = 1;
+  else if(game->entities[1].active)
+    move = _get_ai_input(&game->tileMap, game->entities[0].pos, game->entities[1].pos);
+
+  if(move.x == 0 && move.y == 0 && !game->entities[0].player)
+  {
+    int dir = sys_randint(4);
+    move = directionToPoint(dir);
+  }
   if(move.x != 0 || move.y != 0)
-  {    
+  {
     Point newPoint = pointAddPoint(game->entities[0].pos, move);
     if(!tilemap_collides(&game->tileMap, newPoint))
       game->entities[0].pos = newPoint;
