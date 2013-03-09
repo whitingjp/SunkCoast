@@ -68,8 +68,8 @@ typedef struct
 } Tile;
 #define NULL_TILE {NULL_POINT, NULL_TILETYPE, false, false}
 
-#define TILEMAP_WIDTH (80)
-#define TILEMAP_HEIGHT (24)
+#define TILEMAP_WIDTH (60)
+#define TILEMAP_HEIGHT (20)
 extern const Point tilemap_size;
 extern const Point tile_size;
 typedef struct

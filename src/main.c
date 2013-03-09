@@ -50,8 +50,8 @@ int main()
   
   LOG("Starting game.");
   
-  _resolution.x = 80*8;
-  _resolution.y = 24*15;
+  _resolution.x = TILEMAP_WIDTH*8;
+  _resolution.y = TILEMAP_HEIGHT*15;
   sys_init(_resolution, 4);
   
   for(i=0; i<IMAGE_MAX; i++)
