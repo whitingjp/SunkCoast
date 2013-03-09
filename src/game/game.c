@@ -224,7 +224,7 @@ void game_update(GameData* game)
       
       int amount = sys_randint(game->entities[0].strength);
       game->entities[i].oxygen -= amount;
-      game_addMessage("%d hit %d for %d. Oxygen now %d", 0, i, amount, game->entities[i].oxygen);
+      game_addMessage("%s hit %s", game->entities[0].name, game->entities[i].name);
       if(game->entities[i].oxygen <= 0)
       {
         Entity nullEntity = NULL_ENTITY;

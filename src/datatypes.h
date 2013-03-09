@@ -92,8 +92,9 @@ typedef struct
   int speed;
   int oxygen;
   int strength;
+  const char* name;
 } Entity;
-#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100, 10, 4}
+#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT, INT_MAX, false, 100, 10, 4, NULL}
 
 #define MAX_ENTITIES (64)
 typedef struct
