@@ -262,46 +262,73 @@ void game_draw(const GameData* game, Point offset)
 
 void _do_move(FathomData* fathom, Entity* e, Point move)
 {
-    Entity nullEntity = NULL_ENTITY;
-    if(e->player)
-      numMessages = 0;    
-    Point newPoint = pointAddPoint(e->pos, move);
-    bool isWall = tilemap_collides(&fathom->tileMap, newPoint);
-    bool isEntity = false;
-    int i;
-    for(i=0; i<MAX_ENTITIES; i++)
+  Entity nullEntity = NULL_ENTITY;
+  Point newPoint = pointAddPoint(e->pos, move);
+  bool isWall = tilemap_collides(&fathom->tileMap, newPoint);
+  bool isEntity = false;
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    if(i==0)
+      continue;
+    Entity* victim = &fathom->entities[i];
+    if(!victim->active)
+      continue;
+    if(newPoint.x != victim->pos.x)
+      continue;
+    if(newPoint.y != victim->pos.y)
+      continue;
+    
+    int amount = sys_randint(e->strength);
+    victim->o2 -= amount*10;
+    if(amount == 0)
+      game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
+    else
+      game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
+    if(victim->o2 <= 0)
     {
-      if(i==0)
-        continue;
-      Entity* victim = &fathom->entities[i];
-      if(!victim->active)
-        continue;
-      if(newPoint.x != victim->pos.x)
-        continue;
-      if(newPoint.y != victim->pos.y)
-        continue;
-      
-      int amount = sys_randint(e->strength);
-      victim->o2 -= amount*10;
-      if(amount == 0)
-        game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
-      else
-        game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
-      if(victim->o2 <= 0)
+      if(victim->containso2)
       {
-        if(victim->containso2)
-        {
-          int boost = (sys_randint(3)+sys_randint(3)+2)*10;
-          e->o2 = min(e->o2 + boost, e->maxo2);
-        }
-        *victim = nullEntity;
+        int boost = (sys_randint(3)+sys_randint(3)+2)*10;
+        e->o2 = min(e->o2 + boost, e->maxo2);
       }
-      isEntity = true;
-      break;
+      *victim = nullEntity;
     }
+    isEntity = true;
+    break;
+  }
 
-    if(!isWall && !isEntity)
-      e->pos = newPoint;
+  if(!isWall && !isEntity)
+    e->pos = newPoint;
+}
+
+void _do_pickup(FathomData* fathom, Entity* e)
+{
+  Item nullItem = NULL_ITEM;
+
+  int i;
+  for(i=0; i<MAX_ITEMS; i++)
+  {
+    Item* item = &fathom->items[i];
+    if(!item->active)
+      continue;
+    if(item->pos.x != e->pos.x || item->pos.y != e->pos.y)
+      continue;
+
+    int j;
+    for(j=0; j<MAX_INVENTORY; j++)
+    {
+      if(!e->inventory[j].active)
+      {
+        e->inventory[j] = *item;
+        game_addMessage(fathom, e->pos, "%s picked up %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+        *item = nullItem;
+        break;
+      }
+    }
+    if(j==MAX_INVENTORY)
+      game_addMessage(fathom, e->pos, "%s have no room for %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  }
 }
 
 void _do_turn(FathomData* fathom, Entity* e)
@@ -434,17 +461,26 @@ bool _game_player(GameData* game, Entity* e)
     move.x--;
   if(move.x != 0 || move.y != 0)
   {
+    numMessages = 0;
     _do_move(fathom, e, move);
     return true;
   }
   if(sys_inputPressed(INPUT_DIVE))
   {
+    numMessages = 0;
     _game_dive(game, 0, 1);
     return true;
   }
   if(sys_inputPressed(INPUT_RISE))
   {
+    numMessages = 0;
     _game_dive(game, 0, -1);
+    return true;
+  }
+  if(sys_inputPressed(INPUT_PICKUP))
+  {
+    numMessages = 0;
+    _do_pickup(fathom, e);
     return true;
   }
   return false;
@@ -463,7 +499,7 @@ void game_update(GameData* game)
     _game_ai(game, e);
 
   if(doTurn)
-  {
+  {    
     _do_turn(fathom, e);
     _game_sortEntities(fathom);
     _game_recalcFov(fathom);

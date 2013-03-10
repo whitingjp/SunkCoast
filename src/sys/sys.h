@@ -10,6 +10,8 @@ typedef enum
   INPUT_ESC,
   INPUT_DIVE,
   INPUT_RISE,
+  INPUT_PICKUP,
+  INPUT_DROP,
 
   INPUT_ANY,
 

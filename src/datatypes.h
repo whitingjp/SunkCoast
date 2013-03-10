@@ -101,7 +101,7 @@ typedef struct
 #define NULL_ITEM { false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
 
 
-#define MAX_INVENTORY (6)
+#define MAX_INVENTORY (2)
 typedef struct
 {
   bool active;

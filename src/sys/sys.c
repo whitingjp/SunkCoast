@@ -323,6 +323,8 @@ void sys_update()
   _heldInputs[INPUT_B] = _sys_pressed('X');
   _heldInputs[INPUT_DIVE] = _sys_pressed('V');
   _heldInputs[INPUT_RISE] = _sys_pressed('R');
+  _heldInputs[INPUT_PICKUP] = _sys_pressed('P');
+  _heldInputs[INPUT_DROP] = _sys_pressed('O');
 
   _heldInputs[INPUT_ANY] = false;
   for(i=0; i<INPUT_ANY; i++)
