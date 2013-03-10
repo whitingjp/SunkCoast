@@ -6,5 +6,6 @@ int tilemap_indexFromTilePosition(const TileMap* tileMap, Point p);
 bool tilemap_collides(const TileMap* tileMap, Point p);
 TileMap tilemap_generate();
 
-void tilemap_recalcFov(TileMap* tileMap, Point viewer);
+void tilemap_forgetSeen(TileMap* tileMap);
+void tilemap_recalcFov(TileMap* tileMap, Point viewer, int range);
 bool tilemap_visible(const TileMap* tileMap, Point o);

@@ -104,6 +104,7 @@ typedef enum
 typedef enum
 {
   CHARM_HASTE,
+  CHARM_DARKNESS,
   CHARM_MAX,
 } CharmSubType;
 

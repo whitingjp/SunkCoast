@@ -150,7 +150,14 @@ bool _tilemap_libfov_opaque(void *map, int x, int y) {
   return tilemap_collides(tileMap, p);
 }
 
-void tilemap_recalcFov(TileMap* tileMap, Point viewer)
+void tilemap_forgetSeen(TileMap* tileMap)
+{
+  int i;
+  for(i=0; i<tileMap->size.x*tileMap->size.y; i++)
+    tileMap->tiles[i].seen = false;
+}
+
+void tilemap_recalcFov(TileMap* tileMap, Point viewer, int range)
 {
   int i;
   for(i=0; i<tileMap->size.x*tileMap->size.y; i++)
@@ -159,7 +166,7 @@ void tilemap_recalcFov(TileMap* tileMap, Point viewer)
   fov_settings_init(&fov_settings);
   fov_settings_set_apply_lighting_function(&fov_settings, _tilemap_libfov_apply);
   fov_settings_set_opacity_test_function(&fov_settings, _tilemap_libfov_opaque);
-  fov_circle(&fov_settings, tileMap, NULL, viewer.x, viewer.y, 8);
+  fov_circle(&fov_settings, tileMap, NULL, viewer.x, viewer.y, range);
   fov_settings_free(&fov_settings);
   int index = tilemap_indexFromTilePosition(tileMap, viewer);
   tileMap->tiles[index].seen = true;

@@ -92,6 +92,8 @@ bool game_hasCharm(const Entity *e, CharmSubType charm)
       continue;
     if(e->inventory[i].charmSubtype != charm)
       continue;
+    if(!e->inventory[i].worn)
+      continue;
     return true;
   }
   return false;
@@ -522,9 +524,15 @@ void _game_recalcFov(FathomData* fathom)
   int i;
   for(i=0; i<MAX_ENTITIES; i++)
   {
+    int range = 9;
+    if(game_hasCharm(&fathom->entities[i], CHARM_DARKNESS))
+    {
+      tilemap_forgetSeen(&fathom->tileMap);
+      range = 4;
+    }
     if(!fathom->entities[i].player)
       continue;
-    tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos);
+    tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos, range);
   }
 }
 
