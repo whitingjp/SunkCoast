@@ -314,11 +314,16 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   {
     game_addMessage("%s are on the bottom of the ocean", e.name);
     return;
-  }  
-
+  }
   currentFathom->entities[entityIndex] = nullEntity;
   game->current += depth;
-  game_spawn(game, e);
+
+  if(e.o2depletes)
+    e.o2 -= 5;
+  if(e.o2 <= 0)
+    game_addMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
+  else
+    game_spawn(game, e);
 }
 
 void _game_recalcFov(FathomData* fathom)
