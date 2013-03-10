@@ -3,6 +3,35 @@
 char messages[TILEMAP_HEIGHT][TILEMAP_WIDTH];
 int numMessages;
 
+Entity game_null_entity()
+{
+  SpriteData nullSpriteData = NULL_SPRITEDATA;
+  Point nullPoint = NULL_POINT;
+  Item nullItem = NULL_ITEM;
+
+  Entity out;
+  out.active = false;
+  out.sprite = nullSpriteData;
+  out.frame = nullPoint;
+  out.pos = nullPoint;
+  out.turn = INT_MAX;
+  out.player = false;
+  out.speed = 100;
+  out.o2 = 100;
+  out.maxo2 = 100;
+  out.o2timer = 0;
+  out.o2depletes = false;
+  out.strength = 4;
+  out.name = NULL;
+  out.sentient = false;
+  out.containso2 = false;
+
+  int i;
+  for(i=0; i<MAX_INVENTORY; i++)
+    out.inventory[i] = nullItem;
+  return out;
+}
+
 FathomData game_null_fathomdata()
 {
   FathomData out;

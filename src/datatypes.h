@@ -100,6 +100,8 @@ typedef struct
 } Item;
 #define NULL_ITEM { false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
 
+
+#define MAX_INVENTORY (6)
 typedef struct
 {
   bool active;
@@ -117,10 +119,9 @@ typedef struct
   const char* name;
   bool sentient;
   bool containso2;
+  Item inventory[MAX_INVENTORY];
 } Entity;
-#define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT,\
-                      INT_MAX, false, 100, 100, 100, 0, false, 4, NULL,\
-                      false, false}
+#define NULL_ENTITY (game_null_entity());
 
 #define MAX_ITEMS (64)
 #define MAX_ENTITIES (64)

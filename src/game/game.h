@@ -1,3 +1,4 @@
+Entity game_null_entity();
 FathomData game_null_fathomdata();
 GameData game_null_gamedata();
 
