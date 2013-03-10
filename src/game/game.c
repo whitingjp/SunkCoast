@@ -197,8 +197,11 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
 void _draw_hud(const GameData* game, Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
+  int o2col = 2;
+  if(e.o2 < e.maxo2/4)
+    o2col = 6;
   snprintf(string, TILEMAP_WIDTH, "     O2: %d/%d", e.o2, e.maxo2);
-  sys_drawString(offset, string, TILEMAP_WIDTH, 2);
+  sys_drawString(offset, string, TILEMAP_WIDTH, o2col);
 
   Point fathomPos = offset;
   fathomPos.y++;
