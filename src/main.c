@@ -68,7 +68,7 @@ int main()
   }
 
   game = NULL_GAMEDATA;
-  LOG("Sizeof FathomData %d.", sizeof(FathomData));
+  LOG("Sizeof GameData %dkb.", sizeof(GameData)/1024);
   
   LOG("Main loop.");  
 
