@@ -240,8 +240,13 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   snprintf(string, TILEMAP_WIDTH, " mana: %3d/%3d", e.mana, e.maxMana);
   sys_drawString(manaPos, string, TILEMAP_WIDTH, manacol);
 
+  Point strengthPos = offset;
+  strengthPos.x += 16;
+  snprintf(string, TILEMAP_WIDTH, "str: %d", e.strength);
+  sys_drawString(strengthPos, string, TILEMAP_WIDTH, 2);
+
   Point fathomPos = offset;
-  fathomPos.x = TILEMAP_WIDTH-12;
+  fathomPos.x = TILEMAP_WIDTH-11;
   fathomPos.y++;
   snprintf(string, TILEMAP_WIDTH, "fathoms: %d", (game->current+1)*10);
   sys_drawString(fathomPos, string, TILEMAP_WIDTH, 2);
@@ -500,7 +505,7 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     e->o2 -= 15+sys_randint(15);
     if(e->o2 < 0)
     {
-      game_addMessage(fathom, e->pos, "%s drowned", e->name);
+      game_addMessage(fathom, e->pos, "%s lost your mind", e->name);
       *e = nullEntity;
     }
   }
