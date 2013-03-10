@@ -476,9 +476,10 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     e->mana -= manaCost;
     int distance = 3 + sys_randint(3);
     int i;
+    int spawnType = sys_randint(ET_MAX_ENEMY);
     for(i=0; i<distance; i++)
     {
-      game_spawnAt(fathom, spawn_entity(ET_BUBBLE), pos);
+      game_spawnAt(fathom, spawn_entity(spawnType), pos);
       pos = pointAddPoint(pos, vector);
     }
   } else

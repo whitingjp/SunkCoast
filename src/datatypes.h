@@ -110,7 +110,7 @@ typedef enum
 
 typedef enum
 {
-  CONCH_BUBBLE,
+  CONCH_MONSTER,
   CONCH_MAX,
 } ConchSubType;
 
