@@ -339,5 +339,6 @@ void sys_update()
 
 int sys_randint(int max)
 {
+  if(max <= 0) return max;
   return rand() % max;
 }

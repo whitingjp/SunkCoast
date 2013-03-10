@@ -69,7 +69,9 @@ GameData game_null_gamedata()
     int threat = 10+i*5;
     while(threat > 0)
     {
-      int type = sys_randint(ET_MAX_ENEMY);
+      int type = sys_randint(ET_MAX_ENEMY)+sys_randint(i/2);
+      if(type >= ET_MAX_ENEMY)
+        type = ET_MAX_ENEMY-1;
       game_spawn(&out.fathoms[i], spawn_entity(type));
       threat -= type+1;
     }
