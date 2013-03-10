@@ -1,8 +1,9 @@
 typedef enum
 {
-  ST_SCUBA,
-  ST_STARFISH,
-  ST_BUBBLE
-} SpawnType;
+  ET_SCUBA,
+  ET_STARFISH,
+  ET_BUBBLE
+} EntityType;
 
-Entity spawn_create(SpawnType type);
+Entity spawn_entity(EntityType type);
+Item spawn_item(ItemType type);

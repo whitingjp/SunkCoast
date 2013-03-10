@@ -10,12 +10,19 @@ FathomData game_null_fathomdata()
   Entity nullEntity = NULL_ENTITY;
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
+
+  Item nullItem = NULL_ITEM;
+  for(i=0; i<MAX_ITEMS; i++)
+    out.items[i] = nullItem;
+
   out.tileMap = tilemap_generate();
 
   for(i=0; i<4; i++)
   {
-    game_spawn(&out, spawn_create(ST_STARFISH));
-    game_spawn(&out, spawn_create(ST_BUBBLE));
+    game_spawn(&out, spawn_entity(ET_STARFISH));
+    game_spawn(&out, spawn_entity(ET_BUBBLE));
+    game_place(&out, spawn_item(IT_CONCH));
+    game_place(&out, spawn_item(IT_CHARM));
   }
   return out;
 }
@@ -28,7 +35,7 @@ GameData game_null_gamedata()
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
     out.fathoms[i] = game_null_fathomdata();
-  game_spawn(&out.fathoms[0], spawn_create(ST_SCUBA));
+  game_spawn(&out.fathoms[0], spawn_entity(ET_SCUBA));
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addGlobalMessage("Welcome to Sunk Coast.");
@@ -61,11 +68,10 @@ void _game_sortEntities(FathomData* fathom)
     }
 }
 
-void game_spawn(FathomData* fathom, Entity entity)
+Point _game_getSpawnPoint(const FathomData* fathom)
 {
-  int i;
-  int maxTurn = 0;
   Point spawnPoint = NULL_POINT;
+  int i;
   for(i=0; i<TILEMAP_WIDTH*TILEMAP_HEIGHT; i++)
   {
     spawnPoint.x = sys_randint(TILEMAP_WIDTH);
@@ -73,7 +79,31 @@ void game_spawn(FathomData* fathom, Entity entity)
     if(!tilemap_collides(&fathom->tileMap, spawnPoint))
       break;
   }
-  entity.pos = spawnPoint;
+  return spawnPoint;
+}
+
+void game_place(FathomData* fathom, Item item)
+{
+  item.pos = _game_getSpawnPoint(fathom);
+  item.active = true;
+
+  int i;  
+  for(i=0; i<MAX_ITEMS; i++)
+  {
+    if(fathom->items[i].active)
+      continue;
+    fathom->items[i] = item;
+    return;
+  }
+  LOG("Couldn't find a free item space, not placing.");
+}
+
+void game_spawn(FathomData* fathom, Entity entity)
+{
+  int i;
+  int maxTurn = 0;
+
+  entity.pos = _game_getSpawnPoint(fathom);
   for(i=0; i<MAX_ENTITIES; i++)
   {
     if(!fathom->entities[i].active)
@@ -81,13 +111,14 @@ void game_spawn(FathomData* fathom, Entity entity)
     if(fathom->entities[i].turn > maxTurn)
       maxTurn = fathom->entities[i].turn;
   }
+  entity.active = true;
+  entity.turn = maxTurn+1;
+
   for(i=0; i<MAX_ENTITIES; i++)
   {
     if(fathom->entities[i].active)
       continue;
     fathom->entities[i] = entity;
-    fathom->entities[i].active = true;
-    fathom->entities[i].turn = maxTurn+1;
     _game_sortEntities(fathom);
     return;
   }
@@ -162,6 +193,16 @@ void game_draw(const GameData* game, Point offset)
   const FathomData* fathom = &game->fathoms[game->current];
   int i;
   tilemap_draw(fathom->tileMap, offset);
+  for(i=0; i<MAX_ITEMS; i++)
+  {
+    const Item* item = &fathom->items[i];
+    if(!item->active)
+      continue;
+    if(!tilemap_visible(&fathom->tileMap, item->pos))
+      continue;
+    Point drawPos = pointAddPoint(offset, item->pos);
+    sys_drawSprite(item->sprite, item->frame, drawPos);   
+  }
   for(i=0; i<MAX_ENTITIES; i++)
   {
     const Entity* e = &fathom->entities[i];
@@ -388,7 +429,7 @@ void game_addMessage(const FathomData* fathom, Point p, const char *str, ...)
     {
       LOG("Not enough space for messages.");
       return;
-    }
+    } 
     va_list args;
     va_start(args, str);
     vsnprintf(messages[numMessages], TILEMAP_WIDTH, str, args);

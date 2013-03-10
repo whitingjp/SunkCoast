@@ -82,6 +82,24 @@ typedef struct
 } TileMap;
 #define NULL_TILEMAP (tilemap_null_tileMap());
 
+typedef enum
+{
+  IT_CONCH,
+  IT_CHARM,
+  IT_MAX,
+} ItemType;
+
+typedef struct
+{  
+  bool active;
+  SpriteData sprite;
+  Point frame;
+  ItemType type;
+  int subtype;
+  Point pos;
+} Item;
+#define NULL_ITEM { false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
+
 typedef struct
 {
   bool active;
@@ -104,10 +122,12 @@ typedef struct
                       INT_MAX, false, 100, 100, 100, 0, false, 4, NULL,\
                       false, false}
 
+#define MAX_ITEMS (64)
 #define MAX_ENTITIES (64)
 typedef struct
 {
   Entity entities[MAX_ENTITIES];
+  Item items[MAX_ITEMS];
   TileMap tileMap;  
 } FathomData;
 #define NULL_FATHOMDATA (game_null_fathomdata());
