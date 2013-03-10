@@ -319,8 +319,10 @@ void sys_update()
   _heldInputs[INPUT_RIGHT] = _sys_pressed(GLFW_KEY_RIGHT) || _sys_pressed('L') || _sys_pressed('D');
   _heldInputs[INPUT_DOWN] = _sys_pressed(GLFW_KEY_DOWN) || _sys_pressed('J') || _sys_pressed('S');
   _heldInputs[INPUT_LEFT] = _sys_pressed(GLFW_KEY_LEFT) || _sys_pressed('H') || _sys_pressed('A');
-  _heldInputs[INPUT_A] = glfwGetKey('Z') == GLFW_PRESS;
-  _heldInputs[INPUT_B] = glfwGetKey('X') == GLFW_PRESS;
+  _heldInputs[INPUT_A] = _sys_pressed('Z');
+  _heldInputs[INPUT_B] = _sys_pressed('X');
+  _heldInputs[INPUT_DIVE] = _sys_pressed('V');
+  _heldInputs[INPUT_RISE] = _sys_pressed('R');
 
   _heldInputs[INPUT_ANY] = false;
   for(i=0; i<INPUT_ANY; i++)

@@ -22,7 +22,7 @@ GameData game_null_gamedata()
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
     out.fathoms[i] = game_null_fathomdata();
-  
+
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addMessage("Welcome to Sunk Coast.");
@@ -127,10 +127,13 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
   }
 }
 
-void _draw_hud(Entity e, Point offset)
+void _draw_hud(const GameData* game, Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
-  snprintf(string, TILEMAP_WIDTH, "  O2: %d/%d", e.o2, e.maxo2);
+  snprintf(string, TILEMAP_WIDTH, "     O2: %d/%d", e.o2, e.maxo2);
+  sys_drawString(offset, string, TILEMAP_WIDTH, 2);
+  snprintf(string, TILEMAP_WIDTH, "fathoms: %d", (game->current+1)*10);
+  offset.y++;
   sys_drawString(offset, string, TILEMAP_WIDTH, 2);
 }
 
@@ -178,7 +181,7 @@ void game_draw(const GameData* game, Point offset)
   {
     Point pos = offset;
     pos.y += TILEMAP_HEIGHT;
-    _draw_hud(fathom->entities[playerIndex], pos);
+    _draw_hud(game, fathom->entities[playerIndex], pos);
   }
 }
 
@@ -296,29 +299,73 @@ void _do_turn(FathomData* fathom, Entity* e, Point move)
     e->turn += e->speed+sys_randint(e->speed);
 }
 
+void _game_dive(GameData* game, int entityIndex, int depth)
+{ 
+  Entity nullEntity = NULL_ENTITY; 
+  FathomData* currentFathom = &game->fathoms[game->current];
+  int newFathomIndex = game->current + depth;
+  Entity e = currentFathom->entities[entityIndex];
+  if(newFathomIndex < 0)
+  {
+    game_addMessage("%s are on the surface", e.name);
+    return;
+  }
+  if(newFathomIndex >= MAX_FATHOMS)
+  {
+    game_addMessage("%s are on the bottom of the ocean", e.name);
+    return;
+  }  
+
+  currentFathom->entities[entityIndex] = nullEntity;
+  game->current += depth;
+  game_spawn(game, e);
+}
+
+void _game_recalcFov(FathomData* fathom)
+{
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    if(!fathom->entities[i].player)
+      continue;
+    tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos);
+  }
+}
+
 void game_update(GameData* game)
 {
   FathomData* fathom = &game->fathoms[game->current];
-  int i;
+  Entity* e = &fathom->entities[0];
   Point move = NULL_POINT;
-  if(!fathom->entities[0].active)
+  if(!e->active)
     return;
-  if(fathom->entities[0].player)
+  if(e->player)
+  {
     move = _getInput();
+    if(sys_inputPressed(INPUT_DIVE))
+    {
+      _game_dive(game, 0, 1);
+      _game_recalcFov(&game->fathoms[game->current]);
+      return;
+    }
+    if(sys_inputPressed(INPUT_RISE))
+    {
+      _game_dive(game, 0, -1);
+      _game_recalcFov(&game->fathoms[game->current]);
+      return;
+    }
+  }
   else
-    move = _getAiInput(fathom, &fathom->entities[0]);
+  {
+    move = _getAiInput(fathom, e);
+  }
 
   if(move.x != 0 || move.y != 0)
   {
-    _do_turn(fathom, &fathom->entities[0], move);
+    _do_turn(fathom, e, move);
 
     _game_sortEntities(fathom);
-    for(i=0; i<MAX_ENTITIES; i++)
-    {
-      if(!fathom->entities[i].player)
-        continue;
-      tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos);
-    }
+    _game_recalcFov(fathom);
   }
 }
 

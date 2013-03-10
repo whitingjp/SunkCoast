@@ -8,6 +8,8 @@ typedef enum
   INPUT_A,
   INPUT_B,
   INPUT_ESC,
+  INPUT_DIVE,
+  INPUT_RISE,
 
   INPUT_ANY,
 
