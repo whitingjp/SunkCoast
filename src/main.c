@@ -92,7 +92,7 @@ int main()
       }
       else
       {
-        game_update(&game);
+        while(!game_update(&game)) {}
       }
       _elapsedTime -= _timePerFrame;
     }

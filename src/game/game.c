@@ -730,12 +730,12 @@ bool _game_player(GameData* game, Entity* e)
   return false;
 }
 
-void game_update(GameData* game)
+bool game_update(GameData* game)
 {
   FathomData* fathom = &game->fathoms[game->current];
   Entity* e = &fathom->entities[0];
   if(!e->active)
-    return;
+    return true;
   bool doTurn = !e->player;
   if(e->player)
     doTurn = _game_player(game, e);
@@ -748,6 +748,14 @@ void game_update(GameData* game)
     _game_sortEntities(fathom);
     _game_recalcFov(fathom);
   }
+  int i;
+  bool anyPlayer = false;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    if(fathom->entities[i].player && fathom->entities[i].active)
+      anyPlayer = true;
+  }
+  return fathom->entities[0].player || !anyPlayer;
 }
 
 void game_addMessage(const FathomData* fathom, Point p, const char *str, ...)
