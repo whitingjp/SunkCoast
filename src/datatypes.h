@@ -89,6 +89,30 @@ typedef enum
   IT_MAX,
 } ItemType;
 
+typedef enum
+{
+  IST_INKY,
+  IST_AZURE,
+  IST_PEARL,
+  IST_SEAWEED,
+  IST_BARNACLED,
+  IST_GOLDEN,
+  IST_CORAL,
+  IST_MAX,
+} ItemSubtype;
+
+typedef enum
+{
+  CHARM_HASTE,
+  CHARM_MAX,
+} CharmSubType;
+
+typedef enum
+{
+  CONCH_BUBBLE,
+  CONCH_MAX,
+} ConchSubType;
+
 typedef struct
 {  
   bool active;
@@ -96,10 +120,12 @@ typedef struct
   SpriteData sprite;
   Point frame;
   ItemType type;
-  int subtype;
+  ItemSubtype subtype;
+  CharmSubType charmSubtype;
+  ConchSubType conchSubtype;
   Point pos;
 } Item;
-#define NULL_ITEM { false, false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
+#define NULL_ITEM { false, false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, 0, 0, NULL_POINT}
 
 
 #define MAX_INVENTORY (4)
@@ -130,7 +156,7 @@ typedef struct
 {
   Entity entities[MAX_ENTITIES];
   Item items[MAX_ITEMS];
-  TileMap tileMap;  
+  TileMap tileMap;
 } FathomData;
 #define NULL_FATHOMDATA (game_null_fathomdata());
 
@@ -139,6 +165,8 @@ typedef struct
 {
   int current;
   FathomData fathoms[MAX_FATHOMS];
+  ItemSubtype charmTypes[IST_MAX];
+  ItemSubtype conchTypes[IST_MAX];
 } GameData;
 #define NULL_GAMEDATA (game_null_gamedata());
 

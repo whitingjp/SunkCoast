@@ -6,4 +6,4 @@ typedef enum
 } EntityType;
 
 Entity spawn_entity(EntityType type);
-Item spawn_item(ItemType type);
+Item spawn_item(const GameData* game, ItemType type);

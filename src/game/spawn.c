@@ -31,19 +31,22 @@ Entity spawn_entity(EntityType type)
   return out;
 }
 
-Item spawn_item(ItemType type)
+Item spawn_item(const GameData* game, ItemType type)
 {
   Item out = NULL_ITEM;
   SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
   out.sprite = spriteData;
-  out.type = type;
-  out.subtype = sys_randint(7);
+  out.type = type;  
   switch(out.type)
   {
-    case IT_CONCH:
+    case IT_CONCH:     
+      out.conchSubtype = sys_randint(CONCH_MAX);
+      out.subtype = game->conchTypes[out.conchSubtype];
       out.frame = getFrameFromAscii('&', out.subtype);
       break;
-    case IT_CHARM:
+    case IT_CHARM:      
+      out.charmSubtype = sys_randint(CHARM_MAX);
+      out.subtype = game->charmTypes[out.charmSubtype];
       out.frame = getFrameFromAscii('=', out.subtype);
       break;
     default:

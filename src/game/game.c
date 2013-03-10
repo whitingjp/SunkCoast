@@ -54,8 +54,6 @@ FathomData game_null_fathomdata()
   {
     game_spawn(&out, spawn_entity(ET_STARFISH));
     game_spawn(&out, spawn_entity(ET_BUBBLE));
-    game_place(&out, spawn_item(IT_CONCH));
-    game_place(&out, spawn_item(IT_CHARM));
   }
   return out;
 }
@@ -65,10 +63,18 @@ GameData game_null_gamedata()
   GameData out;
   out.current = 0;
 
+  item_shuffleTypes((int*)out.charmTypes, CHARM_MAX);
+  item_shuffleTypes((int*)out.conchTypes, CONCH_MAX);
+
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
+  {
     out.fathoms[i] = game_null_fathomdata();
-  game_spawn(&out.fathoms[0], spawn_entity(ET_SCUBA));
+    game_place(&out.fathoms[i], spawn_item(&out, IT_CONCH));
+    game_place(&out.fathoms[i], spawn_item(&out, IT_CHARM));
+  }
+  game_spawn(&out.fathoms[0], spawn_entity(ET_SCUBA));    
+
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addGlobalMessage("Welcome to Sunk Coast.");

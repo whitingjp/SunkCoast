@@ -1,3 +1,4 @@
 
 const char* item_typeName(ItemType type);
-const char* item_subtypeDescription(int subtype);
+const char* item_subtypeDescription(ItemSubtype subtype);
+void item_shuffleTypes(int* array, int num);
