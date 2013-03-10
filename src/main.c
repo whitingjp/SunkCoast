@@ -95,6 +95,8 @@ int main()
   game_spawn(&game, blah);
   game_spawn(&game, blah);
   game_spawn(&game, blah);
+
+  LOG("Sizeof GameData %d.", sizeof(GameData));
   
   LOG("Main loop.");  
 

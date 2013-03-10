@@ -255,7 +255,10 @@ void game_update(GameData* game)
       if(game->entities[i].oxygen <= 0)
       {
         if(game->entities[i].containsOxygen)
-          game->entities[0].oxygen += sys_randint(3)+sys_randint(3)+2;
+        {
+          int boost = sys_randint(3)+sys_randint(3)+2;
+          game->entities[0].oxygen = min(game->entities[0].oxygen + boost, game->entities[0].maxOxygen);
+        }
         Entity nullEntity = NULL_ENTITY;
         game->entities[i] = nullEntity;
       }
