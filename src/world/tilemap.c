@@ -43,11 +43,6 @@ Point tilemap_tilePositionFromIndex(const TileMap* tileMap, int i)
   return p;
 }
 
-int tilemap_indexFromTilePosition(const TileMap* tileMap, Point p)
-{
-  return p.x + p.y*tileMap->size.x;
-}
-
 bool _pointInBounds(const TileMap* tileMap, Point p)
 {
   if(p.x < 0)
@@ -59,6 +54,14 @@ bool _pointInBounds(const TileMap* tileMap, Point p)
   if(p.y >= tileMap->size.y)
     return false;
   return true;
+}
+
+int tilemap_indexFromTilePosition(const TileMap* tileMap, Point p)
+{
+  if(_pointInBounds(tileMap, p))
+    return p.x + p.y*tileMap->size.x;
+  else
+    return -1;
 }
 
 bool tilemap_collides(const TileMap* tileMap, Point p)

@@ -476,10 +476,24 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     e->mana -= manaCost;
     int distance = 3 + sys_randint(3);
     int i;
+
     int spawnType = sys_randint(ET_MAX_ENEMY);
+    Tile nullTile = NULL_TILE;
     for(i=0; i<distance; i++)
     {
-      game_spawnAt(fathom, spawn_entity(spawnType), pos);
+      int index = tilemap_indexFromTilePosition(&fathom->tileMap, pos);
+      switch(item->conchSubtype)
+      {
+        case CONCH_MONSTER:
+          game_spawnAt(fathom, spawn_entity(spawnType), pos);
+          break;
+        case CONCH_DIG:          
+          if(index != -1)
+            fathom->tileMap.tiles[index] = nullTile;
+          break;
+        default:
+          break;
+      }      
       pos = pointAddPoint(pos, vector);
     }
   } else

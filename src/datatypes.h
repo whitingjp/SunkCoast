@@ -111,6 +111,7 @@ typedef enum
 typedef enum
 {
   CONCH_MONSTER,
+  CONCH_DIG,
   CONCH_MAX,
 } ConchSubType;
 
