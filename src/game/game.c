@@ -197,9 +197,24 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   char string[TILEMAP_WIDTH];
   snprintf(string, TILEMAP_WIDTH, "     O2: %d/%d", e.o2, e.maxo2);
   sys_drawString(offset, string, TILEMAP_WIDTH, 2);
+
+  Point fathomPos = offset;
+  fathomPos.y++;
   snprintf(string, TILEMAP_WIDTH, "fathoms: %d", (game->current+1)*10);
-  offset.y++;
-  sys_drawString(offset, string, TILEMAP_WIDTH, 2);
+  sys_drawString(fathomPos, string, TILEMAP_WIDTH, 2);
+
+  Point inventoryPos = offset;
+  inventoryPos.x = TILEMAP_WIDTH-MAX_INVENTORY*4;
+  int i;
+  for(i=0; i<MAX_INVENTORY; i++)
+  {
+    Item item = e.inventory[i];
+    snprintf(string, TILEMAP_WIDTH, "%d:", i+1);
+    sys_drawString(inventoryPos, string, TILEMAP_WIDTH, 2);
+    inventoryPos.x += 2;
+    sys_drawSprite(item.sprite, item.frame, inventoryPos);
+    inventoryPos.x += 2;
+  }
 }
 
 
@@ -230,7 +245,7 @@ void game_draw(const GameData* game, Point offset)
     if(!tilemap_visible(&fathom->tileMap, item->pos))
       continue;
     Point drawPos = pointAddPoint(offset, item->pos);
-    sys_drawSprite(item->sprite, item->frame, drawPos);   
+    sys_drawSprite(item->sprite, item->frame, drawPos);
   }
   for(i=0; i<MAX_ENTITIES; i++)
   {
@@ -240,7 +255,7 @@ void game_draw(const GameData* game, Point offset)
     if(!tilemap_visible(&fathom->tileMap, e->pos))
       continue;
     Point drawPos = pointAddPoint(offset, e->pos);
-    sys_drawSprite(e->sprite, e->frame, drawPos);   
+    sys_drawSprite(e->sprite, e->frame, drawPos);
   }
   if(sys_inputDown(INPUT_A))
     _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
