@@ -25,6 +25,8 @@ Entity game_null_entity()
   out.maxo2 = 100;
   out.o2timer = 0;
   out.o2depletes = false;
+  out.mana = 50;
+  out.maxMana = 100;
   out.strength = 4;
   out.name = NULL;
   out.sentient = false;
@@ -154,12 +156,15 @@ void game_place(FathomData* fathom, Item item)
   LOG("Couldn't find a free item space, not placing.");
 }
 
-void game_spawn(FathomData* fathom, Entity entity)
+void game_spawnAt(FathomData* fathom, Entity entity, Point pos)
 {
+  if(pos.x > 0 && pos.y > 0 && !tilemap_collides(&fathom->tileMap, pos))
+    entity.pos = pos;
+  else
+    entity.pos = _game_getSpawnPoint(fathom);
+
   int i;
   int maxTurn = 0;
-
-  entity.pos = _game_getSpawnPoint(fathom);
   for(i=0; i<MAX_ENTITIES; i++)
   {
     if(!fathom->entities[i].active)
@@ -179,6 +184,10 @@ void game_spawn(FathomData* fathom, Entity entity)
     return;
   }
   LOG("Couldn't find a free entity space, not spawning.");
+}
+void game_spawn(FathomData* fathom, Entity entity)
+{
+  game_spawnAt(fathom, entity, _game_getSpawnPoint(fathom));
 }
 
 const TileMap* _aStartTileMap;
@@ -225,10 +234,19 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   int o2col = 2;
   if(e.o2 < e.maxo2/4)
     o2col = 6;
-  snprintf(string, TILEMAP_WIDTH, "     O2: %d/%d", e.o2, e.maxo2);
+  snprintf(string, TILEMAP_WIDTH, "   O2: %3d/%3d", e.o2, e.maxo2);
   sys_drawString(offset, string, TILEMAP_WIDTH, o2col);
 
+  Point manaPos = offset;
+  manaPos.y++;
+  int manacol = 2;
+  if(e.mana < e.maxMana/4)
+    manacol = 6;
+  snprintf(string, TILEMAP_WIDTH, " mana: %3d/%3d", e.mana, e.maxMana);
+  sys_drawString(manaPos, string, TILEMAP_WIDTH, manacol);
+
   Point fathomPos = offset;
+  fathomPos.x = TILEMAP_WIDTH-12;
   fathomPos.y++;
   snprintf(string, TILEMAP_WIDTH, "fathoms: %d", (game->current+1)*10);
   sys_drawString(fathomPos, string, TILEMAP_WIDTH, 2);
@@ -449,6 +467,34 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
 void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
 {
   Item* item = &e->inventory[index];
+  int manaCost = 20;
+  manaCost += sys_randint(manaCost/2);
+  if(e->mana > manaCost)
+  {
+    Point vector = directionToPoint(direction);
+    Point pos = pointAddPoint(e->pos, vector);
+    e->mana -= manaCost;
+    int distance = 3 + sys_randint(3);
+    int i;
+    for(i=0; i<distance; i++)
+    {
+      game_spawnAt(fathom, spawn_entity(ET_BUBBLE), pos);
+      pos = pointAddPoint(pos, vector);
+    }
+  } else
+  {
+    Entity nullEntity = NULL_ENTITY;
+    e->mana = 0;
+    if(e->player)
+      game_addGlobalMessage("Not enough mana. Your mind screams.");
+    e->o2 -= 15+sys_randint(15);
+    if(e->o2 < 0)
+    {
+      game_addMessage(fathom, e->pos, "%s drowned", e->name);
+      *e = nullEntity;
+    }
+  }
+
   game_addMessage(fathom, e->pos, "%s fired %s %s in %d", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type), direction);
 }
 
@@ -469,6 +515,11 @@ void _do_turn(FathomData* fathom, Entity* e)
       }
     }
   }
+
+  if(sys_randint(4) == 0)
+    e->mana += sys_randint(e->maxMana)/10;
+  if(e->mana > e->maxMana)
+    e->mana = e->maxMana;
 
   if(e->player)
   {

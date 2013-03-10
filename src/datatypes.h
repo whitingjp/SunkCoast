@@ -143,6 +143,8 @@ typedef struct
   int maxo2;
   int o2timer;
   bool o2depletes;
+  int mana;
+  int maxMana;
   int strength;
   const char* name;
   bool sentient;
