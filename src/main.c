@@ -83,14 +83,16 @@ int main()
   blah.speed = 100;
   blah.frame = getFrameFromAscii('@', 6);
   blah.name = "you";
+  blah.o2speed = 5;
   game_spawn(&game, blah);
   blah.frame = getFrameFromAscii('o', 2);
   blah.name = "bubble";
   blah.speed = 400;
   blah.player = false;
-  blah.oxygen = 1;
+  blah.o2 = 1;
   blah.sentient = false;
-  blah.containsOxygen = true;
+  blah.containso2 = true;
+  blah.o2speed = 0;
   game_spawn(&game, blah);
   game_spawn(&game, blah);
   game_spawn(&game, blah);

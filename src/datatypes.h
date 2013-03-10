@@ -91,15 +91,17 @@ typedef struct
   int turn;
   bool player;
   int speed;
-  int oxygen;
-  int maxOxygen;
+  int o2;
+  int maxo2;
+  int o2timer;
+  int o2speed;
   int strength;
   const char* name;
   bool sentient;
-  bool containsOxygen;
+  bool containso2;
 } Entity;
 #define NULL_ENTITY { false, NULL_SPRITEDATA, NULL_POINT, NULL_POINT,\
-                      INT_MAX, false, 100, 10, 10, 4, NULL, false, false}
+                      INT_MAX, false, 100, 100, 100, 0, 0, 4, NULL, false, false}
 
 #define MAX_ENTITIES (64)
 typedef struct

@@ -115,8 +115,7 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
 void _draw_hud(Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
-  int o2percent = (100*e.oxygen)/e.maxOxygen;
-  snprintf(string, TILEMAP_WIDTH, "  O2: %d%%", o2percent);
+  snprintf(string, TILEMAP_WIDTH, "  O2: %d/%d", e.o2, e.maxo2);
   sys_drawString(offset, string, TILEMAP_WIDTH, 2);
 }
 
@@ -221,6 +220,53 @@ Point _getAiInput(const GameData* game, Entity* e)
   return move;
 }
 
+void _do_turn(GameData* game, Entity* e, Point move)
+{
+    if(e->player)
+      numMessages = 0;    
+    Point newPoint = pointAddPoint(e->pos, move);
+    bool isWall = tilemap_collides(&game->tileMap, newPoint);
+    bool isEntity = false;
+    int i;
+    for(i=0; i<MAX_ENTITIES; i++)
+    {
+      if(i==0)
+        continue;
+      Entity* victim = &game->entities[i];
+      if(!victim->active)
+        continue;
+      if(newPoint.x != victim->pos.x)
+        continue;
+      if(newPoint.y != victim->pos.y)
+        continue;
+      
+      int amount = sys_randint(e->strength);
+      victim->o2 -= amount*10;
+      if(amount == 0)
+        game_addMessage("%s missed %s", e->name, victim->name);
+      else
+        game_addMessage("%s hit %s", e->name, victim->name);
+      if(victim->o2 <= 0)
+      {
+        if(victim->containso2)
+        {
+          int boost = (sys_randint(3)+sys_randint(3)+2)*10;
+          e->o2 = min(e->o2 + boost, e->maxo2);
+        }
+        Entity nullEntity = NULL_ENTITY;
+        *victim = nullEntity;
+      }
+      isEntity = true;
+      break;
+    }
+
+    if(!isWall && !isEntity)
+      e->pos = newPoint;
+
+    //if(
+    e->turn += e->speed+sys_randint(e->speed);
+}
+
 void game_update(GameData* game)
 {
   int i;
@@ -234,43 +280,8 @@ void game_update(GameData* game)
 
   if(move.x != 0 || move.y != 0)
   {
-    if(game->entities[0].player)
-      numMessages = 0;    
-    Point newPoint = pointAddPoint(game->entities[0].pos, move);
-    bool isWall = tilemap_collides(&game->tileMap, newPoint);
-    bool isEntity = false;
-    for(i=0; i<MAX_ENTITIES; i++)
-    {
-      if(i==0)
-        continue;
-      if(!game->entities[i].active)
-        continue;
-      if(newPoint.x != game->entities[i].pos.x)
-        continue;
-      if(newPoint.y != game->entities[i].pos.y)
-        continue;
-      
-      int amount = sys_randint(game->entities[0].strength);
-      game->entities[i].oxygen -= amount;
-      game_addMessage("%s hit %s", game->entities[0].name, game->entities[i].name);
-      if(game->entities[i].oxygen <= 0)
-      {
-        if(game->entities[i].containsOxygen)
-        {
-          int boost = sys_randint(3)+sys_randint(3)+2;
-          game->entities[0].oxygen = min(game->entities[0].oxygen + boost, game->entities[0].maxOxygen);
-        }
-        Entity nullEntity = NULL_ENTITY;
-        game->entities[i] = nullEntity;
-      }
-        
-      isEntity = true;
-      break;
-    }
-    if(!isWall && !isEntity)
-      game->entities[0].pos = newPoint;
+    _do_turn(game, &game->entities[0], move);
 
-    game->entities[0].turn += game->entities[0].speed+sys_randint(game->entities[0].speed);
     _game_sortEntities(game);
     for(i=0; i<MAX_ENTITIES; i++)
     {
