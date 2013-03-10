@@ -29,7 +29,7 @@ Entity game_null_entity()
   out.maxMana = 100;
   out.strength = 4;
   out.name = NULL;
-  out.sentient = false;
+  out.sentient = true;
   out.containso2 = false;
 
   int i;
@@ -54,6 +54,7 @@ FathomData game_null_fathomdata()
 
   for(i=0; i<4; i++)
   {
+    game_spawn(&out, spawn_entity(ET_WHITEBAIT));
     game_spawn(&out, spawn_entity(ET_STARFISH));
     game_spawn(&out, spawn_entity(ET_BUBBLE));
   }
@@ -163,18 +164,10 @@ void game_spawnAt(FathomData* fathom, Entity entity, Point pos)
   else
     entity.pos = _game_getSpawnPoint(fathom);
 
-  int i;
-  int maxTurn = 0;
-  for(i=0; i<MAX_ENTITIES; i++)
-  {
-    if(!fathom->entities[i].active)
-      continue;
-    if(fathom->entities[i].turn > maxTurn)
-      maxTurn = fathom->entities[i].turn;
-  }
   entity.active = true;
-  entity.turn = maxTurn+1;
+  entity.turn = entity.speed;
 
+  int i;
   for(i=0; i<MAX_ENTITIES; i++)
   {
     if(fathom->entities[i].active)
