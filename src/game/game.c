@@ -2,6 +2,7 @@
 
 char messages[TILEMAP_HEIGHT][TILEMAP_WIDTH];
 int numMessages;
+bool midDrop;
 
 Entity game_null_entity()
 {
@@ -68,6 +69,7 @@ GameData game_null_gamedata()
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addGlobalMessage("Welcome to Sunk Coast.");
+  midDrop = false;
 
   return out;
 }
@@ -346,6 +348,36 @@ void _do_pickup(FathomData* fathom, Entity* e)
   }
 }
 
+void _do_drop(FathomData* fathom, Entity* e, int index)
+{
+  Item nullItem = NULL_ITEM;
+  Item item = e->inventory[index];
+  item.pos = e->pos;
+  if(!e->inventory[index].active)
+  {
+    LOG("Dropping non existent item");
+    return;
+  }
+  int empty = -1;
+  int i;  
+  for(i=0; i<MAX_ITEMS; i++)
+  {
+    if(!fathom->items[i].active)
+    {
+      empty = i;
+      break;
+    }
+  }
+  if(empty == -1)
+  {
+    game_addMessage(fathom, e->pos, "%s can't drop %s %s, too cluttered", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
+    return;
+  }
+  fathom->items[empty] = item;  
+  e->inventory[index] = nullItem;
+  game_addMessage(fathom, e->pos, "%s dropped %s %s", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
+}
+
 void _do_turn(FathomData* fathom, Entity* e)
 {
   Entity nullEntity = NULL_ENTITY;
@@ -465,6 +497,32 @@ void _game_ai(GameData* game, Entity* e)
 bool _game_player(GameData* game, Entity* e)
 {
   FathomData* fathom = &game->fathoms[game->current];
+
+  if(midDrop)
+  {
+    int i=0;
+    for(i=0; i<MAX_INVENTORY; i++)
+    {
+      if(sys_inputPressed(INPUT_1 + i))
+      {
+        midDrop = false;
+        if(!e->inventory[i].active)
+        {
+          game_addGlobalMessage("No item in slot %d. Nevermind.", i);
+          return true;
+        }        
+        _do_drop(fathom, e, i);
+        return true;
+      }
+    }
+    if(sys_inputPressed(INPUT_ANY))
+    {
+      game_addGlobalMessage("Nevermind.");
+      midDrop = false;
+      return false;
+    }
+  }
+
   Point move = NULL_POINT;
   if(sys_inputPressed(INPUT_UP))
     move.y--;
@@ -497,6 +555,11 @@ bool _game_player(GameData* game, Entity* e)
     numMessages = 0;
     _do_pickup(fathom, e);
     return true;
+  }
+  if(sys_inputPressed(INPUT_DROP))
+  {
+    game_addGlobalMessage("Drop which item %d-%d?", 1, MAX_INVENTORY+1);
+    midDrop = true;
   }
   return false;
 }

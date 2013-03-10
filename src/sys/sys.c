@@ -326,6 +326,9 @@ void sys_update()
   _heldInputs[INPUT_PICKUP] = _sys_pressed('P');
   _heldInputs[INPUT_DROP] = _sys_pressed('O');
 
+  for(i=0; i<10; i++)
+    _heldInputs[INPUT_0 + i] = glfwGetKey('0'+i) == GLFW_PRESS;
+
   _heldInputs[INPUT_ANY] = false;
   for(i=0; i<INPUT_ANY; i++)
     if(_heldInputs[i])
