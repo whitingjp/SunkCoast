@@ -80,7 +80,7 @@ int main()
   game_spawn(&game, spawn_create(ST_BUBBLE));
   game_spawn(&game, spawn_create(ST_BUBBLE));
 
-  LOG("Sizeof GameData %d.", sizeof(GameData));
+  LOG("Sizeof FathomData %d.", sizeof(FathomData));
   
   LOG("Main loop.");  
 

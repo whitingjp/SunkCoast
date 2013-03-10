@@ -108,7 +108,15 @@ typedef struct
 typedef struct
 {
   Entity entities[MAX_ENTITIES];
-  TileMap tileMap;
+  TileMap tileMap;  
+} FathomData;
+#define NULL_FATHOMDATA (game_null_fathomdata());
+
+#define MAX_FATHOMS (32)
+typedef struct
+{
+  int current;
+  FathomData fathoms[MAX_FATHOMS];
 } GameData;
 #define NULL_GAMEDATA (game_null_gamedata());
 

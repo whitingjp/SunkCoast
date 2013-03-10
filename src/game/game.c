@@ -3,16 +3,30 @@
 char messages[TILEMAP_HEIGHT][TILEMAP_WIDTH];
 int numMessages;
 
-GameData game_null_gamedata()
+FathomData game_null_fathomdata()
 {
-  GameData out;
+  FathomData out;
   int i;
   Entity nullEntity = NULL_ENTITY;
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
   out.tileMap = tilemap_generate();
+  return out;
+}
+
+GameData game_null_gamedata()
+{
+  GameData out;
+  out.current = 0;
+
+  int i;
+  for(i=0; i<MAX_FATHOMS; i++)
+    out.fathoms[i] = game_null_fathomdata();
+  
+  // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addMessage("Welcome to Sunk Coast.");
+
   return out;
 }
 
@@ -28,21 +42,22 @@ int _game_turnCmp(const void* a, const void* b)
     return 1;
 }
 
-void _game_sortEntities(GameData* game)
+void _game_sortEntities(FathomData* fathom)
 {
-    qsort((void*)&game->entities[0], MAX_ENTITIES, sizeof(Entity), _game_turnCmp);
-    int minTurn = game->entities[0].turn;
+    qsort((void*)&fathom->entities[0], MAX_ENTITIES, sizeof(Entity), _game_turnCmp);
+    int minTurn = fathom->entities[0].turn;
     int i;
     for(i=0; i<MAX_ENTITIES; i++)
     {
-      if(!game->entities[i].active)
+      if(!fathom->entities[i].active)
         continue;
-      game->entities[i].turn -= minTurn;
+      fathom->entities[i].turn -= minTurn;
     }
 }
 
 void game_spawn(GameData* game, Entity entity)
 {
+  FathomData* fathom = &game->fathoms[game->current];
   int i;
   int maxTurn = 0;
   Point spawnPoint = NULL_POINT;
@@ -50,25 +65,25 @@ void game_spawn(GameData* game, Entity entity)
   {
     spawnPoint.x = sys_randint(TILEMAP_WIDTH);
     spawnPoint.y = sys_randint(TILEMAP_WIDTH);
-    if(!tilemap_collides(&game->tileMap, spawnPoint))
+    if(!tilemap_collides(&fathom->tileMap, spawnPoint))
       break;
   }
   entity.pos = spawnPoint;
   for(i=0; i<MAX_ENTITIES; i++)
   {
-    if(!game->entities[i].active)
+    if(!fathom->entities[i].active)
       continue;
-    if(game->entities[i].turn > maxTurn)
-      maxTurn = game->entities[i].turn;
+    if(fathom->entities[i].turn > maxTurn)
+      maxTurn = fathom->entities[i].turn;
   }
   for(i=0; i<MAX_ENTITIES; i++)
   {
-    if(game->entities[i].active)
+    if(fathom->entities[i].active)
       continue;
-    game->entities[i] = entity;
-    game->entities[i].active = true;
-    game->entities[i].turn = maxTurn+1;
-    _game_sortEntities(game);
+    fathom->entities[i] = entity;
+    fathom->entities[i].active = true;
+    fathom->entities[i].turn = maxTurn+1;
+    _game_sortEntities(fathom);
     return;
   }
   LOG("Couldn't find a free entity space, not spawning.");
@@ -120,14 +135,14 @@ void _draw_hud(Entity e, Point offset)
 }
 
 
-int _get_playerIndex(const GameData* game)
+int _get_playerIndex(const FathomData* fathom)
 {
   int i;
   for(i=0; i<MAX_ENTITIES; i++)
   {
-    if(!game->entities[i].active)
+    if(!fathom->entities[i].active)
       continue;
-    if(!game->entities[i].player)
+    if(!fathom->entities[i].player)
       continue;
     return i;
   }
@@ -136,20 +151,21 @@ int _get_playerIndex(const GameData* game)
 
 void game_draw(const GameData* game, Point offset)
 {
+  const FathomData* fathom = &game->fathoms[game->current];
   int i;
-  tilemap_draw(game->tileMap, offset);
+  tilemap_draw(fathom->tileMap, offset);
   for(i=0; i<MAX_ENTITIES; i++)
   {
-    const Entity* e = &game->entities[i];
+    const Entity* e = &fathom->entities[i];
     if(!e->active)
       continue;
-    if(!tilemap_visible(&game->tileMap, e->pos))
+    if(!tilemap_visible(&fathom->tileMap, e->pos))
       continue;
     Point drawPos = pointAddPoint(offset, e->pos);
     sys_drawSprite(e->sprite, e->frame, drawPos);   
   }
   if(sys_inputDown(INPUT_A))
-    _draw_route(&game->tileMap, game->entities[0].pos, game->entities[1].pos, game->entities[0].sprite, game->entities[0].frame);
+    _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
 
   Point messagePos = NULL_POINT;
   for(i=0; i<numMessages; i++)
@@ -157,12 +173,12 @@ void game_draw(const GameData* game, Point offset)
     sys_drawString(messagePos, messages[i], TILEMAP_WIDTH, 1);
     messagePos.y++;
   }
-  int playerIndex = _get_playerIndex(game);
+  int playerIndex = _get_playerIndex(fathom);
   if(playerIndex != -1)
   {
     Point pos = offset;
     pos.y += TILEMAP_HEIGHT;
-    _draw_hud(game->entities[playerIndex], pos);
+    _draw_hud(fathom->entities[playerIndex], pos);
   }
 }
 
@@ -201,16 +217,16 @@ Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
   return move;
 }
 
-Point _getAiInput(const GameData* game, Entity* e)
+Point _getAiInput(const FathomData* fathom, Entity* e)
 {
   Point pos = e->pos;
   Point move = NULL_POINT;
   if(e->sentient)
   {
-    int player =  _get_playerIndex(game);
-    bool visible = tilemap_visible(&game->tileMap, pos);
+    int player =  _get_playerIndex(fathom);
+    bool visible = tilemap_visible(&fathom->tileMap, pos);
     if(player != -1 && visible)
-      move = _get_aiPath(&game->tileMap, pos, game->entities[player].pos);
+      move = _get_aiPath(&fathom->tileMap, pos, fathom->entities[player].pos);
   }
   if(move.x == 0 && move.y == 0)
   {
@@ -220,20 +236,20 @@ Point _getAiInput(const GameData* game, Entity* e)
   return move;
 }
 
-void _do_turn(GameData* game, Entity* e, Point move)
+void _do_turn(FathomData* fathom, Entity* e, Point move)
 {
     Entity nullEntity = NULL_ENTITY;
     if(e->player)
       numMessages = 0;    
     Point newPoint = pointAddPoint(e->pos, move);
-    bool isWall = tilemap_collides(&game->tileMap, newPoint);
+    bool isWall = tilemap_collides(&fathom->tileMap, newPoint);
     bool isEntity = false;
     int i;
     for(i=0; i<MAX_ENTITIES; i++)
     {
       if(i==0)
         continue;
-      Entity* victim = &game->entities[i];
+      Entity* victim = &fathom->entities[i];
       if(!victim->active)
         continue;
       if(newPoint.x != victim->pos.x)
@@ -282,25 +298,26 @@ void _do_turn(GameData* game, Entity* e, Point move)
 
 void game_update(GameData* game)
 {
+  FathomData* fathom = &game->fathoms[game->current];
   int i;
   Point move = NULL_POINT;
-  if(!game->entities[0].active)
+  if(!fathom->entities[0].active)
     return;
-  if(game->entities[0].player)
+  if(fathom->entities[0].player)
     move = _getInput();
   else
-    move = _getAiInput(game, &game->entities[0]);
+    move = _getAiInput(fathom, &fathom->entities[0]);
 
   if(move.x != 0 || move.y != 0)
   {
-    _do_turn(game, &game->entities[0], move);
+    _do_turn(fathom, &fathom->entities[0], move);
 
-    _game_sortEntities(game);
+    _game_sortEntities(fathom);
     for(i=0; i<MAX_ENTITIES; i++)
     {
-      if(!game->entities[i].player)
+      if(!fathom->entities[i].player)
         continue;
-      tilemap_recalcFov(&game->tileMap, game->entities[i].pos);
+      tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos);
     }
   }
 }
