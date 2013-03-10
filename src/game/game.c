@@ -260,61 +260,7 @@ void game_draw(const GameData* game, Point offset)
   }
 }
 
-Point _getInput()
-{
-  Point move = NULL_POINT;
-  if(sys_inputPressed(INPUT_UP))
-    move.y--;
-  if(sys_inputPressed(INPUT_RIGHT))
-    move.x++;
-  if(sys_inputPressed(INPUT_DOWN))
-    move.y++;
-  if(sys_inputPressed(INPUT_LEFT))
-    move.x--;
-  return move;
-}
-
-Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
-{
-  Point move = NULL_POINT;
-  _aStartTileMap = tileMap;
-  astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
-  astar_set_origin (as, 0, 0);
-  astar_set_steering_penalty (as, 0);
-  astar_set_movement_mode (as, DIR_CARDINAL);
-  astar_run (as, start.x, start.y, end.x, end.y);
-  if(astar_have_route(as))
-  {
-    direction_t * directions, * dir;
-    astar_get_directions (as, &directions);    
-    dir = directions;
-    move.x += astar_get_dx(as, *dir);
-    move.y += astar_get_dy(as, *dir);
-    astar_free_directions (directions);
-  }
-  return move;
-}
-
-Point _getAiInput(const FathomData* fathom, Entity* e)
-{
-  Point pos = e->pos;
-  Point move = NULL_POINT;
-  if(e->sentient)
-  {
-    int player =  _get_playerIndex(fathom);
-    bool visible = tilemap_visible(&fathom->tileMap, pos);
-    if(player != -1 && visible)
-      move = _get_aiPath(&fathom->tileMap, pos, fathom->entities[player].pos);
-  }
-  if(move.x == 0 && move.y == 0)
-  {
-    int dir = sys_randint(4);
-    move = directionToPoint(dir);
-  }
-  return move;
-}
-
-void _do_turn(FathomData* fathom, Entity* e, Point move)
+void _do_move(FathomData* fathom, Entity* e, Point move)
 {
     Entity nullEntity = NULL_ENTITY;
     if(e->player)
@@ -356,36 +302,41 @@ void _do_turn(FathomData* fathom, Entity* e, Point move)
 
     if(!isWall && !isEntity)
       e->pos = newPoint;
+}
 
-    if(e->o2depletes)
+void _do_turn(FathomData* fathom, Entity* e)
+{
+  Entity nullEntity = NULL_ENTITY;
+  if(e->o2depletes)
+  {
+    e->o2timer++;
+    if(e->o2timer >= 5)
     {
-      e->o2timer++;
-      if(e->o2timer >= 5)
+      e->o2--;
+      e->o2timer = 0;
+      if(e->o2 <= 0)
       {
-        e->o2--;
-        e->o2timer = 0;
-        if(e->o2 <= 0)
-        {
-          game_addMessage(fathom, newPoint, "%s drowned", e->name);
-          *e = nullEntity;
-        }
+        game_addMessage(fathom, e->pos, "%s drowned", e->name);
+        *e = nullEntity;
       }
     }
+  }
 
-    if(e->player)
+  if(e->player)
+  {
+    int i;
+    for(i=0; i<MAX_ITEMS; i++)
     {
-      for(i=0; i<MAX_ITEMS; i++)
-      {
-        Item* item = &fathom->items[i];
-        if(!item->active)
-          continue;
-        if(e->pos.x != item->pos.x || e->pos.y != item->pos.y)
-          continue;
-        game_addMessage(fathom, item->pos, "%s see a %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
-      }
+      Item* item = &fathom->items[i];
+      if(!item->active)
+        continue;
+      if(e->pos.x != item->pos.x || e->pos.y != item->pos.y)
+        continue;
+      game_addMessage(fathom, item->pos, "%s see a %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
     }
+  }
 
-    e->turn += e->speed+sys_randint(e->speed);
+  e->turn += e->speed+sys_randint(e->speed);
 }
 
 void _game_dive(GameData* game, int entityIndex, int depth)
@@ -427,38 +378,93 @@ void _game_recalcFov(FathomData* fathom)
   }
 }
 
+
+Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
+{
+  Point move = NULL_POINT;
+  _aStartTileMap = tileMap;
+  astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
+  astar_set_origin (as, 0, 0);
+  astar_set_steering_penalty (as, 0);
+  astar_set_movement_mode (as, DIR_CARDINAL);
+  astar_run (as, start.x, start.y, end.x, end.y);
+  if(astar_have_route(as))
+  {
+    direction_t * directions, * dir;
+    astar_get_directions (as, &directions);    
+    dir = directions;
+    move.x += astar_get_dx(as, *dir);
+    move.y += astar_get_dy(as, *dir);
+    astar_free_directions (directions);
+  }
+  return move;
+}
+
+void _game_ai(GameData* game, Entity* e)
+{
+  FathomData* fathom = &game->fathoms[game->current];
+  Point pos = e->pos;
+  Point move = NULL_POINT;
+  if(e->sentient)
+  {
+    int player =  _get_playerIndex(fathom);
+    bool visible = tilemap_visible(&fathom->tileMap, pos);
+    if(player != -1 && visible)
+      move = _get_aiPath(&fathom->tileMap, pos, fathom->entities[player].pos);
+  }
+  if(move.x == 0 && move.y == 0)
+  {
+    int dir = sys_randint(4);
+    move = directionToPoint(dir);
+  }
+  _do_move(fathom, e, move);
+}
+
+bool _game_player(GameData* game, Entity* e)
+{
+  FathomData* fathom = &game->fathoms[game->current];
+  Point move = NULL_POINT;
+  if(sys_inputPressed(INPUT_UP))
+    move.y--;
+  if(sys_inputPressed(INPUT_RIGHT))
+    move.x++;
+  if(sys_inputPressed(INPUT_DOWN))
+    move.y++;
+  if(sys_inputPressed(INPUT_LEFT))
+    move.x--;
+  if(move.x != 0 || move.y != 0)
+  {
+    _do_move(fathom, e, move);
+    return true;
+  }
+  if(sys_inputPressed(INPUT_DIVE))
+  {
+    _game_dive(game, 0, 1);
+    return true;
+  }
+  if(sys_inputPressed(INPUT_RISE))
+  {
+    _game_dive(game, 0, -1);
+    return true;
+  }
+  return false;
+}
+
 void game_update(GameData* game)
 {
   FathomData* fathom = &game->fathoms[game->current];
   Entity* e = &fathom->entities[0];
-  Point move = NULL_POINT;
   if(!e->active)
     return;
+  bool doTurn = !e->player;
   if(e->player)
-  {
-    move = _getInput();
-    if(sys_inputPressed(INPUT_DIVE))
-    {
-      _game_dive(game, 0, 1);
-      _game_recalcFov(&game->fathoms[game->current]);
-      return;
-    }
-    if(sys_inputPressed(INPUT_RISE))
-    {
-      _game_dive(game, 0, -1);
-      _game_recalcFov(&game->fathoms[game->current]);
-      return;
-    }
-  }
+    doTurn = _game_player(game, e);
   else
-  {
-    move = _getAiInput(fathom, e);
-  }
+    _game_ai(game, e);
 
-  if(move.x != 0 || move.y != 0)
+  if(doTurn)
   {
-    _do_turn(fathom, e, move);
-
+    _do_turn(fathom, e);
     _game_sortEntities(fathom);
     _game_recalcFov(fathom);
   }
