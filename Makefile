@@ -28,6 +28,7 @@ all: $(EXE)
 SRC += datatypes.c
 SRC += main.c
 SRC += game/game.c
+SRC += game/spawn.c
 SRC += input/libastar/astar.c
 SRC += input/libastar/astar_heap.c
 SRC += input/libfov/fov.c

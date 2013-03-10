@@ -68,35 +68,17 @@ int main()
   }
 
   game = NULL_GAMEDATA;
-  Entity blah = NULL_ENTITY;
-  SpriteData spriteData = {{0,0}, {8,15}, IMAGE_FONT};
-  blah.sprite = spriteData;
-  blah.frame = getFrameFromAscii('s', 5);
-  blah.speed = 140;
-  blah.name = "starfish";
-  blah.sentient = true;
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
-  blah.player = true;
-  blah.speed = 100;
-  blah.frame = getFrameFromAscii('@', 6);
-  blah.name = "you";
-  blah.o2speed = 5;
-  game_spawn(&game, blah);
-  blah.frame = getFrameFromAscii('o', 2);
-  blah.name = "bubble";
-  blah.speed = 400;
-  blah.player = false;
-  blah.o2 = 1;
-  blah.sentient = false;
-  blah.containso2 = true;
-  blah.o2speed = 0;
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
-  game_spawn(&game, blah);
+  game_spawn(&game, spawn_create(ST_STARFISH));
+  game_spawn(&game, spawn_create(ST_STARFISH));
+  game_spawn(&game, spawn_create(ST_STARFISH));
+  game_spawn(&game, spawn_create(ST_STARFISH));
+
+  game_spawn(&game, spawn_create(ST_SCUBA));
+
+  game_spawn(&game, spawn_create(ST_BUBBLE));
+  game_spawn(&game, spawn_create(ST_BUBBLE));
+  game_spawn(&game, spawn_create(ST_BUBBLE));
+  game_spawn(&game, spawn_create(ST_BUBBLE));
 
   LOG("Sizeof GameData %d.", sizeof(GameData));
   

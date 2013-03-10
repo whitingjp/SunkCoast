@@ -263,10 +263,10 @@ void _do_turn(GameData* game, Entity* e, Point move)
     if(!isWall && !isEntity)
       e->pos = newPoint;
 
-    if(e->o2speed)
+    if(e->o2depletes)
     {
       e->o2timer++;
-      if(e->o2timer >= e->o2speed)
+      if(e->o2timer >= 5)
       {
         e->o2--;
         e->o2timer = 0;

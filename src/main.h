@@ -9,6 +9,7 @@
 
 #include "datatypes.h"
 #include "game/game.h"
+#include "game/spawn.h"
 #include "input/libastar/astar.h"
 #include "input/libfov/fov.h"
 #include "sys/file.h"
