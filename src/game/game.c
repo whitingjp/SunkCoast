@@ -31,7 +31,7 @@ GameData game_null_gamedata()
   game_spawn(&out.fathoms[0], spawn_create(ST_SCUBA));
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
-  game_addMessage("Welcome to Sunk Coast.");
+  game_addGlobalMessage("Welcome to Sunk Coast.");
 
   return out;
 }
@@ -268,9 +268,9 @@ void _do_turn(FathomData* fathom, Entity* e, Point move)
       int amount = sys_randint(e->strength);
       victim->o2 -= amount*10;
       if(amount == 0)
-        game_addMessage("%s missed %s", e->name, victim->name);
+        game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
       else
-        game_addMessage("%s hit %s", e->name, victim->name);
+        game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
       if(victim->o2 <= 0)
       {
         if(victim->containso2)
@@ -296,7 +296,7 @@ void _do_turn(FathomData* fathom, Entity* e, Point move)
         e->o2timer = 0;
         if(e->o2 <= 0)
         {
-          game_addMessage("%s drowned", e->name);
+          game_addMessage(fathom, newPoint, "%s drowned", e->name);
           *e = nullEntity;
         }
       }
@@ -312,12 +312,12 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   Entity e = currentFathom->entities[entityIndex];
   if(newFathomIndex < 0)
   {
-    game_addMessage("%s are on the surface", e.name);
+    game_addGlobalMessage("%s are on the surface", e.name);
     return;
   }
   if(newFathomIndex >= MAX_FATHOMS)
   {
-    game_addMessage("%s are on the bottom of the ocean", e.name);
+    game_addGlobalMessage("%s are on the bottom of the ocean", e.name);
     return;
   }
   currentFathom->entities[entityIndex] = nullEntity;
@@ -325,7 +325,7 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   if(e.o2depletes)
     e.o2 -= 5;
   if(e.o2 <= 0)
-    game_addMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
+    game_addGlobalMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
   else
     game_spawn(&game->fathoms[newDepth], e);
 
@@ -380,7 +380,23 @@ void game_update(GameData* game)
   }
 }
 
-void game_addMessage(const char *str, ...)
+void game_addMessage(const FathomData* fathom, Point p, const char *str, ...)
+{
+  if(tilemap_visible(&fathom->tileMap, p))
+  {
+    if(numMessages >= TILEMAP_HEIGHT)
+    {
+      LOG("Not enough space for messages.");
+      return;
+    }
+    va_list args;
+    va_start(args, str);
+    vsnprintf(messages[numMessages], TILEMAP_WIDTH, str, args);
+    numMessages++;
+  }
+}
+
+void game_addGlobalMessage(const char *str, ...)
 {
   if(numMessages >= TILEMAP_HEIGHT)
   {
