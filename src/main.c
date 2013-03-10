@@ -68,18 +68,6 @@ int main()
   }
 
   game = NULL_GAMEDATA;
-  game_spawn(&game, spawn_create(ST_STARFISH));
-  game_spawn(&game, spawn_create(ST_STARFISH));
-  game_spawn(&game, spawn_create(ST_STARFISH));
-  game_spawn(&game, spawn_create(ST_STARFISH));
-
-  game_spawn(&game, spawn_create(ST_SCUBA));
-
-  game_spawn(&game, spawn_create(ST_BUBBLE));
-  game_spawn(&game, spawn_create(ST_BUBBLE));
-  game_spawn(&game, spawn_create(ST_BUBBLE));
-  game_spawn(&game, spawn_create(ST_BUBBLE));
-
   LOG("Sizeof FathomData %d.", sizeof(FathomData));
   
   LOG("Main loop.");  

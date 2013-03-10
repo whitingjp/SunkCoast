@@ -11,6 +11,12 @@ FathomData game_null_fathomdata()
   for(i=0; i<MAX_ENTITIES; i++)
     out.entities[i] = nullEntity;
   out.tileMap = tilemap_generate();
+
+  for(i=0; i<4; i++)
+  {
+    game_spawn(&out, spawn_create(ST_STARFISH));
+    game_spawn(&out, spawn_create(ST_BUBBLE));
+  }
   return out;
 }
 
@@ -22,7 +28,7 @@ GameData game_null_gamedata()
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
     out.fathoms[i] = game_null_fathomdata();
-
+  game_spawn(&out.fathoms[0], spawn_create(ST_SCUBA));
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addMessage("Welcome to Sunk Coast.");
@@ -55,9 +61,8 @@ void _game_sortEntities(FathomData* fathom)
     }
 }
 
-void game_spawn(GameData* game, Entity entity)
+void game_spawn(FathomData* fathom, Entity entity)
 {
-  FathomData* fathom = &game->fathoms[game->current];
   int i;
   int maxTurn = 0;
   Point spawnPoint = NULL_POINT;
@@ -316,14 +321,15 @@ void _game_dive(GameData* game, int entityIndex, int depth)
     return;
   }
   currentFathom->entities[entityIndex] = nullEntity;
-  game->current += depth;
-
+  int newDepth = game->current+depth;
   if(e.o2depletes)
     e.o2 -= 5;
   if(e.o2 <= 0)
     game_addMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
   else
-    game_spawn(game, e);
+    game_spawn(&game->fathoms[newDepth], e);
+
+  game->current += depth;
 }
 
 void _game_recalcFov(FathomData* fathom)
