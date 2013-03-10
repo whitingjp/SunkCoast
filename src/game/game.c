@@ -342,6 +342,20 @@ void _do_turn(FathomData* fathom, Entity* e, Point move)
         }
       }
     }
+
+    if(e->player)
+    {
+      for(i=0; i<MAX_ITEMS; i++)
+      {
+        Item* item = &fathom->items[i];
+        if(!item->active)
+          continue;
+        if(e->pos.x != item->pos.x || e->pos.y != item->pos.y)
+          continue;
+        game_addMessage(fathom, item->pos, "%s see a %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+      }
+    }
+
     e->turn += e->speed+sys_randint(e->speed);
 }
 
