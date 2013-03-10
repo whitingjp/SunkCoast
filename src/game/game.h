@@ -10,3 +10,5 @@ void game_spawn(FathomData* fathom, Entity entity);
 
 void game_addMessage(const FathomData* fathom, Point p, const char *str, ...);
 void game_addGlobalMessage(const char *str, ...);
+
+bool game_hasCharm(const Entity *e, CharmSubType charm);

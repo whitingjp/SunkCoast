@@ -83,6 +83,20 @@ GameData game_null_gamedata()
   return out;
 }
 
+bool game_hasCharm(const Entity *e, CharmSubType charm)
+{
+  int i;
+  for(i=0; i<MAX_ITEMS; i++)
+  {
+    if(e->inventory[i].type != IT_CHARM)
+      continue;
+    if(e->inventory[i].charmSubtype != charm)
+      continue;
+    return true;
+  }
+  return false;
+}
+
 int _game_turnCmp(const void* a, const void* b)
 {
   Entity* eA = (Entity*)a;
@@ -295,6 +309,14 @@ void game_draw(const GameData* game, Point offset)
 void _do_move(FathomData* fathom, Entity* e, Point move)
 {
   Entity nullEntity = NULL_ENTITY;
+  if(game_hasCharm(e, CHARM_HASTE))
+  {
+    if(sys_randint(15)==0)
+    {
+      Direction d = sys_randint(4);
+      move = directionToPoint(d);
+    }
+  }
   Point newPoint = pointAddPoint(e->pos, move);
   bool isWall = tilemap_collides(&fathom->tileMap, newPoint);
   bool isEntity = false;
@@ -460,7 +482,11 @@ void _do_turn(FathomData* fathom, Entity* e)
     }
   }
 
-  e->turn += e->speed+sys_randint(e->speed);
+  int turnAdd = e->speed+sys_randint(e->speed);
+  if(game_hasCharm(e, CHARM_HASTE))
+    turnAdd = (turnAdd*2)/3;
+
+  e->turn += turnAdd;
 }
 
 void _game_dive(GameData* game, int entityIndex, int depth)
