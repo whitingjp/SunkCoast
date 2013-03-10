@@ -222,6 +222,7 @@ Point _getAiInput(const GameData* game, Entity* e)
 
 void _do_turn(GameData* game, Entity* e, Point move)
 {
+    Entity nullEntity = NULL_ENTITY;
     if(e->player)
       numMessages = 0;    
     Point newPoint = pointAddPoint(e->pos, move);
@@ -253,7 +254,6 @@ void _do_turn(GameData* game, Entity* e, Point move)
           int boost = (sys_randint(3)+sys_randint(3)+2)*10;
           e->o2 = min(e->o2 + boost, e->maxo2);
         }
-        Entity nullEntity = NULL_ENTITY;
         *victim = nullEntity;
       }
       isEntity = true;
@@ -263,7 +263,20 @@ void _do_turn(GameData* game, Entity* e, Point move)
     if(!isWall && !isEntity)
       e->pos = newPoint;
 
-    //if(
+    if(e->o2speed)
+    {
+      e->o2timer++;
+      if(e->o2timer >= e->o2speed)
+      {
+        e->o2--;
+        e->o2timer = 0;
+        if(e->o2 <= 0)
+        {
+          game_addMessage("%s drowned", e->name);
+          *e = nullEntity;
+        }
+      }
+    }
     e->turn += e->speed+sys_randint(e->speed);
 }
 
