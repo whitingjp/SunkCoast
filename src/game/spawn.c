@@ -7,13 +7,14 @@ Entity spawn_entity(EntityType type)
   out.sprite = spriteData;
   switch(type)
   {
-    case ET_SCUBA:
-      out.player = true;
-      out.speed = 100;
-      out.frame = getFrameFromAscii('@', 6);
-      out.name = "you";
-      out.o2depletes = true;
-      out.strength = 4;
+    case ET_BUBBLE:
+      out.frame = getFrameFromAscii('o', 2);
+      out.name = "bubble";
+      out.speed = 1600;
+      out.o2 = 1;
+      out.containso2 = true;
+      out.strength = 1;
+      out.sentient = false;
       break;
     case ET_WHITEBAIT:
       out.speed = 90;
@@ -28,14 +29,21 @@ Entity spawn_entity(EntityType type)
       out.name = "starfish";
       out.strength = 3;
       break;
-    case ET_BUBBLE:
-      out.frame = getFrameFromAscii('o', 2);
-      out.name = "bubble";
-      out.speed = 1600;
-      out.o2 = 1;
+    case ET_PUFFERFISH:
+      out.frame = getFrameFromAscii('O', 2);
+      out.name = "pufferfish";
+      out.speed = 250;
+      out.o2 = 150;
       out.containso2 = true;
-      out.strength = 1;
-      out.sentient = false;
+      out.strength = 6;
+      break;
+    case ET_SCUBA:
+      out.player = true;
+      out.speed = 100;
+      out.frame = getFrameFromAscii('@', 6);
+      out.name = "you";
+      out.o2depletes = true;
+      out.strength = 4;
       break;
   }
   return out;

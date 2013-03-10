@@ -575,9 +575,27 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   if(e.o2 <= 0)
     game_addGlobalMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
   else
-    game_spawn(&game->fathoms[newDepth], e);
+    game_spawnAt(&game->fathoms[newDepth], e, e.pos);
 
-  game->current += depth;
+  if(e.player)
+  {
+    int i;
+    for(i=0; i<MAX_ENTITIES; i++)
+    {
+      Entity *other = &currentFathom->entities[i];
+      if(!other->active)
+        continue;
+      if(!other->sentient)
+        continue;
+      if(other->player)
+        continue;
+      if(!tilemap_visible(&currentFathom->tileMap, other->pos))
+        continue;
+      game_addGlobalMessage("%s follows %s %s", other->name, e.name, depth > 0 ? "down" : "up");
+      _game_dive(game, i, depth); // join in      
+    }
+    game->current += depth;
+  }
 }
 
 void _game_recalcFov(FathomData* fathom)

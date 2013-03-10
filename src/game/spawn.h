@@ -2,7 +2,11 @@ typedef enum
 {
   ET_BUBBLE,
   ET_WHITEBAIT,
-  ET_STARFISH,  
+  ET_STARFISH,
+
+
+  ET_PUFFERFISH,
+
   ET_MAX_ENEMY,
   ET_SCUBA=ET_MAX_ENEMY,
 } EntityType;
