@@ -155,7 +155,7 @@ typedef struct
 #define NULL_ENTITY (game_null_entity());
 
 #define MAX_ITEMS (64)
-#define MAX_ENTITIES (64)
+#define MAX_ENTITIES (128)
 typedef struct
 {
   Entity entities[MAX_ENTITIES];

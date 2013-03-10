@@ -51,13 +51,6 @@ FathomData game_null_fathomdata()
     out.items[i] = nullItem;
 
   out.tileMap = tilemap_generate();
-
-  for(i=0; i<4; i++)
-  {
-    game_spawn(&out, spawn_entity(ET_WHITEBAIT));
-    game_spawn(&out, spawn_entity(ET_STARFISH));
-    game_spawn(&out, spawn_entity(ET_BUBBLE));
-  }
   return out;
 }
 
@@ -73,6 +66,13 @@ GameData game_null_gamedata()
   for(i=0; i<MAX_FATHOMS; i++)
   {
     out.fathoms[i] = game_null_fathomdata();
+    int threat = 10+i*5;
+    while(threat > 0)
+    {
+      int type = sys_randint(ET_MAX_ENEMY);
+      game_spawn(&out.fathoms[i], spawn_entity(type));
+      threat -= type+1;
+    }
     game_place(&out.fathoms[i], spawn_item(&out, IT_CONCH));
     game_place(&out.fathoms[i], spawn_item(&out, IT_CHARM));
   }
