@@ -3,6 +3,7 @@
 char messages[TILEMAP_HEIGHT][TILEMAP_WIDTH];
 int numMessages;
 bool midDrop;
+bool midUse;
 
 Entity game_null_entity()
 {
@@ -214,8 +215,11 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   for(i=0; i<MAX_INVENTORY; i++)
   {
     Item item = e.inventory[i];
+    int itemcol = 2;
+    if(item.worn)
+      itemcol = 4;
     snprintf(string, TILEMAP_WIDTH, "%d:", i+1);
-    sys_drawString(inventoryPos, string, TILEMAP_WIDTH, 2);
+    sys_drawString(inventoryPos, string, TILEMAP_WIDTH, itemcol);
     inventoryPos.x += 2;
     sys_drawSprite(item.sprite, item.frame, inventoryPos);
     inventoryPos.x += 2;
@@ -262,8 +266,8 @@ void game_draw(const GameData* game, Point offset)
     Point drawPos = pointAddPoint(offset, e->pos);
     sys_drawSprite(e->sprite, e->frame, drawPos);
   }
-  if(sys_inputDown(INPUT_A))
-    _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
+  //if(sys_inputDown(INPUT_A))
+  //  _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
 
   Point messagePos = NULL_POINT;
   for(i=0; i<numMessages; i++)
@@ -376,9 +380,28 @@ void _do_drop(FathomData* fathom, Entity* e, int index)
     game_addMessage(fathom, e->pos, "%s can't drop %s %s, too cluttered", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
     return;
   }
+  item.worn = false;
   fathom->items[empty] = item;  
   e->inventory[index] = nullItem;
   game_addMessage(fathom, e->pos, "%s dropped %s %s", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
+}
+
+void _do_use(FathomData* fathom, Entity* e, int index)
+{
+  Item* item = &e->inventory[index];
+  if(!item->active)
+  {
+    LOG("Using non existent item");
+    return;
+  }
+  if(item->type == IT_CHARM)
+  {
+    item->worn = !item->worn;
+    if(item->worn)
+      game_addMessage(fathom, e->pos, "%s put on %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+    else
+      game_addMessage(fathom, e->pos, "%s took off %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  }
 }
 
 void _do_turn(FathomData* fathom, Entity* e)
@@ -501,20 +524,26 @@ bool _game_player(GameData* game, Entity* e)
 {
   FathomData* fathom = &game->fathoms[game->current];
 
-  if(midDrop)
+  if(midDrop || midUse)
   {
     int i=0;
     for(i=0; i<MAX_INVENTORY; i++)
     {
       if(sys_inputPressed(INPUT_1 + i))
       {
-        midDrop = false;
         if(!e->inventory[i].active)
         {
+          midDrop = false;
+          midUse = false;
           game_addGlobalMessage("No item in slot %d. Nevermind.", i);
           return true;
-        }        
-        _do_drop(fathom, e, i);
+        }
+        if(midDrop)
+          _do_drop(fathom, e, i);
+        if(midUse)
+          _do_use(fathom, e, i);
+        midDrop = false;
+        midUse = false;
         return true;
       }
     }
@@ -522,8 +551,9 @@ bool _game_player(GameData* game, Entity* e)
     {
       game_addGlobalMessage("Nevermind.");
       midDrop = false;
-      return false;
+      midUse = false;      
     }
+    return false;
   }
 
   Point move = NULL_POINT;
@@ -563,6 +593,11 @@ bool _game_player(GameData* game, Entity* e)
   {
     game_addGlobalMessage("Drop which item %d-%d?", 1, MAX_INVENTORY+1);
     midDrop = true;
+  }
+  if(sys_inputPressed(INPUT_USE))
+  {
+    game_addGlobalMessage("Use which item %d-%d?", 1, MAX_INVENTORY+1);
+    midUse = true;
   }
   return false;
 }

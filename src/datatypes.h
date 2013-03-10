@@ -92,13 +92,14 @@ typedef enum
 typedef struct
 {  
   bool active;
+  bool worn;
   SpriteData sprite;
   Point frame;
   ItemType type;
   int subtype;
   Point pos;
 } Item;
-#define NULL_ITEM { false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
+#define NULL_ITEM { false, false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, NULL_POINT}
 
 
 #define MAX_INVENTORY (4)
