@@ -115,7 +115,8 @@ void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData spri
 void _draw_hud(Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
-  snprintf(string, TILEMAP_WIDTH, "  O2: %d", e.oxygen);
+  int o2percent = (100*e.oxygen)/e.maxOxygen;
+  snprintf(string, TILEMAP_WIDTH, "  O2: %d%%", o2percent);
   sys_drawString(offset, string, TILEMAP_WIDTH, 2);
 }
 
