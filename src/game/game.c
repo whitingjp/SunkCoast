@@ -174,7 +174,7 @@ Point _game_getSpawnPoint(const FathomData* fathom)
   {
     spawnPoint.x = sys_randint(TILEMAP_WIDTH);
     spawnPoint.y = sys_randint(TILEMAP_WIDTH);
-    if(!tilemap_collides(&fathom->tileMap, spawnPoint))
+    if(game_pointFree(fathom, spawnPoint))
       break;
   }
   return spawnPoint;
@@ -198,7 +198,7 @@ void game_place(FathomData* fathom, Item item)
 
 void game_spawnAt(FathomData* fathom, Entity entity, Point pos)
 {
-  if(pos.x > 0 && pos.y > 0 && !tilemap_collides(&fathom->tileMap, pos))
+  if(pos.x > 0 && pos.y > 0 && game_pointFree(fathom, pos))
     entity.pos = pos;
   else
     entity.pos = _game_getSpawnPoint(fathom);
@@ -222,42 +222,17 @@ void game_spawn(FathomData* fathom, Entity entity)
   game_spawnAt(fathom, entity, _game_getSpawnPoint(fathom));
 }
 
-const TileMap* _aStartTileMap;
+const FathomData* _aStarFathom;
 
 uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
 {
   Point p = NULL_POINT;
   p.x = x;
   p.y = y;
-  if(tilemap_collides(_aStartTileMap, p))
+  if(!game_pointFree(_aStarFathom, p))
     return COST_BLOCKED;
   else
     return 1;
-}
-
-void _draw_route(const TileMap* tileMap, Point start, Point end, SpriteData sprite, Point frame)
-{
-  _aStartTileMap = tileMap;
-  astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
-  astar_set_origin (as, 0, 0);
-  astar_set_steering_penalty (as, 0);
-  astar_set_movement_mode (as, DIR_CARDINAL);
-  astar_run (as, start.x, start.y, end.x, end.y);
-  if(astar_have_route(as))
-  {
-    direction_t * directions, * dir;
-    int i, num_steps;
-    num_steps = astar_get_directions (as, &directions);    
-    Point cur = start;
-    dir = directions;
-    for (i = 0; i < num_steps; i++, dir++)
-    {
-      sys_drawSprite(sprite, frame, cur);
-      cur.x += astar_get_dx(as, *dir);
-      cur.y += astar_get_dy(as, *dir);
-    }
-    astar_free_directions (directions);
-  }
 }
 
 void _draw_hud(const GameData* game, Entity e, Point offset)
@@ -649,10 +624,10 @@ void _game_recalcFov(FathomData* fathom)
 }
 
 
-Point _get_aiPath(const TileMap* tileMap, Point start, Point end)
+Point _get_aiPath(const FathomData* fathom, Point start, Point end)
 {
   Point move = NULL_POINT;
-  _aStartTileMap = tileMap;
+  _aStarFathom = fathom;
   astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
   astar_set_origin (as, 0, 0);
   astar_set_steering_penalty (as, 0);
@@ -680,7 +655,7 @@ void _game_ai(GameData* game, Entity* e)
     int player =  _get_playerIndex(fathom);
     bool visible = tilemap_visible(&fathom->tileMap, pos);
     if(player != -1 && visible)
-      move = _get_aiPath(&fathom->tileMap, pos, fathom->entities[player].pos);
+      move = _get_aiPath(fathom, pos, fathom->entities[player].pos);
   }
   if(move.x == 0 && move.y == 0)
   {
