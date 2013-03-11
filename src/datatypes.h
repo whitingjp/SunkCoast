@@ -129,27 +129,31 @@ typedef struct
 } Item;
 #define NULL_ITEM { false, false, NULL_SPRITEDATA, NULL_POINT, IT_MAX, 0, 0, 0, NULL_POINT}
 
+typedef enum
+{
+  EF_O2DEPLETES = 1<<0,
+  EF_SENTIENT = 1<<1,
+  EF_CONTAINSO2 = 1<<2,
+} EntityFlag;
 
 #define MAX_INVENTORY (4)
 typedef struct
 {
   bool active;
+  bool player;
   SpriteData sprite;
   Point frame;
   Point pos;
   int turn;
-  bool player;
   int speed;
   int o2;
   int maxo2;
   int o2timer;
-  bool o2depletes;
   int mana;
   int maxMana;
   int strength;
   const char* name;
-  bool sentient;
-  bool containso2;
+  EntityFlag flags;
   Item inventory[MAX_INVENTORY];
 } Entity;
 #define NULL_ENTITY (game_null_entity());

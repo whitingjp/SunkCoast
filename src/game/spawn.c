@@ -12,9 +12,8 @@ Entity spawn_entity(EntityType type)
       out.name = "bubble";
       out.speed = 1600;
       out.o2 = 1;
-      out.containso2 = true;
       out.strength = 1;
-      out.sentient = false;
+      out.flags = EF_CONTAINSO2;
       break;
     case ET_WHITEBAIT:
       out.speed = 90;
@@ -22,28 +21,30 @@ Entity spawn_entity(EntityType type)
       out.name = "whitebait";
       out.o2 = 40;
       out.strength = 2;
+      out.flags = EF_SENTIENT;
       break;
     case ET_STARFISH:
       out.speed = 140;
       out.frame = getFrameFromAscii('s', 5);      
       out.name = "starfish";
       out.strength = 3;
+      out.flags = EF_SENTIENT;
       break;
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
       out.name = "pufferfish";
       out.speed = 250;
       out.o2 = 150;
-      out.containso2 = true;
       out.strength = 6;
+      out.flags = EF_SENTIENT | EF_CONTAINSO2;
       break;
     case ET_SCUBA:
       out.player = true;
       out.speed = 100;
       out.frame = getFrameFromAscii('@', 6);
       out.name = "you";
-      out.o2depletes = true;
       out.strength = 4;
+      out.flags = EF_O2DEPLETES;
       break;
   }
   return out;

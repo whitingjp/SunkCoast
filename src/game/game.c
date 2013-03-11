@@ -24,13 +24,11 @@ Entity game_null_entity()
   out.o2 = 100;
   out.maxo2 = 100;
   out.o2timer = 0;
-  out.o2depletes = false;
   out.mana = 50;
   out.maxMana = 100;
   out.strength = 4;
   out.name = NULL;
-  out.sentient = true;
-  out.containso2 = false;
+  out.flags = EF_SENTIENT;
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -361,7 +359,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
     if(victim->o2 <= 0)
     {
-      if(victim->containso2)
+      if(victim->flags & EF_CONTAINSO2)
       {
         int boost = (sys_randint(3)+sys_randint(3)+2)*10;
         e->o2 = min(e->o2 + boost, e->maxo2);
@@ -516,7 +514,7 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
 void _do_turn(FathomData* fathom, Entity* e)
 {
   Entity nullEntity = NULL_ENTITY;
-  if(e->o2depletes)
+  if(e->flags & EF_O2DEPLETES)
   {
     e->o2timer++;
     if(e->o2timer >= 5)
@@ -575,7 +573,7 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   }
   currentFathom->entities[entityIndex] = nullEntity;
   int newDepth = game->current+depth;
-  if(e.o2depletes)
+  if(e.flags & EF_O2DEPLETES)
     e.o2 -= 5;
   if(e.o2 <= 0)
     game_addGlobalMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
@@ -590,9 +588,9 @@ void _game_dive(GameData* game, int entityIndex, int depth)
       Entity *other = &currentFathom->entities[i];
       if(!other->active)
         continue;
-      if(!other->sentient)
-        continue;
       if(other->player)
+        continue;
+      if(!(other->flags & EF_SENTIENT))
         continue;
       if(!tilemap_visible(&currentFathom->tileMap, other->pos))
         continue;
@@ -647,7 +645,7 @@ void _game_ai(GameData* game, Entity* e)
   FathomData* fathom = &game->fathoms[game->current];
   Point pos = e->pos;
   Point move = NULL_POINT;
-  if(e->sentient)
+  if(e->flags & EF_SENTIENT)
   {
     int player =  _get_playerIndex(fathom);
     bool visible = tilemap_visible(&fathom->tileMap, pos);
