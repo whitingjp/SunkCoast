@@ -15,4 +15,5 @@ void game_addGlobalMessage(const char *str, ...);
 bool game_hasCharm(const Entity *e, CharmSubType charm);
 bool game_hurt(FathomData* fathom, Entity *e, int amount);
 
+int game_pointEntityIndex(const FathomData *fathom, Point p);
 bool game_pointFree(const FathomData *fathom, Point p);

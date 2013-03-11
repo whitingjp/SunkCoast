@@ -144,10 +144,8 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
   return false;
 }
 
-bool game_pointFree(const FathomData *fathom, Point p)
+int game_pointEntityIndex(const FathomData *fathom, Point p)
 {
-  if(tilemap_collides(&fathom->tileMap, p))
-    return false;
   int i;
   for(i=0; i<MAX_ENTITIES; i++)
   {
@@ -156,8 +154,17 @@ bool game_pointFree(const FathomData *fathom, Point p)
       continue;
     if(e->pos.x != p.x || e->pos.y != p.y)
       continue;
-    return false;
+    return i;
   }
+  return -1;
+}
+
+bool game_pointFree(const FathomData *fathom, Point p)
+{
+  if(tilemap_collides(&fathom->tileMap, p))
+    return false;
+  if(game_pointEntityIndex(fathom, p) != -1)
+    return false;
   return true;
 }
 
@@ -562,6 +569,20 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
             break;
           }
           pos = pointAddPoint(pos, invert);
+        }
+        break;
+      }
+      case CONCH_DEATH:
+      {
+        Entity nullEntity = NULL_ENTITY;
+        if(e->o2 > 4)
+          e->o2 = e->o2/4;
+        for(i=0; i<distance; i++)
+        {          
+          int index = game_pointEntityIndex(fathom, pos);
+          if(index != -1)
+            fathom->entities[index] = nullEntity;
+          pos = pointAddPoint(pos, vector);          
         }
         break;
       }
