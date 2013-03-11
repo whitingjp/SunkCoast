@@ -29,6 +29,9 @@ Entity game_null_entity()
   out.strength = 4;
   out.name = NULL;
   out.flags = EF_SENTIENT;
+  out.lastKnownPlayerPos = nullPoint;
+  out.lastKnownPlayerPos.x = sys_randint(TILEMAP_WIDTH);
+  out.lastKnownPlayerPos.y = sys_randint(TILEMAP_HEIGHT);
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -223,12 +226,18 @@ void game_spawn(FathomData* fathom, Entity entity)
 }
 
 const FathomData* _aStarFathom;
+Point _aStarStartPoint;
+Point _aStarFinishPoint;
 
 uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
 {
   Point p = NULL_POINT;
   p.x = x;
   p.y = y;
+  if(p.x == _aStarStartPoint.x && p.y == _aStarStartPoint.y)
+    return 1;
+  if(p.x == _aStarFinishPoint.x && p.y == _aStarFinishPoint.y)
+    return 1;
   if(!game_pointFree(_aStarFathom, p))
     return COST_BLOCKED;
   else
@@ -628,6 +637,8 @@ Point _get_aiPath(const FathomData* fathom, Point start, Point end)
 {
   Point move = NULL_POINT;
   _aStarFathom = fathom;
+  _aStarStartPoint = start;
+  _aStarFinishPoint = end;
   astar_t *as = astar_new(TILEMAP_WIDTH, TILEMAP_HEIGHT, _get_map_cost, NULL);
   astar_set_origin (as, 0, 0);
   astar_set_steering_penalty (as, 0);
@@ -655,7 +666,8 @@ void _game_ai(GameData* game, Entity* e)
     int player =  _get_playerIndex(fathom);
     bool visible = tilemap_visible(&fathom->tileMap, pos);
     if(player != -1 && visible)
-      move = _get_aiPath(fathom, pos, fathom->entities[player].pos);
+      e->lastKnownPlayerPos = fathom->entities[player].pos;            
+    move = _get_aiPath(fathom, pos, e->lastKnownPlayerPos);
   }
   if(move.x == 0 && move.y == 0)
   {
