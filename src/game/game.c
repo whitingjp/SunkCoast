@@ -372,7 +372,11 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     if(newPoint.y != victim->pos.y)
       continue;
     
-    int amount = sys_randint(e->strength);
+    int strength = e->strength;
+    if(game_hasCharm(e, CHARM_BRUTE))
+      strength += 6;
+
+    int amount = sys_randint(strength);
     if((victim->flags & EF_CONTAINSO2) && amount > victim->o2)
     {
       int boost = (sys_randint(3)+sys_randint(3)+2)*10;
@@ -389,7 +393,18 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
   }
 
   if(!isWall && !isEntity)
+  {
     e->pos = newPoint;
+    if(game_hasCharm(e, CHARM_BRUTE))
+    {
+      // stomp on seaweed
+      Tile nullTile = NULL_TILE;
+      int index = tilemap_indexFromTilePosition(&fathom->tileMap, e->pos);
+
+      if(fathom->tileMap.tiles[index].type == TILE_HIDE)
+        fathom->tileMap.tiles[index] = nullTile;
+    }
+  }
 }
 
 void _do_pickup(FathomData* fathom, Entity* e)
