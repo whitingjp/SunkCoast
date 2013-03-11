@@ -493,24 +493,48 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     int distance = 3 + sys_randint(3);
     int i;
 
-    int spawnType = sys_randint(ET_MAX_ENEMY);
-    Tile nullTile = NULL_TILE;
-    for(i=0; i<distance; i++)
+    switch(item->conchSubtype)
     {
-      int index = tilemap_indexFromTilePosition(&fathom->tileMap, pos);
-      switch(item->conchSubtype)
+      case CONCH_MONSTER:
       {
-        case CONCH_MONSTER:
+        int spawnType = sys_randint(ET_MAX_ENEMY);
+        for(i=0; i<distance; i++)
+        {
           game_spawnAt(fathom, spawn_entity(spawnType), pos);
-          break;
-        case CONCH_DIG:          
+          pos = pointAddPoint(pos, vector);
+        }
+        break;
+      }
+      case CONCH_DIG:
+      {
+        Tile nullTile = NULL_TILE;
+        for(i=0; i<distance; i++)
+        {
+          int index = tilemap_indexFromTilePosition(&fathom->tileMap, pos);
           if(index != -1)
             fathom->tileMap.tiles[index] = nullTile;
-          break;
-        default:
-          break;
-      }      
-      pos = pointAddPoint(pos, vector);
+          pos = pointAddPoint(pos, vector);
+        }
+        break;
+      }
+      case CONCH_JUMP:
+      {
+        pos = pointAddPoint(pos, pointMultiply(vector, distance));
+        Point invert = pointInverse(vector);
+        for(i=distance-1; i>0; i--)
+        {          
+          if(game_pointFree(fathom, pos))
+          {
+            e->pos = pos;
+            break;
+          }
+          pos = pointAddPoint(pos, invert);
+        }
+        break;
+      }
+      default:
+        LOG("Trying to cast invalid conch");
+        break;
     }
   } else
   {
