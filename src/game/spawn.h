@@ -6,6 +6,7 @@ typedef enum
 
 
   ET_PUFFERFISH,
+  ET_HYDRA,
 
   ET_MAX_ENEMY,
   ET_SCUBA=ET_MAX_ENEMY,

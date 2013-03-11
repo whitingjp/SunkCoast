@@ -38,6 +38,14 @@ Entity spawn_entity(EntityType type)
       out.strength = 6;
       out.flags = EF_SENTIENT | EF_CONTAINSO2;
       break;
+    case ET_HYDRA:
+      out.frame = getFrameFromAscii('H', 6);
+      out.name = "hydra";
+      out.speed = 90;
+      out.o2 = 400;
+      out.strength = 8;
+      out.flags = EF_SENTIENT | EF_SPLITS;
+      break;
     case ET_SCUBA:
       out.player = true;
       out.speed = 100;
