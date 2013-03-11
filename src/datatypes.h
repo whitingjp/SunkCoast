@@ -134,6 +134,7 @@ typedef enum
   EF_O2DEPLETES = 1<<0,
   EF_SENTIENT = 1<<1,
   EF_CONTAINSO2 = 1<<2,
+  EF_SPLITS = 1<<3,
 } EntityFlag;
 
 #define MAX_INVENTORY (4)

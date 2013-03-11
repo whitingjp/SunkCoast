@@ -12,4 +12,4 @@ void game_addMessage(const FathomData* fathom, Point p, const char *str, ...);
 void game_addGlobalMessage(const char *str, ...);
 
 bool game_hasCharm(const Entity *e, CharmSubType charm);
-bool game_hasFlag(const Entity *e, EntityFlag flag);
+bool game_hurt(Entity *e, int amount);

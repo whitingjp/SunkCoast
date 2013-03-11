@@ -102,6 +102,18 @@ bool game_hasCharm(const Entity *e, CharmSubType charm)
   return false;
 }
 
+bool game_hurt(Entity *e, int amount)
+{
+  Entity nullEntity = NULL_ENTITY;
+  e->o2 -= amount;
+  if(e->o2 <= 0)
+  {
+    *e = nullEntity;
+    return true;
+  }
+  return false;
+}
+
 int _game_turnCmp(const void* a, const void* b)
 {
   Entity* eA = (Entity*)a;
@@ -326,7 +338,6 @@ void game_draw(const GameData* game, Point offset)
 
 void _do_move(FathomData* fathom, Entity* e, Point move)
 {
-  Entity nullEntity = NULL_ENTITY;
   if(game_hasCharm(e, CHARM_HASTE))
   {
     if(sys_randint(15)==0)
@@ -352,20 +363,17 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       continue;
     
     int amount = sys_randint(e->strength);
-    victim->o2 -= amount*10;
+    if((victim->flags & EF_CONTAINSO2) && amount > victim->o2)
+    {
+      int boost = (sys_randint(3)+sys_randint(3)+2)*10;
+      e->o2 = min(e->o2 + boost, e->maxo2);
+    }
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
-    if(victim->o2 <= 0)
-    {
-      if(victim->flags & EF_CONTAINSO2)
-      {
-        int boost = (sys_randint(3)+sys_randint(3)+2)*10;
-        e->o2 = min(e->o2 + boost, e->maxo2);
-      }
-      *victim = nullEntity;
-    }
+    game_hurt(victim, amount*10);
+
     isEntity = true;
     break;
   }
@@ -496,36 +504,27 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     }
   } else
   {
-    Entity nullEntity = NULL_ENTITY;
     e->mana = 0;
     if(e->player)
       game_addGlobalMessage("Not enough mana. Your mind screams.");
-    e->o2 -= 15+sys_randint(15);
-    if(e->o2 < 0)
-    {
-      game_addMessage(fathom, e->pos, "%s lost your mind", e->name);
-      *e = nullEntity;
-    }
-  }
 
-  game_addMessage(fathom, e->pos, "%s fired %s %s in %d", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type), direction);
+    Entity copy = *e;
+    if(game_hurt(e, 15+sys_randint(15)))
+      game_addMessage(fathom, copy.pos, "%s lost your mind", copy.name);
+  }
 }
 
 void _do_turn(FathomData* fathom, Entity* e)
 {
-  Entity nullEntity = NULL_ENTITY;
   if(e->flags & EF_O2DEPLETES)
   {
     e->o2timer++;
     if(e->o2timer >= 5)
     {
-      e->o2--;
+      Entity copy = *e;
+      if(game_hurt(e, 1))
+        game_addMessage(fathom, copy.pos, "%s drowned", copy.name);
       e->o2timer = 0;
-      if(e->o2 <= 0)
-      {
-        game_addMessage(fathom, e->pos, "%s drowned", e->name);
-        *e = nullEntity;
-      }
     }
   }
 
@@ -574,11 +573,15 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   currentFathom->entities[entityIndex] = nullEntity;
   int newDepth = game->current+depth;
   if(e.flags & EF_O2DEPLETES)
-    e.o2 -= 5;
-  if(e.o2 <= 0)
-    game_addGlobalMessage("%s drowned while %s", e.name, depth > 0 ? "diving" : "rising");
-  else
-    game_spawnAt(&game->fathoms[newDepth], e, e.pos);
+  {
+    Entity copy = e;
+    if(game_hurt(&e, 5))
+    {
+      game_addGlobalMessage("%s drowned while %s", copy.name, depth > 0 ? "diving" : "rising");
+      return;
+    }
+  }
+  game_spawnAt(&game->fathoms[newDepth], e, e.pos);
 
   if(e.player)
   {
@@ -679,6 +682,7 @@ bool _game_player(GameData* game, Entity* e)
     {
       game_addGlobalMessage("Nevermind.");
       midFire = false;
+      return false;
     }
   }
   if(midDrop || midUse)
@@ -693,7 +697,7 @@ bool _game_player(GameData* game, Entity* e)
           midDrop = false;
           midUse = false;
           game_addGlobalMessage("No item in slot %d. Nevermind.", i);
-          return true;
+          return false;
         }
         bool didAction = false;
         if(midDrop)
@@ -749,11 +753,13 @@ bool _game_player(GameData* game, Entity* e)
   }
   if(sys_inputPressed(INPUT_DROP))
   {
+    numMessages = 0;
     game_addGlobalMessage("Drop which item %d-%d?", 1, MAX_INVENTORY+1);
     midDrop = true;
   }
   if(sys_inputPressed(INPUT_USE))
   {
+    numMessages = 0;
     game_addGlobalMessage("Use which item %d-%d?", 1, MAX_INVENTORY+1);
     midUse = true;
   }

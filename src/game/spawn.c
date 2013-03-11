@@ -28,7 +28,7 @@ Entity spawn_entity(EntityType type)
       out.frame = getFrameFromAscii('s', 5);      
       out.name = "starfish";
       out.strength = 3;
-      out.flags = EF_SENTIENT;
+      out.flags = EF_SENTIENT | EF_SPLITS;
       break;
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
