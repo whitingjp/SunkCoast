@@ -154,6 +154,7 @@ typedef struct
   int maxMana;
   int strength;
   Point lastKnownPlayerPos;
+  bool hunting;
   const char* name;
   EntityFlag flags;
   Item inventory[MAX_INVENTORY];

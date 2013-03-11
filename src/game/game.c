@@ -30,8 +30,7 @@ Entity game_null_entity()
   out.name = NULL;
   out.flags = EF_SENTIENT;
   out.lastKnownPlayerPos = nullPoint;
-  out.lastKnownPlayerPos.x = sys_randint(TILEMAP_WIDTH);
-  out.lastKnownPlayerPos.y = sys_randint(TILEMAP_HEIGHT);
+  out.hunting = false;
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -666,8 +665,16 @@ void _game_ai(GameData* game, Entity* e)
     int player =  _get_playerIndex(fathom);
     bool visible = tilemap_visible(&fathom->tileMap, pos);
     if(player != -1 && visible)
-      e->lastKnownPlayerPos = fathom->entities[player].pos;            
-    move = _get_aiPath(fathom, pos, e->lastKnownPlayerPos);
+    {
+      e->lastKnownPlayerPos = fathom->entities[player].pos;
+      e->hunting = true;
+    }
+    if(e->hunting)
+    {
+      move = _get_aiPath(fathom, pos, e->lastKnownPlayerPos);
+      if(sys_randint(10)==0)
+        e->hunting = false;
+    }
   }
   if(move.x == 0 && move.y == 0)
   {
