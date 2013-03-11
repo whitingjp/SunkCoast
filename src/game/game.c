@@ -102,7 +102,7 @@ bool game_hasCharm(const Entity *e, CharmSubType charm)
   return false;
 }
 
-bool game_hurt(Entity *e, int amount)
+bool game_hurt(FathomData *fathom, Entity *e, int amount)
 {
   Entity nullEntity = NULL_ENTITY;
   e->o2 -= amount;
@@ -111,7 +111,34 @@ bool game_hurt(Entity *e, int amount)
     *e = nullEntity;
     return true;
   }
+  if(e->flags & EF_SPLITS && e->o2 > 5)
+  {
+    e->o2 = e->o2/2;
+    Point nearby = pointAddPoint(e->pos, directionToPoint(sys_randint(4)));
+    if(tilemap_visible(&fathom->tileMap, e->pos) && game_pointFree(fathom, nearby))
+    {
+      game_spawnAt(fathom, *e, nearby);
+      game_addMessage(fathom, nearby, "%s split", e->name);
+    }
+  }
   return false;
+}
+
+bool game_pointFree(const FathomData *fathom, Point p)
+{
+  if(tilemap_collides(&fathom->tileMap, p))
+    return false;
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    const Entity* e = &fathom->entities[i];
+    if(!e->active)
+      continue;
+    if(e->pos.x != p.x || e->pos.y != p.y)
+      continue;
+    return false;
+  }
+  return true;
 }
 
 int _game_turnCmp(const void* a, const void* b)
@@ -372,7 +399,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
-    game_hurt(victim, amount*10);
+    game_hurt(fathom, victim, amount*10);
 
     isEntity = true;
     break;
@@ -509,7 +536,7 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
       game_addGlobalMessage("Not enough mana. Your mind screams.");
 
     Entity copy = *e;
-    if(game_hurt(e, 15+sys_randint(15)))
+    if(game_hurt(fathom, e, 15+sys_randint(15)))
       game_addMessage(fathom, copy.pos, "%s lost your mind", copy.name);
   }
 }
@@ -522,7 +549,7 @@ void _do_turn(FathomData* fathom, Entity* e)
     if(e->o2timer >= 5)
     {
       Entity copy = *e;
-      if(game_hurt(e, 1))
+      if(game_hurt(fathom, e, 1))
         game_addMessage(fathom, copy.pos, "%s drowned", copy.name);
       e->o2timer = 0;
     }
@@ -575,7 +602,7 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   if(e.flags & EF_O2DEPLETES)
   {
     Entity copy = e;
-    if(game_hurt(&e, 5))
+    if(game_hurt(currentFathom, &e, 5))
     {
       game_addGlobalMessage("%s drowned while %s", copy.name, depth > 0 ? "diving" : "rising");
       return;
