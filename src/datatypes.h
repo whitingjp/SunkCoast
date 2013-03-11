@@ -106,6 +106,7 @@ typedef enum
   CHARM_HASTE,
   CHARM_DARKNESS,
   CHARM_BRUTE,
+  CHARM_RESURRECT,
   CHARM_MAX,
 } CharmSubType;
 

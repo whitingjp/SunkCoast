@@ -110,6 +110,24 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
   e->o2 -= amount;
   if(e->o2 <= 0)
   {
+    if(game_hasCharm(e, CHARM_RESURRECT))
+    {
+      e->o2 = e->maxo2-10;
+      int i;
+      Item nullItem = NULL_ITEM;
+      for(i=0; i<MAX_INVENTORY; i++)
+      {
+        if(e->inventory[i].type != IT_CHARM)
+          continue;
+        if(e->inventory[i].charmSubtype != CHARM_RESURRECT)
+          continue;
+        if(!e->inventory[i].worn)
+          continue;
+        e->inventory[i] = nullItem;
+      }
+      game_addMessage(fathom, e->pos, "%s come back to life", e->name);
+      return false;
+    }
     *e = nullEntity;
     return true;
   }
@@ -374,7 +392,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     
     int strength = e->strength;
     if(game_hasCharm(e, CHARM_BRUTE))
-      strength += 6;
+      strength += 6;    
 
     int amount = sys_randint(strength);
     if((victim->flags & EF_CONTAINSO2) && amount > victim->o2)
