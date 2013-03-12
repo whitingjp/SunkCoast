@@ -64,17 +64,21 @@ void game_reset_gamedata(GameData* game)
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
   {
+    int j;
     game->fathoms[i] = game_null_fathomdata();
-    int threat = 5+i*5;
+    int threat = 5+i*3;
     while(threat > 0)
     {
-      int type = sys_randint(ET_MAX_ENEMY)+sys_randint(i/2);
-      if(type >= ET_MAX_ENEMY)
-        type = ET_MAX_ENEMY-1;
+      int type = ET_MAX_ENEMY;
+      while(type >= ET_MAX_ENEMY)
+      {
+        type = 0;
+        for(j=0; j<i/2+1; j++)
+          type += sys_randint(3);
+      }
       game_spawn(&game->fathoms[i], spawn_entity(type));
       threat -= type+1;
-    }
-    int j;
+    }    
     for(j=0; j<(MAX_FATHOMS-i)/4; j++)
       game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
     int numSpawns;
