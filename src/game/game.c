@@ -300,7 +300,7 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   sys_drawString(strengthPos, string, TILEMAP_WIDTH, 2);
 
   Point fathomPos = offset;
-  fathomPos.x = TILEMAP_WIDTH-11;
+  fathomPos.x = TILEMAP_WIDTH-12;
   fathomPos.y++;
   snprintf(string, TILEMAP_WIDTH, "fathoms: %d", (game->current+1)*10);
   sys_drawString(fathomPos, string, TILEMAP_WIDTH, 2);
