@@ -114,9 +114,6 @@ void sys_drawInit(Color col)
   _drawRect.a.y = (_windowSize.y-drawRectSize.y)/2;
   _drawRect.b.x = _drawRect.a.x+drawRectSize.x;
   _drawRect.b.y = _drawRect.a.y+drawRectSize.y;
-  
-  if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-    _shouldClose = true;
 }
 
 Point _sys_worldPointToScreenPoint(Point p)
