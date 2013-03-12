@@ -21,7 +21,7 @@ Entity spawn_entity(EntityType type)
       out.name = "whitebait";
       out.o2 = 40;
       out.strength = 2;
-      out.flags = EF_SENTIENT;
+      out.flags = EF_SENTIENT | EF_SCARES;
       break;
     case ET_TURTLE:
       out.speed = 300;
@@ -45,7 +45,7 @@ Entity spawn_entity(EntityType type)
       out.name = "sea monkey";
       out.strength = 2;
       out.o2 = 60;
-      out.flags = EF_SENTIENT | EF_STEALS;
+      out.flags = EF_SENTIENT | EF_STEALS | EF_SCARES;
       break;   
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);

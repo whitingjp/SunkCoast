@@ -118,6 +118,8 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
 {
   Entity nullEntity = NULL_ENTITY;
   e->o2 -= amount;
+  if(amount > 0 && e->flags & EF_SCARES)
+    e->scared = true;
   if(e->o2 <= 0)
   {
     int i;
@@ -442,6 +444,8 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     }
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
+    else if (amount*10 > victim->o2)
+      game_addMessage(fathom, newPoint, "%s killed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
     game_hurt(fathom, victim, amount*10);

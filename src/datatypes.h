@@ -140,6 +140,7 @@ typedef enum
   EF_CONTAINSO2 = 1<<2,
   EF_SPLITS = 1<<3,
   EF_STEALS = 1<<4,
+  EF_SCARES = 1<<5,
 } EntityFlag;
 
 #define MAX_INVENTORY (4)
