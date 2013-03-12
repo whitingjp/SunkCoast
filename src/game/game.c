@@ -724,7 +724,7 @@ void _game_dive(GameData* game, int entityIndex, int depth)
   if(e.flags & EF_O2DEPLETES)
   {
     Entity copy = e;
-    if(game_hurt(currentFathom, &e, 5))
+    if(game_hurt(currentFathom, &e, 10))
     {
       game_addGlobalMessage("%s drowned while %s", copy.name, depth > 0 ? "diving" : "rising");
       return;

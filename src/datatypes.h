@@ -179,7 +179,7 @@ typedef struct
 } FathomData;
 #define NULL_FATHOMDATA (game_null_fathomdata());
 
-#define MAX_FATHOMS (32)
+#define MAX_FATHOMS (20)
 typedef struct
 {
   int current;
