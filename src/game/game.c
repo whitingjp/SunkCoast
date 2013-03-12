@@ -24,8 +24,6 @@ Entity game_null_entity()
   out.o2 = 100;
   out.maxo2 = 100;
   out.o2timer = 0;
-  out.mana = 50;
-  out.maxMana = 100;
   out.strength = 4;
   out.name = NULL;
   out.flags = EF_SENTIENT;
@@ -286,14 +284,6 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   snprintf(string, TILEMAP_WIDTH, "   O2: %3d/%3d", e.o2, e.maxo2);
   sys_drawString(offset, string, TILEMAP_WIDTH, o2col);
 
-  Point manaPos = offset;
-  manaPos.y++;
-  int manacol = 2;
-  if(e.mana < e.maxMana/4)
-    manacol = 6;
-  snprintf(string, TILEMAP_WIDTH, " mana: %3d/%3d", e.mana, e.maxMana);
-  sys_drawString(manaPos, string, TILEMAP_WIDTH, manacol);
-
   Point strengthPos = offset;
   strengthPos.x += 16;
   snprintf(string, TILEMAP_WIDTH, "str: %d", e.strength);
@@ -532,82 +522,74 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
 void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
 {
   Item* item = &e->inventory[index];
-  int manaCost = 30;
-  manaCost += sys_randint(10)-5;
-  if(e->mana > manaCost)
-  {
-    Point vector = directionToPoint(direction);
-    Point pos = pointAddPoint(e->pos, vector);
-    e->mana -= manaCost;
-    int distance = 3 + sys_randint(3);
-    int i;
+  Point vector = directionToPoint(direction);
+  Point pos = pointAddPoint(e->pos, vector);
+  int distance = 3 + sys_randint(3);
+  int i;
 
-    switch(item->conchSubtype)
+  switch(item->conchSubtype)
+  {
+    case CONCH_MONSTER:
     {
-      case CONCH_MONSTER:
+      int spawnType = sys_randint(ET_MAX_ENEMY);
+      for(i=0; i<distance; i++)
       {
-        int spawnType = sys_randint(ET_MAX_ENEMY);
-        for(i=0; i<distance; i++)
-        {
-          game_spawnAt(fathom, spawn_entity(spawnType), pos);
-          pos = pointAddPoint(pos, vector);
-        }
-        break;
+        game_spawnAt(fathom, spawn_entity(spawnType), pos);
+        pos = pointAddPoint(pos, vector);
       }
-      case CONCH_DIG:
-      {
-        Tile nullTile = NULL_TILE;
-        for(i=0; i<distance; i++)
-        {
-          int index = tilemap_indexFromTilePosition(&fathom->tileMap, pos);
-          if(index != -1)
-            fathom->tileMap.tiles[index] = nullTile;
-          pos = pointAddPoint(pos, vector);
-        }
-        break;
-      }
-      case CONCH_JUMP:
-      {
-        pos = pointAddPoint(pos, pointMultiply(vector, distance));
-        Point invert = pointInverse(vector);
-        for(i=distance-1; i>0; i--)
-        {          
-          if(game_pointFree(fathom, pos))
-          {
-            e->pos = pos;
-            break;
-          }
-          pos = pointAddPoint(pos, invert);
-        }
-        break;
-      }
-      case CONCH_DEATH:
-      {
-        Entity nullEntity = NULL_ENTITY;
-        if(e->o2 > 4)
-          e->o2 = e->o2/4;
-        for(i=0; i<distance; i++)
-        {          
-          int index = game_pointEntityIndex(fathom, pos);
-          if(index != -1)
-            fathom->entities[index] = nullEntity;
-          pos = pointAddPoint(pos, vector);          
-        }
-        break;
-      }
-      default:
-        LOG("Trying to cast invalid conch");
-        break;
+      break;
     }
-  } else
+    case CONCH_DIG:
+    {
+      Tile nullTile = NULL_TILE;
+      for(i=0; i<distance; i++)
+      {
+        int index = tilemap_indexFromTilePosition(&fathom->tileMap, pos);
+        if(index != -1)
+          fathom->tileMap.tiles[index] = nullTile;
+        pos = pointAddPoint(pos, vector);
+      }
+      break;
+    }
+    case CONCH_JUMP:
+    {
+      pos = pointAddPoint(pos, pointMultiply(vector, distance));
+      Point invert = pointInverse(vector);
+      for(i=distance-1; i>0; i--)
+      {          
+        if(game_pointFree(fathom, pos))
+        {
+          e->pos = pos;
+          break;
+        }
+        pos = pointAddPoint(pos, invert);
+      }
+      break;
+    }
+    case CONCH_DEATH:
+    {
+      Entity nullEntity = NULL_ENTITY;
+      if(e->o2 > 4)
+        e->o2 = e->o2/4;
+      for(i=0; i<distance; i++)
+      {          
+        int index = game_pointEntityIndex(fathom, pos);
+        if(index != -1)
+          fathom->entities[index] = nullEntity;
+        pos = pointAddPoint(pos, vector);          
+      }
+      break;
+    }
+    default:
+      LOG("Trying to cast invalid conch");
+      break;
+  }
+  game_addMessage(fathom, e->pos, "%d fires %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  if(sys_randint(5)==0)
   {
-    e->mana = 0;
-    if(e->player)
-      game_addGlobalMessage("Not enough mana. Your mind screams.");
-
-    Entity copy = *e;
-    if(game_hurt(fathom, e, 15+sys_randint(15)))
-      game_addMessage(fathom, copy.pos, "%s lost your mind", copy.name);
+    Item nullItem = NULL_ITEM;
+    game_addMessage(fathom, e->pos, "the %s %s falls apart", item_subtypeDescription(item->subtype), item_typeName(item->type));
+    *item = nullItem;
   }
 }
 
@@ -624,11 +606,6 @@ void _do_turn(FathomData* fathom, Entity* e)
       e->o2timer = 0;
     }
   }
-
-  if(sys_randint(10) == 0)
-    e->mana += sys_randint(e->maxMana)/30;
-  if(e->mana > e->maxMana)
-    e->mana = e->maxMana;
 
   if(e->player)
   {
