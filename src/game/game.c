@@ -557,13 +557,16 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
   return false;
 }
 
-void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
+void _do_fire(GameData* game, Entity* e, int index, Direction direction)
 {
+  FathomData* fathom = &game->fathoms[game->current];
   Item* item = &e->inventory[index];
   Point vector = directionToPoint(direction);
   Point pos = pointAddPoint(e->pos, vector);
   int distance = 3 + sys_randint(3);
   int i;
+
+  Entity nullEntity = NULL_ENTITY;
 
   switch(item->conchSubtype)
   {
@@ -606,15 +609,43 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
     }
     case CONCH_DEATH:
     {
-      Entity nullEntity = NULL_ENTITY;
       if(e->o2 > 4)
         e->o2 = e->o2/4;
       for(i=0; i<distance; i++)
-      {          
+      {
         int index = game_pointEntityIndex(fathom, pos);
         if(index != -1)
           fathom->entities[index] = nullEntity;
         pos = pointAddPoint(pos, vector);          
+      }
+      break;
+    }
+    case CONCH_POLYMORPH:
+    {
+      for(i=0; i<distance; i++)
+      {
+        int index = game_pointEntityIndex(fathom, pos);
+        if(index != -1)
+        {
+          bool player = fathom->entities[index].player;
+          fathom->entities[index] = nullEntity;
+          Entity e = spawn_entity(sys_randint(ET_MAX_ENEMY));
+          e.player = player;
+          game_spawnAt(fathom, e, pos);
+        }
+        int j;
+        for(j=0; j<MAX_ITEMS; j++)
+        {
+          Item* item = &fathom->items[j];
+          if(!item->active)
+            continue;
+          if(pos.x != item->pos.x || pos.y != item->pos.y)
+            continue;
+          *item = spawn_item(game, item->type);
+          item->pos = pos;
+          item->active = true;
+        }
+        pos = pointAddPoint(pos, vector);
       }
       break;
     }
@@ -806,7 +837,7 @@ bool _game_player(GameData* game, Entity* e)
       if(sys_inputPressed(INPUT_UP+i))
       {
         midFire = false;
-        _do_fire(fathom, e, fireIndex, i);
+        _do_fire(game, e, fireIndex, i);
         return true;
       }      
     }

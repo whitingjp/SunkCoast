@@ -112,6 +112,8 @@ typedef enum
 
 typedef enum
 {
+
+  CONCH_POLYMORPH,
   CONCH_MONSTER,
   CONCH_DIG,
   CONCH_JUMP, 
