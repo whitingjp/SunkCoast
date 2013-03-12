@@ -166,10 +166,12 @@ typedef struct
   const char* name;
   EntityFlag flags;
   Item inventory[MAX_INVENTORY];
+  int xp;
+  int level;
 } Entity;
 #define NULL_ENTITY (game_null_entity());
 
-#define MAX_ITEMS (64)
+#define MAX_ITEMS (32)
 #define MAX_ENTITIES (128)
 typedef struct
 {

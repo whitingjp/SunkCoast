@@ -14,6 +14,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 1;
       out.strength = 1;
       out.flags = EF_CONTAINSO2;
+      out.xp = 0;
       break;
     case ET_WHITEBAIT:
       out.speed = 90;
@@ -22,6 +23,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 40;
       out.strength = 2;
       out.flags = EF_SENTIENT | EF_SCARES;
+      out.xp = 1;
       break;
     case ET_TURTLE:
       out.speed = 300;
@@ -30,6 +32,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 100;
       out.strength = 4;
       out.flags = EF_SENTIENT;
+      out.xp = 2;
       break;
     case ET_STARFISH:
       out.speed = 140;
@@ -38,6 +41,7 @@ Entity spawn_entity(EntityType type)
       out.strength = 3;
       out.o2 = 50;
       out.flags = EF_SENTIENT | EF_SPLITS;
+      out.xp = 1;
       break;
     case ET_SEAMONKEY:
       out.speed = 110;
@@ -46,6 +50,7 @@ Entity spawn_entity(EntityType type)
       out.strength = 2;
       out.o2 = 60;
       out.flags = EF_SENTIENT | EF_STEALS | EF_SCARES;
+      out.xp = 3;
       break;   
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
@@ -54,6 +59,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 150;
       out.strength = 6;
       out.flags = EF_SENTIENT | EF_CONTAINSO2;
+      out.xp = 4;
       break;
     case ET_HYDRA:
       out.frame = getFrameFromAscii('H', 6);
@@ -62,6 +68,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 400;
       out.strength = 8;
       out.flags = EF_SENTIENT | EF_SPLITS;
+      out.xp = 5;
       break;
     case ET_SCUBA:
       out.player = true;
@@ -70,6 +77,7 @@ Entity spawn_entity(EntityType type)
       out.name = "you";
       out.strength = 4;
       out.flags = EF_O2DEPLETES;
+      out.xp = 0;
       break;
   }
   return out;

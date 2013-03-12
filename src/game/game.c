@@ -30,6 +30,8 @@ Entity game_null_entity()
   out.lastKnownPlayerPos = nullPoint;
   out.hunting = false;
   out.scared = false;
+  out.xp = 1;
+  out.level = 0;
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -294,11 +296,16 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
   int o2col = 2;
   if(e.o2 < e.maxo2/4)
     o2col = 6;
-  snprintf(string, TILEMAP_WIDTH, "   O2: %3d/%3d", e.o2, e.maxo2);
+  snprintf(string, TILEMAP_WIDTH, "  O2: %3d/%3d", e.o2, e.maxo2);
   sys_drawString(offset, string, TILEMAP_WIDTH, o2col);
 
+  Point xpPos = offset;
+  xpPos.y += 1;
+  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d", e.level+1, e.xp);
+  sys_drawString(xpPos, string, TILEMAP_WIDTH, 2);
+
   Point strengthPos = offset;
-  strengthPos.x += 16;
+  strengthPos.x += 14;
   snprintf(string, TILEMAP_WIDTH, "str: %d", e.strength);
   sys_drawString(strengthPos, string, TILEMAP_WIDTH, 2);
 
@@ -437,10 +444,14 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       }      
     }
 
-    if((victim->flags & EF_CONTAINSO2) && amount*10 > victim->o2)
+    if(amount*10 > victim->o2)
     {
-      int boost = (sys_randint(5)+4)*5;
-      e->o2 = min(e->o2 + boost, e->maxo2);
+      e->xp += victim->xp;
+      if(victim->flags & EF_CONTAINSO2)
+      {
+        int boost = (sys_randint(5)+4)*5;
+        e->o2 = min(e->o2 + boost, e->maxo2);
+      }
     }
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
