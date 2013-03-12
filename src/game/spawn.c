@@ -36,8 +36,17 @@ Entity spawn_entity(EntityType type)
       out.frame = getFrameFromAscii('s', 5);      
       out.name = "starfish";
       out.strength = 3;
+      out.o2 = 50;
       out.flags = EF_SENTIENT | EF_SPLITS;
       break;
+    case ET_SEAMONKEY:
+      out.speed = 110;
+      out.frame = getFrameFromAscii('m', 4);
+      out.name = "sea monkey";
+      out.strength = 2;
+      out.o2 = 60;
+      out.flags = EF_SENTIENT | EF_STEALS;
+      break;   
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
       out.name = "pufferfish";

@@ -139,6 +139,7 @@ typedef enum
   EF_SENTIENT = 1<<1,
   EF_CONTAINSO2 = 1<<2,
   EF_SPLITS = 1<<3,
+  EF_STEALS = 1<<4,
 } EntityFlag;
 
 #define MAX_INVENTORY (4)
@@ -154,8 +155,6 @@ typedef struct
   int o2;
   int maxo2;
   int o2timer;
-  int mana;
-  int maxMana;
   int strength;
   Point lastKnownPlayerPos;
   bool hunting;

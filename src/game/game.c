@@ -80,10 +80,10 @@ void game_reset_gamedata(GameData* game)
     for(j=0; j<(MAX_FATHOMS-i)/4; j++)
       game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
     int numSpawns;
-    numSpawns = sys_randint(3);
+    numSpawns = sys_randint(3)+5;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
-    numSpawns = sys_randint(2);
+    numSpawns = sys_randint(2)+5;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
   }
@@ -94,6 +94,8 @@ void game_reset_gamedata(GameData* game)
   game_addGlobalMessage("Welcome to Sunk Coast.");
   midDrop = false;
 }
+
+bool _do_drop(FathomData* fathom, Entity* e, int index);
 
 bool game_hasCharm(const Entity *e, CharmSubType charm)
 {
@@ -117,13 +119,15 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
   e->o2 -= amount;
   if(e->o2 <= 0)
   {
+    int i;
     if(game_hasCharm(e, CHARM_RESURRECT))
     {
-      e->o2 = e->maxo2-10;
-      int i;
+      e->o2 = e->maxo2-10;      
       Item nullItem = NULL_ITEM;
       for(i=0; i<MAX_INVENTORY; i++)
       {
+        if(!e->inventory[i].active)
+          continue;
         if(e->inventory[i].type != IT_CHARM)
           continue;
         if(e->inventory[i].charmSubtype != CHARM_RESURRECT)
@@ -134,6 +138,12 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
       }
       game_addMessage(fathom, e->pos, "%s come back to life", e->name);
       return false;
+    }
+    for(i=0; i<MAX_INVENTORY; i++)
+    {
+      if(!e->inventory[i].active)
+        continue;
+      _do_drop(fathom, e, i);
     }
     *e = nullEntity;
     return true;
@@ -401,6 +411,28 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       strength += 6;    
 
     int amount = sys_randint(strength);
+    if(amount > 0 && e->flags & EF_STEALS)
+    {
+      int space = -1;
+      int j;
+      for(j=0; j<MAX_INVENTORY; j++)
+      {
+        if(!e->inventory[j].active)
+          space = j;
+      }
+      int slot = sys_randint(MAX_INVENTORY);
+      if(victim->inventory[slot].active && space != -1)
+      {
+        e->inventory[space] = victim->inventory[slot];
+        e->inventory[space].worn = false;
+        Item nullItem = NULL_ITEM;
+        victim->inventory[slot] = nullItem;
+        amount = 0;
+        game_addMessage(fathom, newPoint, "%s stole %s %s from %s", e->name, item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), victim->name);
+        return;
+      }      
+    }
+
     if((victim->flags & EF_CONTAINSO2) && amount*10 > victim->o2)
     {
       int boost = (sys_randint(5)+4)*5;
