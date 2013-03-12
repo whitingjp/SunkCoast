@@ -54,38 +54,43 @@ FathomData game_null_fathomdata()
   return out;
 }
 
-GameData game_null_gamedata()
+void game_reset_gamedata(GameData* game)
 {
-  GameData out;
-  out.current = 0;
+  game->current = 0;
 
-  item_shuffleTypes((int*)out.charmTypes, CHARM_MAX);
-  item_shuffleTypes((int*)out.conchTypes, CONCH_MAX);
+  item_shuffleTypes((int*)game->charmTypes, CHARM_MAX);
+  item_shuffleTypes((int*)game->conchTypes, CONCH_MAX);
 
   int i;
   for(i=0; i<MAX_FATHOMS; i++)
   {
-    out.fathoms[i] = game_null_fathomdata();
-    int threat = 10+i*5;
+    game->fathoms[i] = game_null_fathomdata();
+    int threat = 5+i*5;
     while(threat > 0)
     {
       int type = sys_randint(ET_MAX_ENEMY)+sys_randint(i/2);
       if(type >= ET_MAX_ENEMY)
         type = ET_MAX_ENEMY-1;
-      game_spawn(&out.fathoms[i], spawn_entity(type));
+      game_spawn(&game->fathoms[i], spawn_entity(type));
       threat -= type+1;
     }
-    game_place(&out.fathoms[i], spawn_item(&out, IT_CONCH));
-    game_place(&out.fathoms[i], spawn_item(&out, IT_CHARM));
+    int j;
+    for(j=0; j<(MAX_FATHOMS-i)/4; j++)
+      game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
+    int numSpawns;
+    numSpawns = sys_randint(3);
+    for(j=0; j<numSpawns; j++)
+      game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
+    numSpawns = sys_randint(3);
+    for(j=0; j<numSpawns; j++)
+      game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
   }
-  game_spawn(&out.fathoms[0], spawn_entity(ET_SCUBA));    
+  game_spawn(&game->fathoms[0], spawn_entity(ET_SCUBA));    
 
   // this isn't quite the right place for this stuff anymore
   numMessages = 0;
   game_addGlobalMessage("Welcome to Sunk Coast.");
   midDrop = false;
-
-  return out;
 }
 
 bool game_hasCharm(const Entity *e, CharmSubType charm)

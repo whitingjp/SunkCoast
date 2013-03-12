@@ -1,6 +1,6 @@
 Entity game_null_entity();
 FathomData game_null_fathomdata();
-GameData game_null_gamedata();
+void game_reset_gamedata(GameData *game);
 
 void game_draw(const GameData* game, Point offset);
 bool game_update(GameData* game);

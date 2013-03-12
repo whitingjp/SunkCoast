@@ -52,7 +52,7 @@ int main()
   
   _resolution.x = TILEMAP_WIDTH*8;
   _resolution.y = (TILEMAP_HEIGHT+3)*15;
-  sys_init(_resolution, 4);
+  sys_init(_resolution, 2);
   
   for(i=0; i<IMAGE_MAX; i++)
   {
@@ -67,7 +67,7 @@ int main()
     }
   }
 
-  game = NULL_GAMEDATA;
+  game_reset_gamedata(&game);
   LOG("Sizeof GameData %dkb.", sizeof(GameData)/1024);
   
   LOG("Main loop.");  

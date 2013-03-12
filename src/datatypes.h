@@ -183,7 +183,6 @@ typedef struct
   ItemSubtype charmTypes[IST_MAX];
   ItemSubtype conchTypes[IST_MAX];
 } GameData;
-#define NULL_GAMEDATA (game_null_gamedata());
 
 int min(int a, int b);
 int max(int a, int b);
