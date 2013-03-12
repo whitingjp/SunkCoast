@@ -23,6 +23,14 @@ Entity spawn_entity(EntityType type)
       out.strength = 2;
       out.flags = EF_SENTIENT;
       break;
+    case ET_TURTLE:
+      out.speed = 300;
+      out.frame = getFrameFromAscii('t', 3);
+      out.name = "turtle";
+      out.o2 = 100;
+      out.strength = 4;
+      out.flags = EF_SENTIENT;
+      break;
     case ET_STARFISH:
       out.speed = 140;
       out.frame = getFrameFromAscii('s', 5);      

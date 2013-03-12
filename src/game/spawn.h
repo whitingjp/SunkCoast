@@ -1,6 +1,7 @@
 typedef enum
 {
   ET_WHITEBAIT,
+  ET_TURTLE,
   ET_STARFISH,
 
   ET_PUFFERFISH,
