@@ -107,7 +107,8 @@ typedef enum
   CHARM_DARKNESS,
   CHARM_BRUTE,
   CHARM_RESURRECT,
-  CHARM_MAX,
+  CHARM_WATERBREATH,
+  CHARM_MAX,  
 } CharmSubType;
 
 typedef enum

@@ -664,7 +664,10 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
 
 void _do_turn(FathomData* fathom, Entity* e)
 {
-  if(e->flags & EF_O2DEPLETES)
+  bool waterBreath = game_hasCharm(e, CHARM_WATERBREATH);
+  if(waterBreath && e->o2 > e->maxo2/4)
+    e->o2 = e->maxo2/4;
+  if(e->flags & EF_O2DEPLETES && !waterBreath)
   {
     e->o2timer++;
     if(e->o2timer >= 5)
