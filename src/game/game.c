@@ -83,7 +83,7 @@ void game_reset_gamedata(GameData* game)
     numSpawns = sys_randint(3);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
-    numSpawns = sys_randint(3);
+    numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
   }
@@ -584,7 +584,7 @@ void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
       LOG("Trying to cast invalid conch");
       break;
   }
-  game_addMessage(fathom, e->pos, "%d fires %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  game_addMessage(fathom, e->pos, "%s fires %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
   if(sys_randint(5)==0)
   {
     Item nullItem = NULL_ITEM;
