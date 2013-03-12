@@ -158,6 +158,7 @@ typedef struct
   int strength;
   Point lastKnownPlayerPos;
   bool hunting;
+  bool scared;
   const char* name;
   EntityFlag flags;
   Item inventory[MAX_INVENTORY];

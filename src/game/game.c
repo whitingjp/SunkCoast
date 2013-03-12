@@ -29,6 +29,7 @@ Entity game_null_entity()
   out.flags = EF_SENTIENT;
   out.lastKnownPlayerPos = nullPoint;
   out.hunting = false;
+  out.scared = false;
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -80,10 +81,10 @@ void game_reset_gamedata(GameData* game)
     for(j=0; j<(MAX_FATHOMS-i)/4; j++)
       game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
     int numSpawns;
-    numSpawns = sys_randint(3)+5;
+    numSpawns = sys_randint(3);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
-    numSpawns = sys_randint(2)+5;
+    numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
   }
@@ -429,6 +430,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
         victim->inventory[slot] = nullItem;
         amount = 0;
         game_addMessage(fathom, newPoint, "%s stole %s %s from %s", e->name, item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), victim->name);
+        e->scared = true;
         return;
       }      
     }
@@ -755,7 +757,8 @@ void _game_ai(GameData* game, Entity* e)
 {
   FathomData* fathom = &game->fathoms[game->current];
   Point pos = e->pos;
-  Point move = NULL_POINT;
+  Point nullPoint = NULL_POINT;
+  Point move = nullPoint;
   if(e->flags & EF_SENTIENT)
   {
     int player =  _get_playerIndex(fathom);
@@ -765,11 +768,19 @@ void _game_ai(GameData* game, Entity* e)
       e->lastKnownPlayerPos = fathom->entities[player].pos;
       e->hunting = true;
     }
-    if(e->hunting)
+    if(e->hunting || e->scared)
     {
       move = _get_aiPath(fathom, pos, e->lastKnownPlayerPos);
+      if(e->scared)
+      {
+        move = pointInverse(move);
+        if(sys_randint(3)==0)
+          move = nullPoint;
+      }
       if(sys_randint(10)==0)
         e->hunting = false;
+      if(sys_randint(30)==0)
+        e->scared = false;
     }
   }
   if(move.x == 0 && move.y == 0)
