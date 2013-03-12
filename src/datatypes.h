@@ -112,14 +112,14 @@ typedef enum
 } CharmSubType;
 
 typedef enum
-{
-
-  CONCH_POLYMORPH,
-  CONCH_MONSTER,
+{  
+  CONCH_BUBBLE,
   CONCH_DIG,
   CONCH_JUMP, 
   CONCH_DEATH,
+  CONCH_POLYMORPH,
   CONCH_MAX,
+  
 } ConchSubType;
 
 typedef struct

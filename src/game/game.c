@@ -570,12 +570,15 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
 
   switch(item->conchSubtype)
   {
-    case CONCH_MONSTER:
+    case CONCH_BUBBLE:
     {
       int spawnType = sys_randint(ET_MAX_ENEMY);
       for(i=0; i<distance; i++)
       {
-        game_spawnAt(fathom, spawn_entity(spawnType), pos);
+        if(sys_randint(4)==0)
+          game_spawnAt(fathom, spawn_entity(spawnType), pos);
+        else
+          game_spawnAt(fathom, spawn_entity(ET_BUBBLE), pos);
         pos = pointAddPoint(pos, vector);
       }
       break;
