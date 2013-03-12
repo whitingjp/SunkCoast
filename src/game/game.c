@@ -532,8 +532,8 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
 void _do_fire(FathomData* fathom, Entity* e, int index, Direction direction)
 {
   Item* item = &e->inventory[index];
-  int manaCost = 20;
-  manaCost += sys_randint(manaCost/2);
+  int manaCost = 30;
+  manaCost += sys_randint(10)-5;
   if(e->mana > manaCost)
   {
     Point vector = directionToPoint(direction);
@@ -625,8 +625,8 @@ void _do_turn(FathomData* fathom, Entity* e)
     }
   }
 
-  if(sys_randint(4) == 0)
-    e->mana += sys_randint(e->maxMana)/10;
+  if(sys_randint(10) == 0)
+    e->mana += sys_randint(e->maxMana)/30;
   if(e->mana > e->maxMana)
     e->mana = e->maxMana;
 
