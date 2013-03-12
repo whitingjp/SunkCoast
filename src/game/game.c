@@ -849,7 +849,8 @@ bool _game_player(GameData* game, Entity* e)
     }
     return false;
   }
-
+  if(sys_inputPressed(INPUT_ESC))
+    numMessages = 0;
   Point move = NULL_POINT;
   if(sys_inputPressed(INPUT_UP))
     move.y--;

@@ -321,6 +321,7 @@ void sys_update()
   _heldInputs[INPUT_PICKUP] = _sys_pressed('P');
   _heldInputs[INPUT_DROP] = _sys_pressed('O');
   _heldInputs[INPUT_USE] = _sys_pressed('U');
+  _heldInputs[INPUT_ESC] = _sys_pressed(GLFW_KEY_ESC);
 
   for(i=0; i<10; i++)
     _heldInputs[INPUT_0 + i] = glfwGetKey('0'+i) == GLFW_PRESS;
