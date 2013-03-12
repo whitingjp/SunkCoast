@@ -411,9 +411,9 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       strength += 6;    
 
     int amount = sys_randint(strength);
-    if((victim->flags & EF_CONTAINSO2) && amount > victim->o2)
+    if((victim->flags & EF_CONTAINSO2) && amount*10 > victim->o2)
     {
-      int boost = (sys_randint(3)+sys_randint(3)+2)*10;
+      int boost = (sys_randint(5)+4)*5;
       e->o2 = min(e->o2 + boost, e->maxo2);
     }
     if(amount == 0)
