@@ -290,6 +290,11 @@ uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
     return 1;
 }
 
+int _game_nextLevel(int level)
+{
+  return 1 << (level+3);
+}
+
 void _draw_hud(const GameData* game, Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
@@ -301,7 +306,7 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
 
   Point xpPos = offset;
   xpPos.y += 1;
-  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d", e.level+1, e.xp);
+  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d/%d", e.level+1, e.xp, _game_nextLevel(e.level));
   sys_drawString(xpPos, string, TILEMAP_WIDTH, 2);
 
   Point strengthPos = offset;
@@ -444,21 +449,31 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       }      
     }
 
-    if(amount*10 > victim->o2)
-    {
-      e->xp += victim->xp;
-      if(victim->flags & EF_CONTAINSO2)
-      {
-        int boost = (sys_randint(5)+4)*5;
-        e->o2 = min(e->o2 + boost, e->maxo2);
-      }
-    }
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
     else if (amount*10 > victim->o2)
       game_addMessage(fathom, newPoint, "%s killed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
+
+    if(amount*10 > victim->o2)
+    {
+      e->xp += victim->xp;
+      if(e->xp >= _game_nextLevel(e->level))
+      {
+        e->level++;
+        e->maxo2 += 10;
+        e->o2 += 10;
+        e->strength += 1;
+        game_addMessage(fathom, e->pos, "%s leveled up", e->name);
+      }
+      if(victim->flags & EF_CONTAINSO2)
+      {
+        int boost = (sys_randint(5)+4)*5;
+        e->o2 = min(e->o2 + boost, e->maxo2);
+      }
+    }
+
     game_hurt(fathom, victim, amount*10);
 
     isEntity = true;
