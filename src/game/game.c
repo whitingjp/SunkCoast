@@ -451,12 +451,12 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
 
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
-    else if (amount*10 > victim->o2)
+    else if (amount*10 >= victim->o2)
       game_addMessage(fathom, newPoint, "%s killed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
 
-    if(amount*10 > victim->o2)
+    if(amount*10 >= victim->o2)
     {
       e->xp += victim->xp;
       if(e->xp >= _game_nextLevel(e->level))
