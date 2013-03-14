@@ -472,13 +472,19 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       }      
     }
 
+    int damage = amount*10;
     bool killed = amount*10 >= victim->o2;
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
     else if (killed)
       game_addMessage(fathom, newPoint, "%s killed %s", e->name, victim->name);
     else
-      game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
+    {
+      if(victim->player)
+        game_addMessage(fathom, newPoint, "%s hit %s for %d damage", e->name, victim->name, damage);
+      else
+        game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
+    }
 
     if(amount > 2 && victim->flags & EF_INKY && !killed)
     {
@@ -501,8 +507,9 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       if(victim->flags & EF_CONTAINSO2 && e->flags & EF_O2DEPLETES)
       {
         int boost = (sys_randint(5)+4)*5;
-        e->o2 = min(e->o2 + boost, e->maxo2);
-        game_addMessage(fathom, e->pos, "%s sucked down %d o2", e->name, boost);
+        int newo2 = min(e->o2 + boost, e->maxo2);
+        game_addMessage(fathom, e->pos, "%s sucked down %d o2", e->name, newo2 - e->o2);
+        e->o2 = newo2;
       }
     }
 
