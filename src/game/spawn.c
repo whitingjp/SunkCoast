@@ -51,7 +51,16 @@ Entity spawn_entity(EntityType type)
       out.o2 = 60;
       out.flags = EF_SENTIENT | EF_STEALS | EF_SCARES;
       out.xp = 3;
-      break;   
+      break;
+    case ET_CUTTLEFISH:
+      out.speed = 130;
+      out.frame = getFrameFromAscii('c', 0);
+      out.name = "cuttlefish";
+      out.strength = 2;
+      out.o2 = 70;
+      out.flags = EF_SENTIENT | EF_SCARES | EF_INKY;
+      out.xp = 4;
+      break;
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
       out.name = "pufferfish";

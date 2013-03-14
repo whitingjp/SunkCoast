@@ -32,6 +32,7 @@ Entity game_null_entity()
   out.scared = false;
   out.xp = 1;
   out.level = 0;
+  out.blindTimer = 0;
 
   int i;
   for(i=0; i<MAX_INVENTORY; i++)
@@ -118,13 +119,13 @@ bool game_hasCharm(const Entity *e, CharmSubType charm)
 
 bool game_hurt(FathomData *fathom, Entity *e, int amount)
 {
+  int i;
   Entity nullEntity = NULL_ENTITY;
   e->o2 -= amount;
   if(amount > 0 && e->flags & EF_SCARES)
     e->scared = true;
   if(e->o2 <= 0)
-  {
-    int i;
+  {    
     if(game_hasCharm(e, CHARM_RESURRECT))
     {
       e->o2 = e->maxo2-10;      
@@ -352,11 +353,31 @@ int _get_playerIndex(const FathomData* fathom)
   return -1;
 }
 
+bool _game_isBlind(const FathomData* fathom)
+{
+  bool blind = false;
+  int i;
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
+    const Entity* e = &fathom->entities[i];
+    if(!e->active)
+      continue;
+    if(!e->player)
+      continue;
+    blind = e->blindTimer > 0;
+  }
+  return blind;
+}
+
 void game_draw(const GameData* game, Point offset)
 {
   const FathomData* fathom = &game->fathoms[game->current];
+ 
+  bool blind = _game_isBlind(fathom);
+  if(!blind)
+    tilemap_draw(fathom->tileMap, offset);
+
   int i;
-  tilemap_draw(fathom->tileMap, offset);
   for(i=0; i<MAX_ITEMS; i++)
   {
     const Item* item = &fathom->items[i];
@@ -365,7 +386,8 @@ void game_draw(const GameData* game, Point offset)
     if(!tilemap_visible(&fathom->tileMap, item->pos))
       continue;
     Point drawPos = pointAddPoint(offset, item->pos);
-    sys_drawSprite(item->sprite, item->frame, drawPos);
+    if(!blind)
+      sys_drawSprite(item->sprite, item->frame, drawPos);
   }
   for(i=0; i<MAX_ENTITIES; i++)
   {
@@ -375,7 +397,8 @@ void game_draw(const GameData* game, Point offset)
     if(!tilemap_visible(&fathom->tileMap, e->pos))
       continue;
     Point drawPos = pointAddPoint(offset, e->pos);
-    sys_drawSprite(e->sprite, e->frame, drawPos);
+    if(!blind || e->player)
+      sys_drawSprite(e->sprite, e->frame, drawPos);
   }
   //if(sys_inputDown(INPUT_A))
   //  _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
@@ -449,14 +472,22 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
       }      
     }
 
+    bool killed = amount*10 >= victim->o2;
     if(amount == 0)
       game_addMessage(fathom, newPoint, "%s missed %s", e->name, victim->name);
-    else if (amount*10 >= victim->o2)
+    else if (killed)
       game_addMessage(fathom, newPoint, "%s killed %s", e->name, victim->name);
     else
       game_addMessage(fathom, newPoint, "%s hit %s", e->name, victim->name);
 
-    if(amount*10 >= victim->o2)
+    if(amount > 2 && victim->flags & EF_INKY && !killed)
+    {
+      e->blindTimer = sys_randint(8)+5;
+      game_addMessage(fathom, e->pos, "%s squirted %s with ink", victim->name, e->name);
+      victim->flags &= ~EF_INKY;
+    }
+
+    if(killed)
     {
       e->xp += victim->xp;
       if(e->xp >= _game_nextLevel(e->level))
@@ -467,10 +498,11 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
         e->strength += 1;
         game_addMessage(fathom, e->pos, "%s leveled up", e->name);
       }
-      if(victim->flags & EF_CONTAINSO2)
+      if(victim->flags & EF_CONTAINSO2 && e->flags & EF_O2DEPLETES)
       {
         int boost = (sys_randint(5)+4)*5;
         e->o2 = min(e->o2 + boost, e->maxo2);
+        game_addMessage(fathom, e->pos, "%s sucked down %d o2", e->name, boost);
       }
     }
 
@@ -732,6 +764,9 @@ void _do_turn(FathomData* fathom, Entity* e)
   if(game_hasCharm(e, CHARM_HASTE))
     turnAdd = (turnAdd*2)/3;
 
+  if(e->blindTimer > 0)
+    e->blindTimer--;
+
   e->turn += turnAdd;
 }
 
@@ -798,6 +833,8 @@ void _game_recalcFov(FathomData* fathom)
     }
     if(!fathom->entities[i].player)
       continue;
+    if(_game_isBlind(fathom))
+      range = 1;
     tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos, range);
   }
 }
@@ -832,7 +869,7 @@ void _game_ai(GameData* game, Entity* e)
   Point pos = e->pos;
   Point nullPoint = NULL_POINT;
   Point move = nullPoint;
-  if(e->flags & EF_SENTIENT)
+  if(e->flags & EF_SENTIENT && e->blindTimer == 0)
   {
     int player =  _get_playerIndex(fathom);
     bool visible = tilemap_visible(&fathom->tileMap, pos);

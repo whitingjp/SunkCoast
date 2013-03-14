@@ -145,6 +145,7 @@ typedef enum
   EF_SPLITS = 1<<3,
   EF_STEALS = 1<<4,
   EF_SCARES = 1<<5,
+  EF_INKY = 1<<6,
 } EntityFlag;
 
 #define MAX_INVENTORY (4)
@@ -169,6 +170,7 @@ typedef struct
   Item inventory[MAX_INVENTORY];
   int xp;
   int level;
+  int blindTimer;
 } Entity;
 #define NULL_ENTITY (game_null_entity());
 
