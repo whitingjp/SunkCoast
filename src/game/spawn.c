@@ -70,6 +70,15 @@ Entity spawn_entity(EntityType type)
       out.flags = EF_SENTIENT | EF_CONTAINSO2;
       out.xp = 4;
       break;
+    case ET_DOLPHIN:
+      out.frame = getFrameFromAscii('d', 1);
+      out.name = "dolphin";
+      out.speed = 80;
+      out.o2 = 90;
+      out.strength = 4;
+      out.flags = EF_SENTIENT;
+      out.xp = 7;
+      break;
     case ET_HYDRA:
       out.frame = getFrameFromAscii('H', 6);
       out.name = "hydra";
@@ -77,7 +86,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 400;
       out.strength = 8;
       out.flags = EF_SENTIENT | EF_SPLITS;
-      out.xp = 5;
+      out.xp = 12;
       break;
     case ET_KRAKEN:
       out.frame = getFrameFromAscii('K', 0);
@@ -86,7 +95,7 @@ Entity spawn_entity(EntityType type)
       out.o2 = 500;
       out.strength = 12;
       out.flags = EF_SENTIENT | EF_SCARES;
-      out.xp = 16;
+      out.xp = 25;
       break;
     case ET_SCUBA:
       out.player = true;

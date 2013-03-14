@@ -68,7 +68,7 @@ void game_reset_gamedata(GameData* game)
   {
     int j;
     game->fathoms[i] = game_null_fathomdata();
-    int threat = 5+i*3;
+    int threat = 4+i*3;
     while(threat > 0)
     {
       int type = ET_MAX_ENEMY;
@@ -81,7 +81,7 @@ void game_reset_gamedata(GameData* game)
       game_spawn(&game->fathoms[i], spawn_entity(type));
       threat -= type+1;
     }    
-    for(j=0; j<(MAX_FATHOMS-i)/4; j++)
+    for(j=0; j<(MAX_FATHOMS-i)/4+4; j++)
       game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
     int numSpawns;
     numSpawns = sys_randint(3);
@@ -400,8 +400,6 @@ void game_draw(const GameData* game, Point offset)
     if(!blind || e->player)
       sys_drawSprite(e->sprite, e->frame, drawPos);
   }
-  //if(sys_inputDown(INPUT_A))
-  //  _draw_route(&fathom->tileMap, fathom->entities[0].pos, fathom->entities[1].pos, fathom->entities[0].sprite, fathom->entities[0].frame);
 
   Point messagePos = NULL_POINT;
   for(i=0; i<numMessages; i++)
