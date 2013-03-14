@@ -148,7 +148,7 @@ typedef enum
   EF_INKY = 1<<6,
 } EntityFlag;
 
-#define MAX_INVENTORY (4)
+#define MAX_INVENTORY (5)
 typedef struct
 {
   bool active;

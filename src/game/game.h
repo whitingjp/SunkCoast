@@ -17,3 +17,5 @@ bool game_hurt(FathomData* fathom, Entity *e, int amount);
 
 int game_pointEntityIndex(const FathomData *fathom, Point p);
 bool game_pointFree(const FathomData *fathom, Point p);
+
+int game_nextLevel(int level);

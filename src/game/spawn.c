@@ -98,6 +98,8 @@ Entity spawn_entity(EntityType type)
       out.xp = 0;
       break;
   }
+  while(out.xp > game_nextLevel(out.level))
+    out.level++;
   return out;
 }
 

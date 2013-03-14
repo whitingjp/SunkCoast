@@ -291,7 +291,7 @@ uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
     return 1;
 }
 
-int _game_nextLevel(int level)
+int game_nextLevel(int level)
 {
   return 1 << (level+3);
 }
@@ -307,7 +307,7 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
 
   Point xpPos = offset;
   xpPos.y += 1;
-  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d/%d", e.level+1, e.xp, _game_nextLevel(e.level));
+  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d/%d", e.level+1, e.xp, game_nextLevel(e.level));
   sys_drawString(xpPos, string, TILEMAP_WIDTH, 2);
 
   Point strengthPos = offset;
@@ -490,7 +490,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     if(killed)
     {
       e->xp += victim->xp;
-      if(e->xp >= _game_nextLevel(e->level))
+      if(e->xp >= game_nextLevel(e->level))
       {
         e->level++;
         e->maxo2 += 10;
