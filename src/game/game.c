@@ -678,6 +678,12 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
       }
       break;
     }
+    case CONCH_MAPPING:
+    {
+      for(i=0; i<fathom->tileMap.size.x*fathom->tileMap.size.y; i++)
+        fathom->tileMap.tiles[i].seen = true;
+      break;
+    }
     default:
       LOG("Trying to cast invalid conch");
       break;

@@ -118,6 +118,7 @@ typedef enum
   CONCH_JUMP, 
   CONCH_DEATH,
   CONCH_POLYMORPH,
+  CONCH_MAPPING,
   CONCH_MAX,
   
 } ConchSubType;
