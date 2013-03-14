@@ -7,6 +7,7 @@ typedef enum
   ET_SEAMONKEY,
   ET_PUFFERFISH,
   ET_HYDRA,
+  ET_KRAKEN,
 
   ET_MAX_ENEMY,
   ET_BUBBLE,

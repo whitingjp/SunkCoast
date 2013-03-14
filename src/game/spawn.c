@@ -70,6 +70,15 @@ Entity spawn_entity(EntityType type)
       out.flags = EF_SENTIENT | EF_SPLITS;
       out.xp = 5;
       break;
+    case ET_KRAKEN:
+      out.frame = getFrameFromAscii('K', 0);
+      out.name = "kraken";
+      out.speed = 40;
+      out.o2 = 500;
+      out.strength = 12;
+      out.flags = EF_SENTIENT | EF_SCARES;
+      out.xp = 16;
+      break;
     case ET_SCUBA:
       out.player = true;
       out.speed = 100;
