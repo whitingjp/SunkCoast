@@ -69,7 +69,7 @@ void game_reset_gamedata(GameData* game)
     int j;
     game->fathoms[i] = game_null_fathomdata();
     feature_process(game, &game->fathoms[i], i);
-    int threat = 4+i*3;
+    int threat = 7+i*4;
     while(threat > 0)
     {
       int type = ET_MAX_ENEMY;
@@ -310,10 +310,11 @@ uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
 
 int game_nextLevel(int level)
 {
+  if(level < 0)
+    return 0;
   int n = level+2;
-  return n*(n+1);
+  return n*n+game_nextLevel(level-1);
 }
-
 void _draw_hud(const GameData* game, Entity e, Point offset)
 {
   char string[TILEMAP_WIDTH];
