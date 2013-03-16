@@ -528,7 +528,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     break;
   }
 
-  if(!isWall && !isEntity)
+  if(!isWall && !isEntity && !(e->flags & EF_STATIONARY))
   {
     e->pos = newPoint;
     if(game_hasCharm(e, CHARM_BRUTE))

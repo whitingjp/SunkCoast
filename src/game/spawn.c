@@ -25,6 +25,15 @@ Entity spawn_entity(EntityType type)
       out.flags = EF_SENTIENT | EF_SCARES;
       out.xp = 1;
       break;
+    case ET_ANEMONE:
+      out.speed = 100;
+      out.frame = getFrameFromAscii('a', 0);
+      out.name = "anemone";
+      out.o2 = 100;
+      out.strength = 3;
+      out.flags = EF_SENTIENT | EF_STATIONARY;
+      out.xp = 2;
+      break;
     case ET_TURTLE:
       out.speed = 300;
       out.frame = getFrameFromAscii('t', 3);

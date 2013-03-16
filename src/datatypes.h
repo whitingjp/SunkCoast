@@ -147,6 +147,7 @@ typedef enum
   EF_SCARES = 1<<5,
   EF_INKY = 1<<6,
   EF_TOOLED = 1<<7,
+  EF_STATIONARY = 1<<8,
 } EntityFlag;
 
 #define MAX_INVENTORY (5)
