@@ -76,7 +76,7 @@ void game_reset_gamedata(GameData* game)
       while(type >= ET_MAX_ENEMY)
       {
         type = 0;
-        for(j=0; j<i/2+5; j++)
+        for(j=0; j<(i*2)/3+2; j++)
           type += sys_randint(2);
       }
       Entity e = spawn_entity(type);
