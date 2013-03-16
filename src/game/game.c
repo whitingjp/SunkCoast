@@ -69,14 +69,14 @@ void game_reset_gamedata(GameData* game)
     int j;
     game->fathoms[i] = game_null_fathomdata();
     feature_process(game, &game->fathoms[i], i);
-    int threat = 4+i*2;
+    int threat = 4+i*3;
     while(threat > 0)
     {
       int type = ET_MAX_ENEMY;
       while(type >= ET_MAX_ENEMY)
       {
         type = 0;
-        for(j=0; j<i/2+3; j++)
+        for(j=0; j<i/2+5; j++)
           type += sys_randint(2);
       }
       Entity e = spawn_entity(type);
