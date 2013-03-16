@@ -71,13 +71,25 @@ Entity spawn_entity(EntityType type)
       out.xp = 4;
       break;
     case ET_DOLPHIN:
-      out.frame = getFrameFromAscii('d', 1);
+      out.frame = getFrameFromAscii('d', 2);
       out.name = "dolphin";
       out.speed = 80;
       out.o2 = 90;
       out.strength = 4;
       out.flags = EF_SENTIENT;
       out.xp = 7;
+      break;
+    case ET_MERMAID:
+      out.frame = getFrameFromAscii('@', 1);
+      int rnd = sys_randint(10);
+      if(rnd == 0) out.name = "mermadame";
+      else if(rnd > 6) out.name = "merman";
+      else out.name = "mermaid";
+      out.speed = 100;
+      out.o2 = 100;
+      out.strength = 4;
+      out.flags = EF_SENTIENT | EF_TOOLED;
+      out.xp = 9;
       break;
     case ET_HYDRA:
       out.frame = getFrameFromAscii('H', 6);
@@ -100,6 +112,7 @@ Entity spawn_entity(EntityType type)
     case ET_SCUBA:
       out.player = true;
       out.speed = 100;
+      out.o2 = 100;
       out.frame = getFrameFromAscii('@', 6);
       out.name = "you";
       out.strength = 4;

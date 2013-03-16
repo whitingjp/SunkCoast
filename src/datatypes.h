@@ -104,11 +104,11 @@ typedef enum
 typedef enum
 {
   CHARM_HASTE,
-  CHARM_DARKNESS,
+  CHARM_DARKNESS,  
   CHARM_BRUTE,
   CHARM_RESURRECT,
-  CHARM_WATERBREATH,
-  CHARM_MAX,  
+  CHARM_WATERBREATH,  
+  CHARM_MAX,
 } CharmSubType;
 
 typedef enum
@@ -146,6 +146,7 @@ typedef enum
   EF_STEALS = 1<<4,
   EF_SCARES = 1<<5,
   EF_INKY = 1<<6,
+  EF_TOOLED = 1<<7,
 } EntityFlag;
 
 #define MAX_INVENTORY (5)

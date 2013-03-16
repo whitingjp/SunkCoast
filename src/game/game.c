@@ -78,7 +78,17 @@ void game_reset_gamedata(GameData* game)
         for(j=0; j<i/2+3; j++)
           type += sys_randint(2);
       }
-      game_spawn(&game->fathoms[i], spawn_entity(type));
+      Entity e = spawn_entity(type);
+      if(e.flags & EF_TOOLED)
+      {
+        Item i = spawn_item(game, sys_randint(IT_MAX));
+        i.active = true;
+        if(i.type == IT_CHARM)
+          i.worn = true;
+        if(i.type != IT_CONCH || i.conchSubtype != CONCH_DEATH) // death isn't fair
+          e.inventory[0] = i;
+      }
+      game_spawn(&game->fathoms[i], e);
       threat -= type+1;
     }    
     for(j=0; j<(MAX_FATHOMS-i)/4+4; j++)
@@ -726,7 +736,7 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
       LOG("Trying to cast invalid conch");
       break;
   }
-  game_addMessage(fathom, e->pos, "%s fires %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  game_addMessage(fathom, e->pos, "%s fired %s %s", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
   if(sys_randint(5)==0)
   {
     Item nullItem = NULL_ITEM;
@@ -829,14 +839,17 @@ void _game_dive(GameData* game, int entityIndex, int depth)
 void _game_recalcFov(FathomData* fathom)
 {
   int i;
+  int range = 9;
   for(i=0; i<MAX_ENTITIES; i++)
   {
-    int range = 9;
     if(game_hasCharm(&fathom->entities[i], CHARM_DARKNESS))
     {
       tilemap_forgetSeen(&fathom->tileMap);
       range = 4;
     }
+  }
+  for(i=0; i<MAX_ENTITIES; i++)
+  {
     if(!fathom->entities[i].player)
       continue;
     if(_game_isBlind(fathom))
@@ -869,6 +882,46 @@ Point _get_aiPath(const FathomData* fathom, Point start, Point end)
   return move;
 }
 
+bool _game_aiFire(GameData* game, Entity* e, Point playerPos)
+{
+  if(!(e->flags & EF_TOOLED))
+    return false;
+  if(sys_randint(4) > 0)
+    return false;
+  int i;
+  for(i=0; i<MAX_INVENTORY; i++)
+  {
+    if(!e->inventory[i].active)
+      continue;
+    if(!e->inventory[i].type == IT_CONCH)
+      continue;
+    break;
+  }
+  if(i == MAX_INVENTORY)
+    return false;
+  if(playerPos.x == e->pos.x && playerPos.y > e->pos.y && playerPos.y-5 < e->pos.y)
+  {
+    _do_fire(game, e, i, DIR_DOWN);
+    return true;
+  }
+  if(playerPos.x == e->pos.x && playerPos.y < e->pos.y && playerPos.y+5 > e->pos.y)
+  {
+    _do_fire(game, e, i, DIR_UP);
+    return true;
+  }
+  if(playerPos.y == e->pos.y && playerPos.x > e->pos.x && playerPos.x-5 < e->pos.x)
+  {
+    _do_fire(game, e, i, DIR_RIGHT);
+    return true;
+  }
+  if(playerPos.y == e->pos.y && playerPos.x < e->pos.x && playerPos.x+5 > e->pos.x)
+  {
+    _do_fire(game, e, i, DIR_LEFT);
+    return true;
+  }
+  return false;
+}
+
 void _game_ai(GameData* game, Entity* e)
 {
   FathomData* fathom = &game->fathoms[game->current];
@@ -883,6 +936,8 @@ void _game_ai(GameData* game, Entity* e)
     {
       e->lastKnownPlayerPos = fathom->entities[player].pos;
       e->hunting = true;
+      if(_game_aiFire(game, e, e->lastKnownPlayerPos))
+        return;
     }
     if(e->hunting || e->scared)
     {
