@@ -173,6 +173,7 @@ typedef struct
   int xp;
   int level;
   int blindTimer;
+  char character;
 } Entity;
 #define NULL_ENTITY (game_null_entity());
 

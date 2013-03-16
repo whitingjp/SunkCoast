@@ -68,6 +68,7 @@ void game_reset_gamedata(GameData* game)
   {
     int j;
     game->fathoms[i] = game_null_fathomdata();
+    feature_process(game, &game->fathoms[i], i);
     int threat = 4+i*2;
     while(threat > 0)
     {
@@ -240,9 +241,9 @@ Point _game_getSpawnPoint(const FathomData* fathom)
   return spawnPoint;
 }
 
-void game_place(FathomData* fathom, Item item)
+void game_placeAt(FathomData* fathom, Item item, Point pos)
 {
-  item.pos = _game_getSpawnPoint(fathom);
+  item.pos = pos;
   item.active = true;
 
   int i;  
@@ -254,6 +255,12 @@ void game_place(FathomData* fathom, Item item)
     return;
   }
   LOG("Couldn't find a free item space, not placing.");
+}
+
+void game_place(FathomData* fathom, Item item)
+{
+  Point pos = _game_getSpawnPoint(fathom); 
+  game_placeAt(fathom, item, pos);
 }
 
 void game_spawnAt(FathomData* fathom, Entity entity, Point pos)

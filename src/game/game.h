@@ -6,6 +6,7 @@ void game_draw(const GameData* game, Point offset);
 bool game_update(GameData* game);
 
 void game_place(FathomData* fathom, Item item);
+void game_placeAt(FathomData* fathom, Item item, Point p);
 void game_spawn(FathomData* fathom, Entity entity);
 void game_spawnAt(FathomData* fathom, Entity entity, Point p);
 

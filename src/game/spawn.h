@@ -15,7 +15,8 @@ typedef enum
   ET_MAX_ENEMY,  
   
   ET_BUBBLE,
-  ET_SCUBA=ET_MAX_ENEMY,
+  ET_SCUBA,
+  ET_MAX,
 } EntityType;
 
 Entity spawn_entity(EntityType type);

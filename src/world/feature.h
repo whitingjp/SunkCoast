@@ -1,0 +1,1 @@
+void feature_process(const GameData* game, FathomData* fathom, int level);

@@ -36,6 +36,7 @@ SRC += input/libfov/fov.c
 SRC += sys/file.c
 SRC += sys/logging.c
 SRC += sys/sys.c
+SRC += world/feature.c
 SRC += world/tilemap.c
 
 HEADERS := $(patsubst %.c,src/%.h,$(SRC)) src/sys/logging.h

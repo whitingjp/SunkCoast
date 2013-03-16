@@ -117,7 +117,7 @@ TileMap tilemap_generate()
   }
   _tilemap_walker(&out, out.size.x*out.size.y*4, empty, TILE_MAX);
   for(i=0; i<8; i++)
-    _tilemap_walker(&out, sys_randint(out.size.x*out.size.y/10), seaweed, TILE_WALL);
+    _tilemap_walker(&out, sys_randint(out.size.x*out.size.y/10), seaweed, TILE_WALL);  
   return out;
 }
 

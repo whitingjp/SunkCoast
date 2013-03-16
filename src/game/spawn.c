@@ -9,6 +9,7 @@ Entity spawn_entity(EntityType type)
   {
     case ET_BUBBLE:
       out.frame = getFrameFromAscii('o', 2);
+      out.character = 'o';
       out.name = "bubble";
       out.speed = 1600;
       out.o2 = 1;
@@ -19,6 +20,7 @@ Entity spawn_entity(EntityType type)
     case ET_WHITEBAIT:
       out.speed = 90;
       out.frame = getFrameFromAscii('w', 1);
+      out.character = 'w';
       out.name = "whitebait";
       out.o2 = 40;
       out.strength = 2;
@@ -28,6 +30,7 @@ Entity spawn_entity(EntityType type)
     case ET_ANEMONE:
       out.speed = 100;
       out.frame = getFrameFromAscii('a', 0);
+      out.character = 'a';
       out.name = "anemone";
       out.o2 = 100;
       out.strength = 3;
@@ -37,6 +40,7 @@ Entity spawn_entity(EntityType type)
     case ET_TURTLE:
       out.speed = 300;
       out.frame = getFrameFromAscii('t', 3);
+      out.character = 't';
       out.name = "turtle";
       out.o2 = 100;
       out.strength = 4;
@@ -45,7 +49,8 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_STARFISH:
       out.speed = 140;
-      out.frame = getFrameFromAscii('s', 5);      
+      out.frame = getFrameFromAscii('s', 5);
+      out.character = 's';
       out.name = "starfish";
       out.strength = 3;
       out.o2 = 50;
@@ -55,6 +60,7 @@ Entity spawn_entity(EntityType type)
     case ET_SEAMONKEY:
       out.speed = 110;
       out.frame = getFrameFromAscii('m', 4);
+      out.character = 'm';
       out.name = "sea monkey";
       out.strength = 2;
       out.o2 = 60;
@@ -64,6 +70,7 @@ Entity spawn_entity(EntityType type)
     case ET_CUTTLEFISH:
       out.speed = 130;
       out.frame = getFrameFromAscii('c', 0);
+      out.character = 'c';
       out.name = "cuttlefish";
       out.strength = 2;
       out.o2 = 70;
@@ -72,6 +79,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
+      out.character = 'O';
       out.name = "pufferfish";
       out.speed = 250;
       out.o2 = 150;
@@ -81,6 +89,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_DOLPHIN:
       out.frame = getFrameFromAscii('d', 2);
+      out.character = 'd';
       out.name = "dolphin";
       out.speed = 80;
       out.o2 = 90;
@@ -90,6 +99,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_MERMAID:
       out.frame = getFrameFromAscii('@', 1);
+      out.character = '@';
       int rnd = sys_randint(10);
       if(rnd == 0) out.name = "mermadame";
       else if(rnd > 6) out.name = "merman";
@@ -102,6 +112,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_HYDRA:
       out.frame = getFrameFromAscii('H', 6);
+      out.character = 'H';
       out.name = "hydra";
       out.speed = 90;
       out.o2 = 400;
@@ -111,6 +122,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_KRAKEN:
       out.frame = getFrameFromAscii('K', 0);
+      out.character = 'K';
       out.name = "kraken";
       out.speed = 40;
       out.o2 = 500;
@@ -120,6 +132,7 @@ Entity spawn_entity(EntityType type)
       break;
     case ET_SCUBA:
       out.player = true;
+      out.character = 0;
       out.speed = 100;
       out.o2 = 100;
       out.frame = getFrameFromAscii('@', 6);
@@ -127,6 +140,8 @@ Entity spawn_entity(EntityType type)
       out.strength = 4;
       out.flags = EF_O2DEPLETES;
       out.xp = 0;
+      break;
+    default:
       break;
   }
   while(out.xp > game_nextLevel(out.level))

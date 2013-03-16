@@ -16,6 +16,7 @@
 #include "sys/file.h"
 #include "sys/logging.h"
 #include "sys/sys.h"
+#include "world/feature.h"
 #include "world/tilemap.h"
 
 Point main_getResolution();
