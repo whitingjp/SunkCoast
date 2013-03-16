@@ -293,7 +293,8 @@ uint8_t _get_map_cost (const uint32_t x, const uint32_t y)
 
 int game_nextLevel(int level)
 {
-  return 1 << (level+3);
+  int n = level+2;
+  return n*(n+1);
 }
 
 void _draw_hud(const GameData* game, Entity e, Point offset)
