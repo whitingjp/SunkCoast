@@ -167,6 +167,10 @@ Item spawn_item(const GameData* game, ItemType type)
       out.subtype = game->charmTypes[out.charmSubtype];
       out.frame = getFrameFromAscii('=', out.subtype);
       break;
+    case IT_DOUBLOON:
+      out.subtype = sys_randint(IST_MAX);
+      out.frame = getFrameFromAscii('$', out.subtype);
+      break;
     default:
       LOG("Trying to spawn invalid item type!");
       out.type = IT_CONCH;

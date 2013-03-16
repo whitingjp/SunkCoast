@@ -6,6 +6,7 @@ const char* item_typeName(ItemType type)
   {
     case IT_CONCH: return "conch";
     case IT_CHARM: return "charm";
+    case IT_DOUBLOON: return "doubloon";
     default:
       LOG("item_typeName on invalid type %d", type);
       return "nothing";
@@ -44,4 +45,23 @@ void item_shuffleTypes(int* array, int num)
     array[j] = array[i];
     array[i] = tmp;
   }
+}
+
+int item_value(ItemType type, ItemSubtype subtype)
+{
+  int out = 0;
+  switch(subtype)
+  {
+    case IST_INKY: out = 2;
+    case IST_AZURE: out = 15;
+    case IST_PEARL: out = 20;
+    case IST_SEAWEED: out = 1;
+    case IST_BARNACLED: out = 10;
+    case IST_GOLDEN: out = 100;
+    case IST_CORAL: out = 5;
+    default: out = 1;
+  }
+  if(type == IT_DOUBLOON)
+    out *= 100;
+  return out;
 }

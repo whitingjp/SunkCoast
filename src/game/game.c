@@ -636,6 +636,10 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
     fireIndex = index;
     return false;
   }
+  if(item->type == IT_DOUBLOON)
+  {
+
+  }
   return false;
 }
 

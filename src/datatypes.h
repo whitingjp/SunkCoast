@@ -86,6 +86,7 @@ typedef enum
 {
   IT_CONCH,
   IT_CHARM,
+  IT_DOUBLOON,
   IT_MAX,
 } ItemType;
 
