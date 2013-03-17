@@ -102,7 +102,6 @@ void game_reset_gamedata(GameData* game)
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
     numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
-    numSpawns = 10;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_DOUBLOON));
   }
