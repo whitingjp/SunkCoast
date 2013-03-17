@@ -480,7 +480,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     
     int strength = e->strength;
     if(game_hasCharm(e, CHARM_BRUTE))
-      strength += 6;    
+      strength += 4;    
 
     int amount = sys_randint(strength);
     if(amount > 0 && e->flags & EF_STEALS)
@@ -779,8 +779,8 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
 void _do_turn(FathomData* fathom, Entity* e)
 {
   bool waterBreath = game_hasCharm(e, CHARM_WATERBREATH);
-  if(waterBreath && e->o2 > e->maxo2/4)
-    e->o2 = e->maxo2/4;
+  if(waterBreath && e->o2 > e->maxo2/3)
+    e->o2 = e->maxo2/3;
   if(e->flags & EF_O2DEPLETES && !waterBreath)
   {
     e->o2timer++;
@@ -868,7 +868,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
   }
   currentFathom->entities[entityIndex] = nullEntity;
   int newDepth = game->current+depth;
-  if(e.flags & EF_O2DEPLETES)
+  if(e.flags & EF_O2DEPLETES && !game_hasCharm(e, CHARM_WATERBREATH))
   {
     Entity copy = e;
     if(game_hurt(currentFathom, &e, 10))
