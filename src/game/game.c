@@ -813,6 +813,7 @@ void _do_turn(FathomData* fathom, Entity* e)
     e->blindTimer--;
 
   e->turn += turnAdd;
+  //LOG("%s turn plus %d now %d", e->name, turnAdd, e->turn);
 }
 
 bool _game_dive(GameData* game, int entityIndex, int depth)
@@ -1160,7 +1161,10 @@ bool game_update(GameData* game)
     _game_ai(game, e);
 
   if(doTurn)
-  {    
+  { 
+    // Re-calculate these because game->current may have changed!
+    fathom = &game->fathoms[game->current];
+    e = &fathom->entities[0];
     _do_turn(fathom, e);
     _game_sortEntities(fathom);
     _game_recalcFov(fathom);
