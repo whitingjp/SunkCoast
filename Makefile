@@ -53,9 +53,7 @@ $(OBJ_DIR)/%.o: src/%.c $(HEADERS)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf obj
-	rm -f $(EXE)
-	rm -f $(EDITOR)
+	rm -rf $(BUILD_DIR)
 
 $(EXE): $(OBJ)
 	mkdir -p $(dir $@)
