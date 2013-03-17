@@ -98,11 +98,10 @@ void game_reset_gamedata(GameData* game)
     for(j=0; j<(MAX_FATHOMS-i)/4+4; j++)
       game_spawn(&game->fathoms[i], spawn_entity(ET_BUBBLE));
     int numSpawns;
-    numSpawns = sys_randint(3);
-    for(j=0; j<numSpawns; j++)
-      game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
     numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
+      game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
+    if(sys_randint(3)==0)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
     numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
     for(j=0; j<numSpawns; j++)
