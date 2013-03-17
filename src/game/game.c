@@ -522,7 +522,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
 
     if(amount > 2 && victim->flags & EF_INKY && !killed)
     {
-      e->blindTimer = sys_randint(8)+5;
+      e->blindTimer += sys_randint(8)+5;
       game_addMessage(fathom, e->pos, "%s squirted %s with ink.", victim->name, e->name);
       victim->flags &= ~EF_INKY;
     }
@@ -868,7 +868,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
   }
   currentFathom->entities[entityIndex] = nullEntity;
   int newDepth = game->current+depth;
-  if(e.flags & EF_O2DEPLETES && !game_hasCharm(e, CHARM_WATERBREATH))
+  if(e.flags & EF_O2DEPLETES && !game_hasCharm(&e, CHARM_WATERBREATH))
   {
     Entity copy = e;
     if(game_hurt(currentFathom, &e, 10))
@@ -919,8 +919,6 @@ void _game_recalcFov(FathomData* fathom)
   {
     if(!fathom->entities[i].player)
       continue;
-    if(_game_isBlind(fathom))
-      range = 1;
     tilemap_recalcFov(&fathom->tileMap, fathom->entities[i].pos, range);
   }
 }
