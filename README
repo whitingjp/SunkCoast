@@ -21,8 +21,8 @@ Controls:
       Rise: r
 
 Executables:
-  Windows build: sunkcoast.exe
-    Linux build: sunkcoast
+  Windows executable: sunkcoast.exe
+    Linux executable: sunkcoast
   If you are using the linux build you must have glfw
   and DevIL runtimes installed. On ubuntu I believe the
   packages are 'libglfw2' and 'libdevil1c2'.
