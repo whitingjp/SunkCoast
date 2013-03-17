@@ -215,8 +215,8 @@ typedef struct
 #define MAX_FATHOMS (20)
 typedef struct
 {
-  uint magic;
-  uint version;
+  uint16_t magic;
+  uint16_t version;
   int current;
   FathomData fathoms[MAX_FATHOMS];
   ItemSubtype charmTypes[IST_MAX];
