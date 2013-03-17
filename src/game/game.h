@@ -2,6 +2,8 @@ Entity game_null_entity();
 FathomData game_null_fathomdata();
 void game_reset_gamedata(GameData *game);
 
+void game_reset_interface();
+
 void game_draw(const GameData* game, Point offset);
 bool game_update(GameData* game);
 
@@ -20,3 +22,5 @@ int game_pointEntityIndex(const FathomData *fathom, Point p);
 bool game_pointFree(const FathomData *fathom, Point p);
 
 int game_nextLevel(int level);
+
+bool game_anyPlayer(GameData* game);

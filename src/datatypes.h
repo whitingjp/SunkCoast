@@ -188,9 +188,15 @@ typedef struct
 } FathomData;
 #define NULL_FATHOMDATA (game_null_fathomdata());
 
+#define SAVE_FILENAME ("sunkcoast.sav")
+#define SAVE_MAGIC (0xf4ca)
+#define SAVE_VERSION (0)
+
 #define MAX_FATHOMS (20)
 typedef struct
 {
+  uint magic;
+  uint version;
   int current;
   FathomData fathoms[MAX_FATHOMS];
   ItemSubtype charmTypes[IST_MAX];

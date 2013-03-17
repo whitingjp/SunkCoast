@@ -60,6 +60,8 @@ FathomData game_null_fathomdata()
 void game_reset_gamedata(GameData* game)
 {
   game->current = 0;
+  game->magic = SAVE_MAGIC;
+  game->version = 0;
 
   item_shuffleTypes((int*)game->charmTypes, CHARM_MAX);
   item_shuffleTypes((int*)game->conchTypes, CONCH_MAX);
@@ -102,16 +104,22 @@ void game_reset_gamedata(GameData* game)
     numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
-    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 5;
+    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_DOUBLOON));
   }
   game_spawn(&game->fathoms[0], spawn_entity(ET_SCUBA));    
 
-  // this isn't quite the right place for this stuff anymore
+}
+
+void game_reset_interface()
+{
   numMessages = 0;
   game_addGlobalMessage("Welcome to Sunk Coast.");
   midDrop = false;
+  midUse = false;
+  midFire = false;
+  midEscape = false;
 }
 
 bool _do_drop(FathomData* fathom, Entity* e, int index);
@@ -165,6 +173,11 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
       if(!e->inventory[i].active)
         continue;
       _do_drop(fathom, e, i);
+    }
+    if(e->player)
+    {
+      LOG("Player died, deleting save");
+      file_delete(SAVE_FILENAME); // woo, permadeath
     }
     *e = nullEntity;
     return true;
@@ -836,6 +849,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
         case 5: game_addGlobalMessage("%s are rich beyond your wildest dreams."); break;
       }
       currentFathom->entities[entityIndex].active = false;
+      file_delete(SAVE_FILENAME);
       return true;
     } else
     {
@@ -865,6 +879,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
 
   if(e.player)
   {
+    file_save(SAVE_FILENAME, sizeof(GameData), game);
     for(i=0; i<MAX_ENTITIES; i++)
     {
       Entity *other = &currentFathom->entities[i];
@@ -1117,10 +1132,9 @@ bool _game_player(GameData* game, Entity* e)
   return false;
 }
 
-bool game_update(GameData* game)
+bool game_anyPlayer(GameData* game)
 {
   FathomData* fathom = &game->fathoms[game->current];
-
   int i;
   bool anyPlayer = false;
   for(i=0; i<MAX_ENTITIES; i++)
@@ -1128,9 +1142,15 @@ bool game_update(GameData* game)
     if(fathom->entities[i].player && fathom->entities[i].active)
       anyPlayer = true;
   }
-  if(!anyPlayer)
+  return anyPlayer;
+}
+
+bool game_update(GameData* game)
+{
+  if(!game_anyPlayer(game))
     return true;
 
+  FathomData* fathom = &game->fathoms[game->current];
   Entity* e = &fathom->entities[0];
   if(!e->active)
     return true;

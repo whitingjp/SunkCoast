@@ -64,3 +64,14 @@ bool file_load(const char* fileName, int size, void* data)
   fclose(src);
   return true;
 }
+
+bool file_delete(const char* fileName)
+{
+  int result = remove(fileName);
+  if(result != 0)
+  {
+    LOG("Failed to delete %s", fileName);
+    return false;
+  }
+  return true;
+}

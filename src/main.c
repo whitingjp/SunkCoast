@@ -67,7 +67,26 @@ int main()
     }
   }
 
-  game_reset_gamedata(&game);
+  bool loadedSave = false;
+  bool dataLoad = file_load(SAVE_FILENAME, sizeof(GameData), &game);
+  if(!dataLoad)
+  {
+    LOG("No save game found.");
+  }
+  else
+  {
+    if(game.magic != SAVE_MAGIC)
+      LOG("Save appears to be corrupt, ignoring.");
+    else if(game.version != SAVE_VERSION)
+      LOG("Save version incompatible, ignoring.");
+    else
+      loadedSave = true;
+  }
+  game_reset_interface();
+  if(loadedSave)
+    game_addGlobalMessage("Save game restored.");
+  else
+    game_reset_gamedata(&game);
   LOG("Sizeof GameData %dkb.", sizeof(GameData)/1024);
   
   LOG("Main loop.");  
@@ -109,6 +128,8 @@ int main()
     if(sys_shouldClose())
       running = false;
   }
+  if(game_anyPlayer(&game))
+    file_save(SAVE_FILENAME, sizeof(GameData), &game);
   
   LOG("Closing.");
   sys_close();
