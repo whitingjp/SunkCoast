@@ -73,6 +73,8 @@ void game_reset_gamedata(GameData* game)
     game->fathoms[i] = game_null_fathomdata();
     feature_process(game, &game->fathoms[i], i);
     int threat = 7+i*4;
+    if(i==MAX_FATHOMS-1)
+      threat *= 2;
     while(threat > 0)
     {
       int type = ET_MAX_ENEMY;
