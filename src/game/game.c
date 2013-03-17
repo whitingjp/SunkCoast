@@ -5,6 +5,7 @@ int numMessages;
 bool midDrop;
 bool midUse;
 bool midFire;
+bool midEscape;
 int fireIndex;
 
 Entity game_null_entity()
@@ -101,7 +102,7 @@ void game_reset_gamedata(GameData* game)
     numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
-    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
+    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 5;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_DOUBLOON));
   }
@@ -802,21 +803,52 @@ void _do_turn(FathomData* fathom, Entity* e)
   e->turn += turnAdd;
 }
 
-void _game_dive(GameData* game, int entityIndex, int depth)
+bool _game_dive(GameData* game, int entityIndex, int depth)
 { 
+  int i;
   Entity nullEntity = NULL_ENTITY; 
   FathomData* currentFathom = &game->fathoms[game->current];
   int newFathomIndex = game->current + depth;
   Entity e = currentFathom->entities[entityIndex];
   if(newFathomIndex < 0)
   {
-    game_addGlobalMessage("%s are on the surface.", e.name);
-    return;
+    if(midEscape)
+    {
+      int numGoldenDoubloons = 0;
+      for(i=0; i<MAX_INVENTORY; i++)
+      {
+        if(!e.inventory[i].active)
+          continue;
+        if(!e.inventory[i].type == IT_DOUBLOON)
+          continue;
+        if(!e.inventory[i].subtype == IST_GOLDEN)
+          continue;
+        numGoldenDoubloons++;
+      }
+      game_addGlobalMessage("%s escaped with %d golden doubloons.", e.name, numGoldenDoubloons);
+      switch(numGoldenDoubloons)
+      {
+        case 0: game_addGlobalMessage("%s remain poor till your dying day."); break;
+        case 1: game_addGlobalMessage("%s can pay off your mortgage."); break;
+        case 2: game_addGlobalMessage("%s can consider early retirement."); break;
+        case 3: game_addGlobalMessage("%s are independently wealthy."); break;
+        case 4: game_addGlobalMessage("%s can buy a small island somewhere."); break;
+        case 5: game_addGlobalMessage("%s are rich beyond your wildest dreams."); break;
+      }
+      currentFathom->entities[entityIndex].active = false;
+      return true;
+    } else
+    {
+      game_addGlobalMessage("%s are just under the surface.", e.name);
+      game_addGlobalMessage("Press 'R'ise again to escape.", e.name);
+      midEscape = true;
+      return false;
+    }
   }
   if(newFathomIndex >= MAX_FATHOMS)
   {
     game_addGlobalMessage("%s are on the bottom of the ocean.", e.name);
-    return;
+    return false;
   }
   currentFathom->entities[entityIndex] = nullEntity;
   int newDepth = game->current+depth;
@@ -826,14 +858,13 @@ void _game_dive(GameData* game, int entityIndex, int depth)
     if(game_hurt(currentFathom, &e, 10))
     {
       game_addGlobalMessage("%s drowned while %s.", copy.name, depth > 0 ? "diving" : "rising");
-      return;
+      return true;
     }
   }
   game_spawnAt(&game->fathoms[newDepth], e, e.pos);
 
   if(e.player)
   {
-    int i;
     for(i=0; i<MAX_ENTITIES; i++)
     {
       Entity *other = &currentFathom->entities[i];
@@ -850,6 +881,7 @@ void _game_dive(GameData* game, int entityIndex, int depth)
     }
     game->current += depth;
   }
+  return true;
 }
 
 void _game_recalcFov(FathomData* fathom)
@@ -1046,36 +1078,39 @@ bool _game_player(GameData* game, Entity* e)
   if(move.x != 0 || move.y != 0)
   {
     numMessages = 0;
+    midEscape = false;
     _do_move(fathom, e, move);
     return true;
   }
   if(sys_inputPressed(INPUT_DIVE))
   {
     numMessages = 0;
-    _game_dive(game, 0, 1);
-    return true;
+    midEscape = false;
+    return _game_dive(game, 0, 1);
   }
   if(sys_inputPressed(INPUT_RISE))
   {
     numMessages = 0;
-    _game_dive(game, 0, -1);
-    return true;
+    return _game_dive(game, 0, -1);
   }
   if(sys_inputPressed(INPUT_PICKUP))
   {
     numMessages = 0;
+    midEscape = false;
     _do_pickup(fathom, e);
     return true;
   }
   if(sys_inputPressed(INPUT_DROP))
   {
     numMessages = 0;
+    midEscape = false;
     game_addGlobalMessage("Drop which item %d-%d?", 1, MAX_INVENTORY+1);
     midDrop = true;
   }
   if(sys_inputPressed(INPUT_USE))
   {
     numMessages = 0;
+    midEscape = false;
     game_addGlobalMessage("Use which item %d-%d?", 1, MAX_INVENTORY+1);
     midUse = true;
   }
@@ -1142,5 +1177,7 @@ void game_addGlobalMessage(const char *str, ...)
   va_list args;
   va_start(args, str);
   vsnprintf(messages[numMessages], TILEMAP_WIDTH, str, args);
+  if(messages[numMessages][0] >= 'a' && messages[numMessages][0] <= 'z')
+    messages[numMessages][0] += 'A' - 'a';
   numMessages++;
 }
