@@ -26,7 +26,7 @@ Entity game_null_entity()
   out.maxo2 = 100;
   out.o2timer = 0;
   out.strength = 4;
-  out.name = NULL;
+  out.name = NAME_YOU;
   out.flags = EF_SENTIENT;
   out.lastKnownPlayerPos = nullPoint;
   out.hunting = false;
@@ -55,6 +55,29 @@ FathomData game_null_fathomdata()
 
   out.tileMap = tilemap_generate();
   return out;
+}
+
+const char* _getName(Name name)
+{
+  switch(name)
+  {
+    case NAME_ANEMONE: return "anemone";
+    case NAME_TURTLE: return "turtle";
+    case NAME_WHITEBAIT: return "whitebait";
+    case NAME_STARFISH: return "starfish";
+    case NAME_SEAMONKEY: return "seamonkey";
+    case NAME_CUTTLEFISH: return "cuttlefish";
+    case NAME_PUFFERFISH: return "pufferfish";
+    case NAME_DOLPHIN: return "dolphin";
+    case NAME_MERMAID: return "mermaid";
+    case NAME_MERMAN: return "merman";
+    case NAME_MERMADAME: return "mermadame";
+    case NAME_HYDRA: return "hydra";
+    case NAME_KRAKEN: return "kraken";
+    case NAME_BUBBLE: return "bubble";
+    case NAME_YOU: return "you";
+  }
+  return "";
 }
 
 void game_reset_gamedata(GameData* game)
@@ -165,7 +188,7 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
           continue;
         e->inventory[i] = nullItem;
       }
-      game_addMessage(fathom, e->pos, "%s come back to life.", e->name);
+      game_addMessage(fathom, e->pos, "%s come back to life.", _getName(e->name));
       return false;
     }
     for(i=0; i<MAX_INVENTORY; i++)
@@ -188,7 +211,7 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
     Point nearby = pointAddPoint(e->pos, directionToPoint(sys_randint(4)));
     if(tilemap_visible(&fathom->tileMap, e->pos) && game_pointFree(fathom, nearby))
     {
-      game_addMessage(fathom, nearby, "%s split.", e->name);
+      game_addMessage(fathom, nearby, "%s split.", _getName(e->name));
       game_spawnAt(fathom, *e, nearby);      
     }
   }
@@ -500,7 +523,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
         Item nullItem = NULL_ITEM;
         victim->inventory[slot] = nullItem;
         amount = 0;
-        game_addMessage(fathom, newPoint, "%s stole %s %s from %s.", e->name, item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), victim->name);
+        game_addMessage(fathom, newPoint, "%s stole %s %s from %s.", _getName(e->name), item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), victim->name);
         e->scared = true;
         return;
       }      
@@ -509,21 +532,21 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
     int damage = amount*10;
     bool killed = amount*10 >= victim->o2;
     if(amount == 0)
-      game_addMessage(fathom, newPoint, "%s missed %s.", e->name, victim->name);
+      game_addMessage(fathom, newPoint, "%s missed %s.", _getName(e->name), _getName(victim->name));
     else if (killed)
-      game_addMessage(fathom, newPoint, "%s killed %s.", e->name, victim->name);
+      game_addMessage(fathom, newPoint, "%s killed %s.", _getName(e->name), _getName(victim->name));
     else
     {
       if(victim->player)
-        game_addMessage(fathom, newPoint, "%s hit %s for %d damage.", e->name, victim->name, damage);
+        game_addMessage(fathom, newPoint, "%s hit %s for %d damage.", _getName(e->name), _getName(victim->name), damage);
       else
-        game_addMessage(fathom, newPoint, "%s hit %s.", e->name, victim->name);
+        game_addMessage(fathom, newPoint, "%s hit %s.", _getName(e->name), _getName(victim->name));
     }
 
     if(amount > 2 && victim->flags & EF_INKY && !killed)
     {
       e->blindTimer += sys_randint(8)+5;
-      game_addMessage(fathom, e->pos, "%s squirted %s with ink.", victim->name, e->name);
+      game_addMessage(fathom, e->pos, "%s squirted %s with ink.",  _getName(victim->name), _getName(e->name));
       victim->flags &= ~EF_INKY;
     }
 
@@ -537,13 +560,13 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
         e->maxo2 += 10;
         e->o2 += 10;
         e->strength += 1;
-        game_addMessage(fathom, e->pos, "%s leveled up.", e->name);
+        game_addMessage(fathom, e->pos, "%s leveled up.", _getName(e->name));
       }
       if(victim->flags & EF_CONTAINSO2 && e->flags & EF_O2DEPLETES)
       {
         int boost = (sys_randint(5)+4)*5;
         int newo2 = min(e->o2 + boost, e->maxo2);
-        game_addMessage(fathom, e->pos, "%s sucked down %d o2.", e->name, newo2 - e->o2);
+        game_addMessage(fathom, e->pos, "%s sucked down %d o2.", _getName(e->name), newo2 - e->o2);
         e->o2 = newo2;
       }
     }
@@ -588,13 +611,13 @@ void _do_pickup(FathomData* fathom, Entity* e)
       if(!e->inventory[j].active)
       {
         e->inventory[j] = *item;
-        game_addMessage(fathom, e->pos, "%s picked up %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+        game_addMessage(fathom, e->pos, "%s picked up %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
         *item = nullItem;
         break;
       }
     }
     if(j==MAX_INVENTORY)
-      game_addMessage(fathom, e->pos, "%s have no room for %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+      game_addMessage(fathom, e->pos, "%s have no room for %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
   }
 }
 
@@ -620,13 +643,13 @@ bool _do_drop(FathomData* fathom, Entity* e, int index)
   }
   if(empty == -1)
   {
-    game_addMessage(fathom, e->pos, "%s can't drop %s %s, too cluttered.", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
+    game_addMessage(fathom, e->pos, "%s can't drop %s %s, too cluttered.", _getName(e->name), item_subtypeDescription(item.subtype), item_typeName(item.type));
     return false;
   }
   item.worn = false;
   fathom->items[empty] = item;  
   e->inventory[index] = nullItem;
-  game_addMessage(fathom, e->pos, "%s dropped %s %s.", e->name, item_subtypeDescription(item.subtype), item_typeName(item.type));
+  game_addMessage(fathom, e->pos, "%s dropped %s %s.", _getName(e->name), item_subtypeDescription(item.subtype), item_typeName(item.type));
   return true;
 }
 
@@ -642,9 +665,9 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
   {
     item->worn = !item->worn;
     if(item->worn)
-      game_addMessage(fathom, e->pos, "%s put on %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+      game_addMessage(fathom, e->pos, "%s put on %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
     else
-      game_addMessage(fathom, e->pos, "%s took off %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+      game_addMessage(fathom, e->pos, "%s took off %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
     return true;
   }
   if(item->type == IT_CONCH)
@@ -767,7 +790,7 @@ void _do_fire(GameData* game, Entity* e, int index, Direction direction)
       LOG("Trying to cast invalid conch.");
       break;
   }
-  game_addMessage(fathom, e->pos, "%s fired %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+  game_addMessage(fathom, e->pos, "%s fired %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
   if(sys_randint(5)==0)
   {
     Item nullItem = NULL_ITEM;
@@ -788,7 +811,7 @@ void _do_turn(FathomData* fathom, Entity* e)
     {
       Entity copy = *e;
       if(game_hurt(fathom, e, 1))
-        game_addMessage(fathom, copy.pos, "%s drowned.", copy.name);
+        game_addMessage(fathom, copy.pos, "%s drowned.", _getName(copy.name));
       e->o2timer = 0;
     }
   }
@@ -803,7 +826,7 @@ void _do_turn(FathomData* fathom, Entity* e)
         continue;
       if(e->pos.x != item->pos.x || e->pos.y != item->pos.y)
         continue;
-      game_addMessage(fathom, item->pos, "%s see a %s %s.", e->name, item_subtypeDescription(item->subtype), item_typeName(item->type));
+      game_addMessage(fathom, item->pos, "%s see a %s %s.", _getName(e->name), item_subtypeDescription(item->subtype), item_typeName(item->type));
     }
   }
 
@@ -815,7 +838,7 @@ void _do_turn(FathomData* fathom, Entity* e)
     e->blindTimer--;
 
   e->turn += turnAdd;
-  //LOG("%s turn plus %d now %d", e->name, turnAdd, e->turn);
+  //LOG("%s turn plus %d now %d", _getName(e->name), turnAdd, e->turn);
 }
 
 bool _game_dive(GameData* game, int entityIndex, int depth)
@@ -840,7 +863,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
           continue;
         numGoldenDoubloons++;
       }
-      game_addGlobalMessage("%s escaped with %d golden doubloons.", e.name, numGoldenDoubloons);
+      game_addGlobalMessage("%s escaped with %d golden doubloons.", _getName(e.name), numGoldenDoubloons);
       switch(numGoldenDoubloons)
       {
         case 0: game_addGlobalMessage("%s remain poor till your dying day."); break;
@@ -855,15 +878,15 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
       return true;
     } else
     {
-      game_addGlobalMessage("%s are just under the surface.", e.name);
-      game_addGlobalMessage("Press 'R'ise again to escape.", e.name);
+      game_addGlobalMessage("%s are just under the surface.", _getName(e.name));
+      game_addGlobalMessage("Press 'R'ise again to escape.", _getName(e.name));
       midEscape = true;
       return false;
     }
   }
   if(newFathomIndex >= MAX_FATHOMS)
   {
-    game_addGlobalMessage("%s are on the bottom of the ocean.", e.name);
+    game_addGlobalMessage("%s are on the bottom of the ocean.", _getName(e.name));
     return false;
   }
   currentFathom->entities[entityIndex] = nullEntity;
@@ -873,7 +896,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
     Entity copy = e;
     if(game_hurt(currentFathom, &e, 10))
     {
-      game_addGlobalMessage("%s drowned while %s.", copy.name, depth > 0 ? "diving" : "rising");
+      game_addGlobalMessage("%s drowned while %s.", _getName(copy.name), depth > 0 ? "diving" : "rising");
       return true;
     }
   }
@@ -895,7 +918,7 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
         continue;
       if(!tilemap_visible(&currentFathom->tileMap, other->pos))
         continue;
-      game_addGlobalMessage("%s follows %s %s.", other->name, e.name, depth > 0 ? "down" : "up");
+      game_addGlobalMessage("%s follows %s %s.", _getName(other->name), _getName(e.name), depth > 0 ? "down" : "up");
       _game_dive(game, i, depth); // join in      
     }
     game->current += depth;

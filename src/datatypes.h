@@ -151,6 +151,25 @@ typedef enum
   EF_STATIONARY = 1<<8,
 } EntityFlag;
 
+typedef enum
+{
+  NAME_ANEMONE,
+  NAME_TURTLE,    
+  NAME_WHITEBAIT,
+  NAME_STARFISH,
+  NAME_SEAMONKEY,
+  NAME_CUTTLEFISH,  
+  NAME_PUFFERFISH,
+  NAME_DOLPHIN,
+  NAME_MERMAID,
+  NAME_MERMAN,
+  NAME_MERMADAME,
+  NAME_HYDRA,
+  NAME_KRAKEN,
+  NAME_BUBBLE,
+  NAME_YOU,
+} Name;
+
 #define MAX_INVENTORY (5)
 typedef struct
 {
@@ -168,7 +187,8 @@ typedef struct
   Point lastKnownPlayerPos;
   bool hunting;
   bool scared;
-  const char* name;
+  Name name;
+
   EntityFlag flags;
   Item inventory[MAX_INVENTORY];
   int xp;

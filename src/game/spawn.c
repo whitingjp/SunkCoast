@@ -10,7 +10,7 @@ Entity spawn_entity(EntityType type)
     case ET_BUBBLE:
       out.frame = getFrameFromAscii('o', 2);
       out.character = 'o';
-      out.name = "bubble";
+      out.name = NAME_BUBBLE;
       out.speed = 1600;
       out.o2 = 1;
       out.strength = 1;
@@ -21,7 +21,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 90;
       out.frame = getFrameFromAscii('w', 1);
       out.character = 'w';
-      out.name = "whitebait";
+      out.name = NAME_WHITEBAIT;
       out.o2 = 40;
       out.strength = 2;
       out.flags = EF_SENTIENT | EF_SCARES;
@@ -31,7 +31,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 100;
       out.frame = getFrameFromAscii('a', 0);
       out.character = 'a';
-      out.name = "anemone";
+      out.name = NAME_ANEMONE;
       out.o2 = 100;
       out.strength = 3;
       out.flags = EF_SENTIENT | EF_STATIONARY;
@@ -41,7 +41,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 300;
       out.frame = getFrameFromAscii('t', 3);
       out.character = 't';
-      out.name = "turtle";
+      out.name = NAME_TURTLE;
       out.o2 = 100;
       out.strength = 4;
       out.flags = EF_SENTIENT;
@@ -51,7 +51,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 140;
       out.frame = getFrameFromAscii('s', 5);
       out.character = 's';
-      out.name = "starfish";
+      out.name = NAME_STARFISH;
       out.strength = 3;
       out.o2 = 50;
       out.flags = EF_SENTIENT | EF_SPLITS;
@@ -61,7 +61,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 110;
       out.frame = getFrameFromAscii('m', 4);
       out.character = 'm';
-      out.name = "sea monkey";
+      out.name = NAME_SEAMONKEY;
       out.strength = 2;
       out.o2 = 60;
       out.flags = EF_SENTIENT | EF_STEALS | EF_SCARES;
@@ -71,7 +71,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 130;
       out.frame = getFrameFromAscii('c', 0);
       out.character = 'c';
-      out.name = "cuttlefish";
+      out.name = NAME_CUTTLEFISH;
       out.strength = 2;
       out.o2 = 70;
       out.flags = EF_SENTIENT | EF_SCARES | EF_INKY;
@@ -80,7 +80,7 @@ Entity spawn_entity(EntityType type)
     case ET_PUFFERFISH:
       out.frame = getFrameFromAscii('O', 2);
       out.character = 'O';
-      out.name = "pufferfish";
+      out.name = NAME_PUFFERFISH;
       out.speed = 250;
       out.o2 = 150;
       out.strength = 6;
@@ -90,7 +90,7 @@ Entity spawn_entity(EntityType type)
     case ET_DOLPHIN:
       out.frame = getFrameFromAscii('d', 2);
       out.character = 'd';
-      out.name = "dolphin";
+      out.name = NAME_DOLPHIN;
       out.speed = 80;
       out.o2 = 90;
       out.strength = 4;
@@ -101,9 +101,9 @@ Entity spawn_entity(EntityType type)
       out.frame = getFrameFromAscii('@', 1);
       out.character = '@';
       int rnd = sys_randint(10);
-      if(rnd == 0) out.name = "mermadame";
-      else if(rnd > 6) out.name = "merman";
-      else out.name = "mermaid";
+      if(rnd == 0) out.name = NAME_MERMADAME;
+      else if(rnd > 6) out.name = NAME_MERMAN;
+      else out.name = NAME_MERMAID;
       out.speed = 100;
       out.o2 = 100;
       out.strength = 4;
@@ -113,7 +113,7 @@ Entity spawn_entity(EntityType type)
     case ET_HYDRA:
       out.frame = getFrameFromAscii('H', 6);
       out.character = 'H';
-      out.name = "hydra";
+      out.name = NAME_HYDRA;
       out.speed = 90;
       out.o2 = 400;
       out.strength = 8;
@@ -123,7 +123,7 @@ Entity spawn_entity(EntityType type)
     case ET_KRAKEN:
       out.frame = getFrameFromAscii('K', 0);
       out.character = 'K';
-      out.name = "kraken";
+      out.name = NAME_KRAKEN;
       out.speed = 40;
       out.o2 = 500;
       out.strength = 12;
@@ -136,7 +136,7 @@ Entity spawn_entity(EntityType type)
       out.speed = 100;
       out.o2 = 100;
       out.frame = getFrameFromAscii('@', 6);
-      out.name = "you";
+      out.name = NAME_YOU;
       out.strength = 4;
       out.flags = EF_O2DEPLETES;
       out.xp = 0;

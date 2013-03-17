@@ -312,10 +312,10 @@ void sys_update()
   for(i=0; i<INPUT_MAX; i++)
     _oldInputs[i] = _heldInputs[i];
     
-  _heldInputs[INPUT_UP] = _sys_pressed(GLFW_KEY_UP) || _sys_pressed('K') || _sys_pressed('W');
-  _heldInputs[INPUT_RIGHT] = _sys_pressed(GLFW_KEY_RIGHT) || _sys_pressed('L') || _sys_pressed('D');
-  _heldInputs[INPUT_DOWN] = _sys_pressed(GLFW_KEY_DOWN) || _sys_pressed('J') || _sys_pressed('S');
-  _heldInputs[INPUT_LEFT] = _sys_pressed(GLFW_KEY_LEFT) || _sys_pressed('H') || _sys_pressed('A');
+  _heldInputs[INPUT_UP] = _sys_pressed(GLFW_KEY_UP) || _sys_pressed('K') || _sys_pressed('W') || _sys_pressed(GLFW_KEY_KP_8);
+  _heldInputs[INPUT_RIGHT] = _sys_pressed(GLFW_KEY_RIGHT) || _sys_pressed('L') || _sys_pressed('D') || _sys_pressed(GLFW_KEY_KP_6);
+  _heldInputs[INPUT_DOWN] = _sys_pressed(GLFW_KEY_DOWN) || _sys_pressed('J') || _sys_pressed('S') || _sys_pressed(GLFW_KEY_KP_2);
+  _heldInputs[INPUT_LEFT] = _sys_pressed(GLFW_KEY_LEFT) || _sys_pressed('H') || _sys_pressed('A') || _sys_pressed(GLFW_KEY_KP_4);
   _heldInputs[INPUT_DIVE] = _sys_pressed('V');
   _heldInputs[INPUT_RISE] = _sys_pressed('R');
   _heldInputs[INPUT_PICKUP] = _sys_pressed('P');
