@@ -523,7 +523,7 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
         Item nullItem = NULL_ITEM;
         victim->inventory[slot] = nullItem;
         amount = 0;
-        game_addMessage(fathom, newPoint, "%s stole %s %s from %s.", _getName(e->name), item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), victim->name);
+        game_addMessage(fathom, newPoint, "%s stole %s %s from %s.", _getName(e->name), item_subtypeDescription(e->inventory[space].subtype), item_typeName(e->inventory[space].type), _getName(victim->name));
         e->scared = true;
         return;
       }      
