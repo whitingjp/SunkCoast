@@ -7,6 +7,7 @@ bool midUse;
 bool midFire;
 bool midEscape;
 int fireIndex;
+int restartTimer;
 
 Entity game_null_entity()
 {
@@ -143,6 +144,7 @@ void game_reset_interface()
   midUse = false;
   midFire = false;
   midEscape = false;
+  restartTimer = 0;
 }
 
 bool _do_drop(FathomData* fathom, Entity* e, int index);
@@ -1173,7 +1175,26 @@ bool game_anyPlayer(GameData* game)
 bool game_update(GameData* game)
 {
   if(!game_anyPlayer(game))
+  {
+    if(restartTimer < 50)
+    {
+      restartTimer++;
+    }
+    else
+    {
+      if(restartTimer == 50)
+      {
+        game_addGlobalMessage("Press 'r' to restart.");
+        restartTimer++;
+      }
+      if(sys_inputPressed(INPUT_RISE))
+      {
+        game_reset_gamedata(game);
+        game_reset_interface();
+      }
+    }
     return true;
+  }
 
   FathomData* fathom = &game->fathoms[game->current];
   Entity* e = &fathom->entities[0];
