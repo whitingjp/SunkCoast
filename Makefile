@@ -16,14 +16,20 @@ CC = gcc
 CFLAGS = -Isrc $(LIB_INCLUDE_PATH) -Wall -Wextra -Werror -g
 LIB_DEPS = $(LIB_BIN_PATH) $(GL_LIBS)
 
-EXE = sunkcoast
+BUILD_DIR = build
+OBJ_DIR = build/obj
+OUT_DIR=$(BUILD_DIR)/out
+DATA_OUT=$(OUT_DIR)/data
+DATA=$(DATA_OUT)/font.png
+
+EXE = $(OUT_DIR)/sunkcoast
 CORE_SRC = 
 GAME_SRC = 
 GAME_HEADERS =
 EDITOR_SRC =
 EDITOR_HEADERS =
 
-all: $(EXE)
+all: $(EXE) $(DATA) $(OUT_DIR)/readme.txt
 
 SRC += datatypes.c
 SRC += main.c
@@ -40,9 +46,9 @@ SRC += world/feature.c
 SRC += world/tilemap.c
 
 HEADERS := $(patsubst %.c,src/%.h,$(SRC)) src/sys/logging.h
-OBJ := $(patsubst %.c,obj/%.o,$(SRC))
+OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
-obj/%.o: src/%.c $(HEADERS)
+$(OBJ_DIR)/%.o: src/%.c $(HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) -c $(CFLAGS) $< -o $@
 
@@ -52,5 +58,13 @@ clean:
 	rm -f $(EDITOR)
 
 $(EXE): $(OBJ)
+	mkdir -p $(dir $@)
 	$(CC) $(OBJ) $(LIB_DEPS) -o $@
 
+$(DATA_OUT)/%: data/%
+	mkdir -p $(dir $@)
+	cp $< $@
+
+$(OUT_DIR)/readme.txt: README
+	mkdir -p $(dir $@)
+	cp $< $@
