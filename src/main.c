@@ -59,7 +59,7 @@ int main()
     switch(i)
     {
       case IMAGE_FONT:
-        sys_loadImage("data/graphics/font.png");
+        sys_loadImage("data/font.png");
         break;
       default:
         LOG("Missing image load for ImageID:%d", i);
