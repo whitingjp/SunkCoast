@@ -105,7 +105,7 @@ void game_reset_gamedata(GameData* game)
       game_place(&game->fathoms[i], spawn_item(game, IT_CONCH));
     if(sys_randint(3)==0)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
-    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
+    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 5;
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_DOUBLOON));
   }
@@ -834,9 +834,9 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
       {
         if(!e.inventory[i].active)
           continue;
-        if(!e.inventory[i].type == IT_DOUBLOON)
+        if(e.inventory[i].type != IT_DOUBLOON)
           continue;
-        if(!e.inventory[i].subtype == IST_GOLDEN)
+        if(e.inventory[i].subtype != IST_GOLDEN)
           continue;
         numGoldenDoubloons++;
       }
