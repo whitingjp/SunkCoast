@@ -1,0 +1,27 @@
+   _____             __      ______                 __ 
+  / ___/__  ______  / /__   / ____/___  ____ ______/ /_
+  \__ \/ / / / __ \/ //_/  / /   / __ \/ __ `/ ___/ __/
+ ___/ / /_/ / / / / ,<    / /___/ /_/ / /_/ (__  ) /_  
+/____/\__,_/_/ /_/_/|_|   \____/\____/\__,_/____/\__/  
+
+An aquatic roguelike by Jonathan Whiting.
+
+You're flat broke. Legends tell of priceless golden
+doubloons sunk two hundred fathoms deep. You promised
+not to do anything stupid, but then again your family
+need to eat. You strap your final cylinder to your
+back, adjust your regulator and dive into the water.
+
+Controls:
+  Movement: Arrows or wsad or hjkl or numpad dirs.
+    Pickup: p 
+      drOp: o 
+       Use: u 
+      diVe: v 
+      Rise: r
+
+Get in touch:
+  Website: http://jonathanwhiting.com
+  Twitter: @whitingjp
+    Email: jonathan@ignika.com
+   Source: http://github.com/BLAHBLAHBLAH
