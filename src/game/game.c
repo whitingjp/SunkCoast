@@ -891,6 +891,8 @@ bool _game_dive(GameData* game, int entityIndex, int depth)
         continue;
       if(!(other->flags & EF_SENTIENT))
         continue;
+      if(other->flags & EF_STATIONARY)
+        continue;
       if(!tilemap_visible(&currentFathom->tileMap, other->pos))
         continue;
       game_addGlobalMessage("%s follows %s %s.", other->name, e.name, depth > 0 ? "down" : "up");
