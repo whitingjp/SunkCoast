@@ -85,7 +85,7 @@ void game_reset_gamedata(GameData* game)
       Entity e = spawn_entity(type);
       if(e.flags & EF_TOOLED)
       {
-        Item i = spawn_item(game, sys_randint(IT_MAX));
+        Item i = spawn_item(game, sys_randint(IT_MAX-1));
         i.active = true;
         if(i.type == IT_CHARM)
           i.worn = true;
