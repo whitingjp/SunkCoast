@@ -6,9 +6,15 @@ ifeq ($(UNAME), MINGW32_NT-5.1)
 	LIB_INCLUDE_PATH = -I$(DEVIL_PATH)/include -I$(GLFW_PATH)/include
 	LIB_BIN_PATH = -L$(DEVIL_PATH)/lib -L$(GLFW_PATH)/lib-mingw
 else
-	GL_LIBS = -lGL -lGLU -lIL -lglfw
-	LIB_INCLUDE_PATH = 
-	LIB_BIN_PATH =
+	ifeq ($(UNAME), Darwin)
+		GL_LIBS = -framework OpenGL -lIL -lglfw
+		LIB_INCLUDE_PATH = 
+		LIB_BIN_PATH =
+	else
+		GL_LIBS = -lGL -lGLU -lIL -lglfw
+		LIB_INCLUDE_PATH = 
+		LIB_BIN_PATH =
+	endif
 endif
 
 CC = gcc
