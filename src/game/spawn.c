@@ -168,7 +168,7 @@ Item spawn_item(const GameData* game, ItemType type)
       out.frame = getFrameFromAscii('=', out.subtype);
       break;
     case IT_DOUBLOON:
-      out.subtype = sys_randint(IST_MAX);
+      out.subtype = IST_GOLDEN;
       out.frame = getFrameFromAscii('$', out.subtype);
       break;
     default:

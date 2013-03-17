@@ -101,6 +101,10 @@ void game_reset_gamedata(GameData* game)
     numSpawns = sys_randint(2);
     for(j=0; j<numSpawns; j++)
       game_place(&game->fathoms[i], spawn_item(game, IT_CHARM));
+    numSpawns = (i == MAX_FATHOMS-1) ? 5 : 0;
+    numSpawns = 10;
+    for(j=0; j<numSpawns; j++)
+      game_place(&game->fathoms[i], spawn_item(game, IT_DOUBLOON));
   }
   game_spawn(&game->fathoms[0], spawn_entity(ET_SCUBA));    
 
@@ -617,7 +621,7 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
   Item* item = &e->inventory[index];
   if(!item->active)
   {
-    LOG("Using non existent item");
+    LOG("using non existent item");
     return false;
   }
   if(item->type == IT_CHARM)
@@ -631,14 +635,15 @@ bool _do_use(FathomData* fathom, Entity* e, int index)
   }
   if(item->type == IT_CONCH)
   {
-    game_addGlobalMessage("Point %s %s in which direction?", item_subtypeDescription(item->subtype), item_typeName(item->type));
+    game_addGlobalMessage("point %s %s in which direction?", item_subtypeDescription(item->subtype), item_typeName(item->type));
     midFire = true;
     fireIndex = index;
     return false;
   }
   if(item->type == IT_DOUBLOON)
   {
-
+    game_addGlobalMessage("only valuable on the surface");
+    return true;
   }
   return false;
 }
