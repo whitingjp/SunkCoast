@@ -188,8 +188,8 @@ bool game_hurt(FathomData *fathom, Entity *e, int amount)
     Point nearby = pointAddPoint(e->pos, directionToPoint(sys_randint(4)));
     if(tilemap_visible(&fathom->tileMap, e->pos) && game_pointFree(fathom, nearby))
     {
-      game_spawnAt(fathom, *e, nearby);
       game_addMessage(fathom, nearby, "%s split.", e->name);
+      game_spawnAt(fathom, *e, nearby);      
     }
   }
   return false;
@@ -343,7 +343,7 @@ void _draw_hud(const GameData* game, Entity e, Point offset)
 
   Point xpPos = offset;
   xpPos.y += 1;
-  snprintf(string, TILEMAP_WIDTH, " lvl:  %2d      xp: %d/%d", e.level+1, e.xp, game_nextLevel(e.level));
+  snprintf(string, TILEMAP_WIDTH, " lvl: %2d       xp: %d/%d", e.level+1, e.xp, game_nextLevel(e.level));
   sys_drawString(xpPos, string, TILEMAP_WIDTH, 2);
 
   Point strengthPos = offset;
@@ -529,7 +529,8 @@ void _do_move(FathomData* fathom, Entity* e, Point move)
 
     if(killed)
     {
-      e->xp += victim->xp;
+      if(!game_hasCharm(victim, CHARM_RESURRECT))
+        e->xp += victim->xp;
       if(e->xp >= game_nextLevel(e->level))
       {
         e->level++;
