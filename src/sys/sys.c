@@ -39,6 +39,7 @@ void sys_init(Point resolution, int pixel_scale)
   }
   result = glfwOpenWindow( _resolution.x*_pixel_scale, _resolution.y*_pixel_scale,
                            0,0,0,0, 0,0, GLFW_WINDOW );
+  glfwSetWindowTitle("Sunk Coast");
   if(!result)
   {
     LOG("Failed to open GLFW window");
