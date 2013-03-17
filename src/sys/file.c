@@ -4,7 +4,7 @@ bool file_save(const char* fileName, int size, const void* data)
 {
   FILE *dest;
   int written;
-  dest = fopen(fileName, "w");
+  dest = fopen(fileName, "wb");
   if (dest == NULL)
   {
     LOG("Failed to open %s for save.", fileName);
@@ -36,7 +36,7 @@ bool file_load(const char* fileName, int size, void* data)
   FILE *src;
   int read;
   int readSize;
-  src = fopen(fileName, "r");
+  src = fopen(fileName, "rb");
   if (src == NULL)
   {
     LOG("Failed to open %s for load.", fileName);
