@@ -1,20 +1,21 @@
 UNAME := $(shell uname)
+
+LIB_INCLUDE_PATH = 
+LIB_BIN_PATH =
+GL_LIBS =
+
 ifeq ($(UNAME), MINGW32_NT-5.1)
 	DEVIL_PATH=input/devil
 	GLFW_PATH=input/glfw
-	GL_LIBS = -lglfw -lglu32 -lopengl32 -lDevIL
 	LIB_INCLUDE_PATH = -I$(DEVIL_PATH)/include -I$(GLFW_PATH)/include
 	LIB_BIN_PATH = -L$(DEVIL_PATH)/lib -L$(GLFW_PATH)/lib-mingw
-else
-	ifeq ($(UNAME), Darwin)
-		GL_LIBS = -framework OpenGL -lIL -lglfw
-		LIB_INCLUDE_PATH = 
-		LIB_BIN_PATH =
-	else
-		GL_LIBS = -lGL -lGLU -lIL -lglfw
-		LIB_INCLUDE_PATH = 
-		LIB_BIN_PATH =
-	endif
+	GL_LIBS = -lglfw -lglu32 -lopengl32 -lDevIL
+endif
+ifeq ($(UNAME), Linux)
+	GL_LIBS = -lGL -lGLU -lIL -lglfw
+endif
+ifeq ($(UNAME), Darwin)
+	GL_LIBS = -framework OpenGL -lIL -lglfw
 endif
 
 CC = gcc
