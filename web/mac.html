@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>Sunk Coast</title>
+<title>Sunk Coast - Mac Info</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <style type="text/css">
 html, body, div, p, a, img { margin: 0; padding: 0; border: 0; font: inherit; font-size: 100%; vertical-align: baseline; }
@@ -26,25 +26,31 @@ pre { font-family: fixedsys, consolas, monospace; font-weight: Normal; color: #f
  ___/ / /_/ / / / / , >   / /___/ /_/ / /_/ (__  ) /_  
 /____/\__,_/_/ /_/_/|_|   \____/\____/\__,_/____/\__/  
     </pre>
-    <p>An aquatic roguelike by <a href="../..">Jonathan Whiting</a></p>
     <p>
-      You're flat broke. Legends tell of priceless golden
-      doubloons sunk two hundred fathoms deep. You promised
-      not to do anything stupid, but then again your family
-      need to eat. You strap your final cylinder to your
-      back, adjust your regulator and dive into the water.
+      Getting <a href="index.html">Sunk Coast</a> working on Mac.
+      Thanks to <a href="http://twitter.com/carpenterjc">@carpenterjc</a>
+      for making this. I don't own a mac myself, so build is currently
+      unsupported, sorry!
     </p>
     <p>
-      <a href="sunkcoast20130317.zip">Download</a> Windows and Linux builds.
-    </p>
+      This is the <a href="sunkcoast20130317mac.zip">download</a>.
+      You also need <a href="http://mxcl.github.com/homebrew/">homebrew</a>
+      to install the dependencies (glfw and DevIL).
+    </p>    
     <p>
-      If you have a Mac, my friend <a href="http://twitter.com/carpenterjc">@carpenterjc</a>
-      managed to compile a build, <a href="mac.html">info here</a>.
+      James' instructions for getting the build working, from a
+      command line in the extracted builds directory:
     </p>
+    <pre>
+brew install devil
+brew install glfw
+
+chmod 711 sunkcoast
+./sunkcoast
+    </pre>
     <p>
-      The source code is availabe <a href="http://github.com/whitingjp/SunkCoast">on GitHub</a>.
+      Back to <a href="index.html">main page</a>.
     </p>
-    <img src="screenshot.png" alt="Sunk Coast Screenshot"/>
   </div>
 </body>
 </html>
