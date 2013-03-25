@@ -205,8 +205,15 @@ ImageID sys_loadImage(const char *name)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
-  _images[_nextImage].size.x = ilGetInteger(IL_IMAGE_WIDTH);
-  _images[_nextImage].size.y = ilGetInteger(IL_IMAGE_HEIGHT);
+  int sizex = ilGetInteger(IL_IMAGE_WIDTH);
+  int sizey = ilGetInteger(IL_IMAGE_HEIGHT);
+  if((sizex & (sizex-1)) != 0)
+    LOG("WARNING: Image %s width %d is not power of 2, some gfx cards do not support this!", name, sizex);
+  if((sizey & (sizey-1)) != 0)
+    LOG("WARNING: Image %s height %d is not power of 2, some gfx cards do not support this!", name, sizey);
+  _images[_nextImage].size.x = sizex;
+  _images[_nextImage].size.y = sizey;
+  
     
   glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP),
                _images[_nextImage].size.x, _images[_nextImage].size.y,
