@@ -101,7 +101,7 @@ asheap_t * astar_heap_new (uint32_t initial_length, uint32_t delta);
 void astar_heap_destroy (asheap_t * heap);
 
 
-inline void astar_heap_clear (asheap_t * heap);
+void astar_heap_clear (asheap_t * heap);
 
 
 uint32_t astar_heap_sizeof (asheap_t * heap);
