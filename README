@@ -6,6 +6,11 @@
 
 An aquatic roguelike by Jonathan Whiting.
 
+This version of Sunk Coast is a port to GLFW 3 so that
+it can build on modern systems.
+
+------------------------------------------------------
+
 You're flat broke. Legends tell of priceless golden
 doubloons sunk two hundred fathoms deep. You promised
 not to do anything stupid, but then again your family
@@ -24,8 +29,8 @@ Executables:
   Windows executable: sunkcoast.exe
     Linux executable: sunkcoast
   If you are using the linux build you must have glfw
-  and DevIL runtimes installed. On ubuntu I believe the
-  packages are 'libglfw2' and 'libdevil1c2'.
+  and DevIL runtimes installed. On ubuntu the packages
+  are 'libglfw3' and 'libdevil1c2'.
 
 Get in touch:
   Website: http://jonathanwhiting.com
