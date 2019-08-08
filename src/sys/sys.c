@@ -1,5 +1,7 @@
 #include "main.h"
+#include <math.h>
 
+GLFWwindow *_window;
 Point _resolution;
 Point _windowSize;
 int _pixel_scale;
@@ -17,7 +19,7 @@ typedef struct
 Image _images[IMAGE_MAX];
 #define NULL_IMAGE {0, NULL_POINT}
 
-int GLFWCALL _sys_close_callback();
+void _sys_close_callback();
 
 void sys_init(Point resolution, int pixel_scale)
 {
@@ -37,22 +39,21 @@ void sys_init(Point resolution, int pixel_scale)
     LOG("Failed to initialize GLFW");
     exit( EXIT_FAILURE );
   }
-  result = glfwOpenWindow( _resolution.x*_pixel_scale, _resolution.y*_pixel_scale,
-                           0,0,0,0, 0,0, GLFW_WINDOW );
-  glfwSetWindowTitle("Sunk Coast");
-  if(!result)
+  _window = glfwCreateWindow( _resolution.x*_pixel_scale, _resolution.y*_pixel_scale,
+                             "Sunk Coast", NULL, NULL );
+  if(!_window)
   {
-    LOG("Failed to open GLFW window");
+    LOG("Failed to create GLFW window");
     exit( EXIT_FAILURE );
   }
   
   // Detect key presses between calls to GetKey
-  glfwEnable( GLFW_STICKY_KEYS );
+  glfwSetInputMode( _window, GLFW_STICKY_KEYS, GLFW_TRUE );
   
   // Enable vertical sync (on cards that support it)
   glfwSwapInterval( 1 );
   
-  glfwSetWindowCloseCallback(_sys_close_callback);
+  glfwSetWindowCloseCallback(_window, _sys_close_callback);
   
   LOG("Initialize DevIL");
   
@@ -70,10 +71,9 @@ void sys_init(Point resolution, int pixel_scale)
   srand(time(NULL));
 }
 
-int GLFWCALL _sys_close_callback()
+void _sys_close_callback()
 {
-  _shouldClose = true;
-  return true;
+  return;
 }
 
 bool sys_shouldClose()
@@ -96,7 +96,7 @@ void sys_drawInit(Color col)
   Point maxPixelSize = NULL_POINT;
   Point drawRectSize = NULL_POINT;
   
-  glfwGetWindowSize( &_windowSize.x, &_windowSize.y);  
+  glfwGetWindowSize( _window, &_windowSize.x, &_windowSize.y);
   glViewport( 0, 0, _windowSize.x, _windowSize.y ); 
   
   glClearColor((float)col.r/255.0f, (float)col.g/255.0f, (float)col.b/255.0f, (float)col.a/255.0f);
@@ -104,7 +104,7 @@ void sys_drawInit(Color col)
   
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, _windowSize.x, _windowSize.y,0);
+  glOrtho(0, _windowSize.x, _windowSize.y,0, -1,1);
   
   maxPixelSize.x = _windowSize.x/_resolution.x;
   maxPixelSize.y = _windowSize.y/_resolution.y;
@@ -166,7 +166,7 @@ void sys_drawFinish()
   _sys_drawRectangle(rectSBar, black);
   _sys_drawRectangle(rectWBar, black);
   
-  glfwSwapBuffers();
+  glfwSwapBuffers( _window );
 }
 
 ImageID sys_loadImage(const char *name)
@@ -300,7 +300,10 @@ bool sys_inputPressed(Input input)
 Point sys_mousePos()
 {
   Point out;
-  glfwGetMousePos(&out.x, &out.y);
+  double x, y;
+  glfwGetCursorPos(_window, &x, &y);
+  out.x = floor(x);
+  out.y = floor(y);
   out = pointAddPoint(out, pointInverse(_drawRect.a));  
   out.x /= _pixel_scale;
   out.y /= _pixel_scale;
@@ -309,7 +312,7 @@ Point sys_mousePos()
 
 bool _sys_pressed(int key)
 {
-  return glfwGetKey(key) == GLFW_PRESS;
+  return glfwGetKey(_window, key) == GLFW_PRESS;
 }
 
 
@@ -329,10 +332,10 @@ void sys_update()
   _heldInputs[INPUT_PICKUP] = _sys_pressed('P');
   _heldInputs[INPUT_DROP] = _sys_pressed('O');
   _heldInputs[INPUT_USE] = _sys_pressed('U');
-  _heldInputs[INPUT_ESC] = _sys_pressed(GLFW_KEY_ESC);
+  _heldInputs[INPUT_ESC] = _sys_pressed(GLFW_KEY_ESCAPE);
 
   for(i=0; i<10; i++)
-    _heldInputs[INPUT_0 + i] = glfwGetKey('0'+i) == GLFW_PRESS;
+    _heldInputs[INPUT_0 + i] = glfwGetKey(_window, '0'+i) == GLFW_PRESS;
 
   _heldInputs[INPUT_ANY] = false;
   for(i=0; i<INPUT_ANY; i++)
