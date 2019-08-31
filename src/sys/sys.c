@@ -46,6 +46,7 @@ void sys_init(Point resolution, int pixel_scale)
     LOG("Failed to create GLFW window");
     exit( EXIT_FAILURE );
   }
+  glfwMakeContextCurrent( _window );
   
   // Detect key presses between calls to GetKey
   glfwSetInputMode( _window, GLFW_STICKY_KEYS, GLFW_TRUE );
@@ -167,6 +168,7 @@ void sys_drawFinish()
   _sys_drawRectangle(rectWBar, black);
   
   glfwSwapBuffers( _window );
+  glfwPollEvents();
 }
 
 ImageID sys_loadImage(const char *name)
