@@ -21,7 +21,7 @@ endif
 CC = gcc
 
 CFLAGS = -Isrc $(LIB_INCLUDE_PATH) -Wall -Wextra -Werror -g
-LIB_DEPS = $(LIB_BIN_PATH) $(GL_LIBS)
+LIB_DEPS = $(LIB_BIN_PATH) $(GL_LIBS) -lm
 
 BUILD_DIR = build
 OBJ_DIR = build/obj

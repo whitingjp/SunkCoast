@@ -52,13 +52,13 @@ int item_value(ItemType type, ItemSubtype subtype)
   int out = 0;
   switch(subtype)
   {
-    case IST_INKY: out = 2;
-    case IST_AZURE: out = 15;
-    case IST_PEARL: out = 20;
-    case IST_SEAWEED: out = 1;
-    case IST_BARNACLED: out = 10;
-    case IST_GOLDEN: out = 100;
-    case IST_CORAL: out = 5;
+    case IST_INKY: out = 2; break;
+    case IST_AZURE: out = 15; break;
+    case IST_PEARL: out = 20; break;
+    case IST_SEAWEED: out = 1; break;
+    case IST_BARNACLED: out = 10; break;
+    case IST_GOLDEN: out = 100; break;
+    case IST_CORAL: out = 5; break;
     default: out = 1;
   }
   if(type == IT_DOUBLOON)

@@ -24,8 +24,8 @@ Executables:
   Windows executable: sunkcoast.exe
     Linux executable: sunkcoast
   If you are using the linux build you must have glfw
-  and DevIL runtimes installed. On ubuntu I believe the
-  packages are 'libglfw2' and 'libdevil1c2'.
+  and DevIL runtimes installed. On ubuntu the packages
+  are 'libglfw3' and 'libdevil1c2'.
 
 Get in touch:
   Website: http://jonathanwhiting.com
