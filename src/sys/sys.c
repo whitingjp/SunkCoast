@@ -2,7 +2,7 @@
 #include <math.h>
 
 GLFWwindow *_window;
-Point _resolution;
+static Point _resolution;
 Point _windowSize;
 int _pixel_scale;
 Rectangle _drawRect;
