@@ -74,6 +74,7 @@ void sys_init(Point resolution, int pixel_scale)
 
 void _sys_close_callback()
 {
+  _shouldClose = true;
   return;
 }
 
