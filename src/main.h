@@ -20,4 +20,3 @@
 #include "world/feature.h"
 #include "world/tilemap.h"
 
-Point main_getResolution();

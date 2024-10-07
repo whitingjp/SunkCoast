@@ -8,7 +8,6 @@ const char* line4 = "/____/\\__,_/_/ /_/_/|_|   \\____/\\____/\\__,_/____/\\__/ 
 
 const double _timePerFrame = 1.0f/60.0f;
 
-Point _resolution;
 double _totalTime;
 double _elapsedTime;
 
@@ -49,10 +48,11 @@ int main()
   int i;
   
   LOG("Starting game.");
-  
-  _resolution.x = TILEMAP_WIDTH*8;
-  _resolution.y = (TILEMAP_HEIGHT+3)*15;
-  sys_init(_resolution, 2);
+
+  Point resolution;
+  resolution.x = TILEMAP_WIDTH*8;
+  resolution.y = (TILEMAP_HEIGHT+3)*15;
+  sys_init(resolution, 2);
   
   for(i=0; i<IMAGE_MAX; i++)
   {
@@ -134,9 +134,4 @@ int main()
   LOG("Closing.");
   sys_close();
   return EXIT_SUCCESS;
-}
-
-Point main_getResolution()
-{
-  return _resolution;
 }
